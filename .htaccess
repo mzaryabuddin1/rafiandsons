@@ -1,0 +1,6 @@
+# Project root — DocumentRoot should point to /public (see Laragon vhost).
+# Kept as a fallback if DocumentRoot is ever set back to project root.
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+	RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
