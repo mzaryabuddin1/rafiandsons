@@ -25,7 +25,8 @@ After you share the FRS, we will break work into tasks against this document.
 |-----|--------|
 | Name | **Rafi & Sons** |
 | Logo (brand) | `public/assets/images/logo.png` (circular NR mark) |
-| Tagline | Dream's of Life |
+| Tagline | Making Life Easier, Every Day. |
+| Domain | rafiandsonsnr.com |
 | Favicon | `public/assets/images/logo.png` |
 | Tone | Clean retail / lifestyle eCommerce (Demo22 look) |
 
