@@ -15,30 +15,8 @@ class Home extends BaseStoreController
         $bannerModel  = model(BannerModel::class);
 
         $topCategories = [];
-        $catIcons = [
-            'electronics'       => 'fa-mobile-alt',
-            'home-appliances'   => 'fa-blender',
-            'computers'         => 'fa-laptop',
-            'mobiles'           => 'fa-mobile-alt',
-            'laptops'           => 'fa-laptop',
-            'led-tv'            => 'fa-tv',
-            'refrigerator'      => 'fa-door-closed',
-            'washing-machine'   => 'fa-soap',
-            'air-conditioner'   => 'fa-snowflake',
-            'small-appliances'  => 'fa-th-large',
-            'microwave-oven'    => 'fa-temperature-high',
-            'water-dispenser'   => 'fa-tint',
-            'fans'              => 'fa-fan',
-            'bikes'             => 'fa-motorcycle',
-            'deep-freezer'      => 'fa-box',
-            'batteries'         => 'fa-car-battery',
-            'mattress'          => 'fa-bed',
-            'tyres'             => 'fa-circle',
-            'tablet'            => 'fa-tablet-alt',
-            'solar'             => 'fa-sun',
-        ];
         foreach ($categories as $index => $cat) {
-            $cat['icon'] = $catIcons[$cat['slug']] ?? 'fa-box';
+            $cat['icon'] = category_fa_icon($cat['slug'] ?? '', $cat['description'] ?? null);
             $cat['image_file'] = ! empty($cat['image'])
                 ? $cat['image']
                 : 'theme/images/demos/demo22/categories/' . (($index % 6) + 1) . '.png';

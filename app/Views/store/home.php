@@ -1,35 +1,5 @@
 <?= $this->extend('store/layout') ?>
 <?= $this->section('content') ?>
-<?php
-$homeSliders = $homeSliders ?? [];
-$catIcons = [
-    'electronics'      => 'fa-mobile-alt',
-    'home-appliances'  => 'fa-blender',
-    'computers'        => 'fa-laptop',
-    'fashion'          => 'fa-tshirt',
-    'beauty'           => 'fa-spa',
-    'furniture'        => 'fa-couch',
-    'televisions'      => 'fa-tv',
-    'mobiles'          => 'fa-mobile-alt',
-    'kitchen'          => 'fa-blender',
-    'laptops'          => 'fa-laptop',
-    'led-tv'           => 'fa-tv',
-    'refrigerator'     => 'fa-door-closed',
-    'washing-machine'  => 'fa-soap',
-    'air-conditioner'  => 'fa-snowflake',
-    'small-appliances' => 'fa-th-large',
-    'microwave-oven'   => 'fa-temperature-high',
-    'water-dispenser'  => 'fa-tint',
-    'fans'             => 'fa-fan',
-    'bikes'            => 'fa-motorcycle',
-    'deep-freezer'     => 'fa-box',
-    'batteries'        => 'fa-car-battery',
-    'mattress'         => 'fa-bed',
-    'tyres'            => 'fa-circle',
-    'tablet'           => 'fa-tablet-alt',
-    'solar'            => 'fa-sun',
-];
-?>
 <main class="main qb-main">
     <div class="page-content">
         <!-- Hero: category sidebar + slider -->
@@ -38,10 +8,10 @@ $catIcons = [
                 <aside class="qb-cat-sidebar d-none d-lg-block">
                     <ul>
                         <?php foreach ($categoryTree as $cat): ?>
-                            <?php $icon = $catIcons[$cat['slug']] ?? 'fa-box'; ?>
+                            <?php $icon = category_fa_icon($cat['slug'] ?? '', $cat['description'] ?? null); ?>
                             <li class="<?= ! empty($cat['children']) ? 'has-children' : '' ?>">
                                 <a href="<?= site_url('shop?category=' . urlencode($cat['slug'])) ?>">
-                                    <i class="fas <?= esc($icon) ?>"></i>
+                                    <i class="fas <?= esc($icon) ?>" aria-hidden="true"></i>
                                     <span><?= esc($cat['name']) ?></span>
                                     <?php if (! empty($cat['children'])): ?><i class="fas fa-chevron-right qb-cat-arrow"></i><?php endif; ?>
                                 </a>
