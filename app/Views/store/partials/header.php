@@ -14,9 +14,9 @@ $searchCategory = $searchCategory ?? '';
                     <img src="<?= base_url('assets/store/rafi-and-sons-logo.png') ?>" alt="<?= esc($siteName) ?>" height="56">
                 </a>
 
-                <form action="<?= site_url('shop') ?>" method="get" class="qb-search-form">
+                <form action="<?= site_url('search') ?>" method="get" class="qb-search-form" id="qb-search-form" role="search">
                     <div class="qb-search-inner">
-                        <select name="category" class="qb-search-cat" aria-label="Category">
+                        <select name="category" class="qb-search-cat" id="qb-search-category" aria-label="Category">
                             <option value="">All</option>
                             <?php foreach ($categoryTree as $cat): ?>
                                 <option value="<?= esc($cat['slug']) ?>" <?= $searchCategory === $cat['slug'] ? 'selected' : '' ?>>
@@ -24,8 +24,32 @@ $searchCategory = $searchCategory ?? '';
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                        <input type="text" name="q" value="<?= esc($search ?? '') ?>" placeholder="I'm shopping for..." class="qb-search-input">
-                        <button type="submit" class="qb-search-btn">Search</button>
+                        <div class="qb-search-field">
+                            <input
+                                type="search"
+                                name="q"
+                                id="qb-search-input"
+                                value="<?= esc($search ?? '') ?>"
+                                placeholder="Search products..."
+                                class="qb-search-input"
+                                autocomplete="off"
+                                aria-label="Search products"
+                                aria-expanded="false"
+                                aria-controls="qb-search-dropdown"
+                            >
+                            <div class="qb-search-dropdown" id="qb-search-dropdown" hidden>
+                                <div class="qb-search-dropdown-inner">
+                                    <ul class="qb-search-results" id="qb-search-results" role="listbox"></ul>
+                                    <a href="#" class="qb-search-view-all" id="qb-search-view-all" hidden>
+                                        View all results
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="qb-search-btn">
+                            <i class="d-icon-search d-none d-md-inline"></i>
+                            <span>Search</span>
+                        </button>
                     </div>
                 </form>
 
@@ -84,8 +108,8 @@ $searchCategory = $searchCategory ?? '';
     <div class="mobile-menu-overlay"></div>
     <a class="mobile-menu-close" href="#"><i class="d-icon-times"></i></a>
     <div class="mobile-menu-container scrollable">
-        <form action="<?= site_url('shop') ?>" method="get" class="input-wrapper">
-            <input type="text" class="form-control" name="q" placeholder="Search..." required>
+        <form action="<?= site_url('search') ?>" method="get" class="input-wrapper">
+            <input type="search" class="form-control" name="q" placeholder="Search products..." required autocomplete="off">
             <button class="btn btn-search" type="submit"><i class="d-icon-search"></i></button>
         </form>
         <ul class="mobile-menu mmenu-anim">

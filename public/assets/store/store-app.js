@@ -179,6 +179,172 @@ window.StoreApp = (function ($) {
   // Prevent Riode theme from hijacking .btn-quickview / product-action links
   $(document).off('click', '.btn-quickview');
 
+  function initProductSearch() {
+    var $form = $('#qb-search-form');
+    var $input = $('#qb-search-input');
+    var $dropdown = $('#qb-search-dropdown');
+    var $results = $('#qb-search-results');
+    var $viewAll = $('#qb-search-view-all');
+    var $category = $('#qb-search-category');
+
+    if (!$form.length || !$input.length) {
+      return;
+    }
+
+    var timer = null;
+    var xhr = null;
+    var activeIndex = -1;
+
+    function shopSearchUrl(query) {
+      var params = new URLSearchParams();
+      if (query) {
+        params.set('q', query);
+      }
+      var cat = ($category.val() || '').trim();
+      if (cat) {
+        params.set('category', cat);
+      }
+      var qs = params.toString();
+      return (window.STORE_BASE || '') + '/shop' + (qs ? '?' + qs : '');
+    }
+
+    function closeDropdown() {
+      $dropdown.attr('hidden', 'hidden');
+      $input.attr('aria-expanded', 'false');
+      activeIndex = -1;
+    }
+
+    function openDropdown() {
+      $dropdown.removeAttr('hidden');
+      $input.attr('aria-expanded', 'true');
+    }
+
+    function renderItems(items, total, query) {
+      $results.empty();
+      activeIndex = -1;
+
+      if (!items.length) {
+        $results.html('<li class="qb-search-empty">No products found for "' + $('<div>').text(query).html() + '"</li>');
+        $viewAll.attr('hidden', 'hidden');
+        openDropdown();
+        return;
+      }
+
+      items.forEach(function (item) {
+        var advance = item.min_advance ? 'Rs. ' + Number(item.min_advance).toLocaleString() + ' Advance' : '';
+        var $li = $('<li role="option"></li>');
+        var $a = $('<a></a>').attr('href', item.url);
+        $a.append(
+          $('<img>').attr('src', item.image).attr('alt', item.name),
+          $('<div class="qb-search-result-body"></div>').append(
+            $('<strong></strong>').text(item.name),
+            $('<span></span>').text(item.category_name || ''),
+            advance ? $('<em></em>').text(item.price_label + ' · ' + advance) : $('<em></em>').text(item.price_label)
+          )
+        );
+        $li.append($a);
+        $results.append($li);
+      });
+
+      $viewAll
+        .removeAttr('hidden')
+        .attr('href', shopSearchUrl(query))
+        .text(total > items.length ? 'View all ' + total + ' results' : 'View all results');
+
+      openDropdown();
+    }
+
+    function fetchSuggestions() {
+      var query = ($input.val() || '').trim();
+      if (query.length < 2) {
+        closeDropdown();
+        return;
+      }
+
+      if (xhr) {
+        xhr.abort();
+      }
+
+      $results.html('<li class="qb-search-loading">Searching products...</li>');
+      openDropdown();
+
+      xhr = $.ajax({
+        url: (window.STORE_BASE || '') + '/search/suggest',
+        method: 'GET',
+        dataType: 'json',
+        data: {
+          q: query,
+          category: ($category.val() || '').trim()
+        }
+      }).done(function (res) {
+        var data = (res && res.data) || {};
+        renderItems(data.items || [], data.total || 0, query);
+      }).fail(function () {
+        closeDropdown();
+      }).always(function () {
+        xhr = null;
+      });
+    }
+
+    $input.on('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(fetchSuggestions, 280);
+    });
+
+    $input.on('focus', function () {
+      if (($input.val() || '').trim().length >= 2) {
+        fetchSuggestions();
+      }
+    });
+
+    $input.on('keydown', function (e) {
+      var $items = $results.find('li[role="option"] a');
+      if (!$items.length || $dropdown.is('[hidden]')) {
+        return;
+      }
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        activeIndex = Math.min(activeIndex + 1, $items.length - 1);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        activeIndex = Math.max(activeIndex - 1, 0);
+      } else if (e.key === 'Enter' && activeIndex >= 0) {
+        e.preventDefault();
+        window.location.href = $items.eq(activeIndex).attr('href');
+        return;
+      } else if (e.key === 'Escape') {
+        closeDropdown();
+        return;
+      } else {
+        return;
+      }
+
+      $results.find('li[role="option"]').removeClass('is-active');
+      if (activeIndex >= 0) {
+        $items.eq(activeIndex).closest('li').addClass('is-active');
+      }
+    });
+
+    $form.on('submit', function (e) {
+      var query = ($input.val() || '').trim();
+      if (!query) {
+        e.preventDefault();
+        $input.focus();
+        return;
+      }
+      closeDropdown();
+    });
+
+    $(document).on('click', function (e) {
+      if (!$(e.target).closest('.qb-search-form').length) {
+        closeDropdown();
+      }
+    });
+  }
+
+  initProductSearch();
+
   return {
     request: request,
     toast: toast,

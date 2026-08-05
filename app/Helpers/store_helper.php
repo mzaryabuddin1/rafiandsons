@@ -70,3 +70,37 @@ if (! function_exists('category_fa_icon')) {
         return 'fa-box';
     }
 }
+
+if (! function_exists('shop_query_url')) {
+    /**
+     * Build shop URL preserving current filters (q, category, sort).
+     */
+    function shop_query_url(array $overrides = [], array $remove = []): string
+    {
+        $request = service('request');
+        $params  = [
+            'q'         => trim((string) $request->getGet('q')),
+            'category'  => trim((string) $request->getGet('category')),
+            'sort'      => (string) $request->getGet('sort'),
+            'min_price' => trim((string) $request->getGet('min_price')),
+            'max_price' => trim((string) $request->getGet('max_price')),
+        ];
+
+        foreach ($remove as $key) {
+            unset($params[$key]);
+        }
+
+        foreach ($overrides as $key => $value) {
+            if ($value === null || $value === '') {
+                unset($params[$key]);
+            } else {
+                $params[$key] = $value;
+            }
+        }
+
+        $params = array_filter($params, static fn ($v) => $v !== '' && $v !== null);
+        $query  = $params !== [] ? '?' . http_build_query($params) : '';
+
+        return site_url('shop') . $query;
+    }
+}

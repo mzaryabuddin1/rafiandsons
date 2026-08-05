@@ -22,7 +22,7 @@ class CartController extends BaseStoreController
         }
 
         return $this->storeView('cart', [
-            'pageTitle'       => 'Cart',
+            'pageTitle'       => 'Shopping Cart',
             'activeMenu'      => 'cart',
             'items'           => $items,
             'plansByProduct'  => $plansByProduct,
