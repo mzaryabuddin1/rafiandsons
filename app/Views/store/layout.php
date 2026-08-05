@@ -18,11 +18,11 @@
             s.parentNode.insertBefore(wf, s);
         })(document);
     </script>
-    <link rel="stylesheet" type="text/css" href="<?= base_url('theme/vendor/fontawesome-free/css/all.min.css') ?>">
-    <link rel="stylesheet" type="text/css" href="<?= base_url('theme/vendor/animate/animate.min.css') ?>">
-    <link rel="stylesheet" type="text/css" href="<?= base_url('theme/vendor/magnific-popup/magnific-popup.min.css') ?>">
-    <link rel="stylesheet" type="text/css" href="<?= base_url('theme/vendor/owl-carousel/owl.carousel.min.css') ?>">
-    <link rel="stylesheet" type="text/css" href="<?= base_url('theme/vendor/sticky-icon/stickyicon.css') ?>">
+    <link rel="stylesheet" type="text/css" href="<?= base_url('assets/riode-vendor/fontawesome-free/css/all.min.css') ?>">
+    <link rel="stylesheet" type="text/css" href="<?= base_url('assets/riode-vendor/animate/animate.min.css') ?>">
+    <link rel="stylesheet" type="text/css" href="<?= base_url('assets/riode-vendor/magnific-popup/magnific-popup.min.css') ?>">
+    <link rel="stylesheet" type="text/css" href="<?= base_url('assets/riode-vendor/owl-carousel/owl.carousel.min.css') ?>">
+    <link rel="stylesheet" type="text/css" href="<?= base_url('assets/riode-vendor/sticky-icon/stickyicon.css') ?>">
     <link rel="stylesheet" type="text/css" href="<?= base_url('theme/css/' . ($cssFile ?? 'demo22.min.css')) ?>">
     <link rel="stylesheet" type="text/css" href="<?= base_url('assets/store/store.css') ?>">
     <link rel="stylesheet" type="text/css" href="<?= base_url('assets/store/qist-style.css') ?>">
@@ -62,11 +62,11 @@
     window.STORE_BASE = '<?= rtrim(site_url(), '/') ?>';
     window.BASE_URL = '<?= rtrim(base_url(), '/') ?>/';
 </script>
-<script src="<?= base_url('theme/vendor/jquery/jquery.min.js') ?>"></script>
-<script src="<?= base_url('theme/vendor/magnific-popup/jquery.magnific-popup.min.js') ?>"></script>
-<script src="<?= base_url('theme/vendor/owl-carousel/owl.carousel.min.js') ?>"></script>
-<script src="<?= base_url('theme/vendor/imagesloaded/imagesloaded.pkgd.min.js') ?>"></script>
-<script src="<?= base_url('theme/vendor/elevatezoom/jquery.elevatezoom.min.js') ?>"></script>
+<script src="<?= base_url('assets/riode-vendor/jquery/jquery.min.js') ?>"></script>
+<script src="<?= base_url('assets/riode-vendor/magnific-popup/jquery.magnific-popup.min.js') ?>"></script>
+<script src="<?= base_url('assets/riode-vendor/owl-carousel/owl.carousel.min.js') ?>"></script>
+<script src="<?= base_url('assets/riode-vendor/imagesloaded/imagesloaded.pkgd.min.js') ?>"></script>
+<script src="<?= base_url('assets/riode-vendor/elevatezoom/jquery.elevatezoom.min.js') ?>"></script>
 <script src="<?= base_url('theme/js/main.min.js') ?>"></script>
 <script src="<?= base_url('assets/store/store-app.js') ?>"></script>
 <?= $this->renderSection('scripts') ?>

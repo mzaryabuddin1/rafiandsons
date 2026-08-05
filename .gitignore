@@ -85,6 +85,9 @@ php_errors.log
 # Composer
 #-------------------------
 vendor/
+# Theme front-end vendor assets (Riode) must be publicly served
+!public/theme/vendor/
+!public/theme/vendor/**/
 
 #-------------------------
 # IDE / Development Files
