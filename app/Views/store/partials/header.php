@@ -15,28 +15,33 @@ $searchCategory = $searchCategory ?? '';
                 </a>
 
                 <form action="<?= site_url('search') ?>" method="get" class="qb-search-form" id="qb-search-form" role="search">
-                    <div class="qb-search-inner">
-                        <select name="category" class="qb-search-cat" id="qb-search-category" aria-label="Category">
-                            <option value="">All</option>
-                            <?php foreach ($categoryTree as $cat): ?>
-                                <option value="<?= esc($cat['slug']) ?>" <?= $searchCategory === $cat['slug'] ? 'selected' : '' ?>>
-                                    <?= esc($cat['name']) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
+                    <div class="qb-search-box">
+                        <div class="qb-search-cat-wrap">
+                            <label class="qb-search-cat-label" for="qb-search-category">Category</label>
+                            <select name="category" class="qb-search-cat" id="qb-search-category" aria-label="Category">
+                                <option value="">All</option>
+                                <?php foreach ($categoryTree as $cat): ?>
+                                    <option value="<?= esc($cat['slug']) ?>" <?= $searchCategory === $cat['slug'] ? 'selected' : '' ?>>
+                                        <?= esc($cat['name']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
                         <div class="qb-search-field">
+                            <span class="qb-search-icon" aria-hidden="true"><i class="d-icon-search"></i></span>
                             <input
                                 type="search"
                                 name="q"
                                 id="qb-search-input"
                                 value="<?= esc($search ?? '') ?>"
-                                placeholder="Search products..."
+                                placeholder="Search mobiles, AC, LED TV..."
                                 class="qb-search-input"
                                 autocomplete="off"
                                 aria-label="Search products"
                                 aria-expanded="false"
                                 aria-controls="qb-search-dropdown"
                             >
+                            <button type="button" class="qb-search-clear" id="qb-search-clear" aria-label="Clear search" hidden>&times;</button>
                             <div class="qb-search-dropdown" id="qb-search-dropdown" hidden>
                                 <div class="qb-search-dropdown-inner">
                                     <ul class="qb-search-results" id="qb-search-results" role="listbox"></ul>
@@ -46,9 +51,9 @@ $searchCategory = $searchCategory ?? '';
                                 </div>
                             </div>
                         </div>
-                        <button type="submit" class="qb-search-btn">
-                            <i class="d-icon-search d-none d-md-inline"></i>
-                            <span>Search</span>
+                        <button type="submit" class="qb-search-submit">
+                            <i class="d-icon-search d-md-none"></i>
+                            <span class="d-none d-md-inline">Search</span>
                         </button>
                     </div>
                 </form>

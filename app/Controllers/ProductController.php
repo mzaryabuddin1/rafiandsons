@@ -14,7 +14,9 @@ class ProductController extends BaseStoreController
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound('Product not found');
         }
 
-        $plans = $model->plansForProduct((int) $product['id']);
+        $plans = (int) ($product['installment_available'] ?? 0) === 1
+            ? $model->plansForProduct((int) $product['id'])
+            : [];
         $images = $product['images'] ? json_decode($product['images'], true) : [];
         $related = $this->enrichProducts(
             $model->where('status', 1)
@@ -45,15 +47,20 @@ class ProductController extends BaseStoreController
 
         $enriched = $this->enrichProducts([$product])[0];
         $images = $product['images'] ? json_decode($product['images'], true) : [];
-        $plans = $model->plansForProduct((int) $product['id']);
+        $plans = (int) ($product['installment_available'] ?? 0) === 1
+            ? $model->plansForProduct((int) $product['id'])
+            : [];
 
         return $this->jsonSuccess('OK', [
-            'id'          => (int) $product['id'],
-            'name'        => $product['name'],
-            'slug'        => $product['slug'],
-            'sku'         => $product['sku'],
-            'price'       => (float) $product['price'],
-            'min_advance' => $enriched['min_advance'] ?? null,
+            'id'                    => (int) $product['id'],
+            'name'                  => $product['name'],
+            'slug'                  => $product['slug'],
+            'sku'                   => $product['sku'],
+            'price'                 => (float) $product['price'],
+            'compare_price'         => ! empty($product['compare_price']) ? (float) $product['compare_price'] : null,
+            'cash_available'        => (int) ($product['cash_available'] ?? 1),
+            'installment_available' => (int) ($product['installment_available'] ?? 0),
+            'min_advance'           => $enriched['min_advance'] ?? null,
             'description' => $product['description'],
             'url'         => site_url('product/' . $product['slug']),
             'image'       => $this->productImage($product['images']),

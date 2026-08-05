@@ -13,8 +13,8 @@ class ProductModel extends Model
     protected $useSoftDeletes   = true;
     protected $useTimestamps    = true;
     protected $allowedFields    = [
-        'category_id', 'name', 'slug', 'sku', 'price', 'images', 'description',
-        'stock_status', 'installment_available', 'status', 'meta_title', 'meta_description',
+        'category_id', 'name', 'slug', 'sku', 'price', 'compare_price', 'images', 'description',
+        'stock_status', 'cash_available', 'installment_available', 'status', 'meta_title', 'meta_description',
     ];
 
     public function planIds(int $productId): array

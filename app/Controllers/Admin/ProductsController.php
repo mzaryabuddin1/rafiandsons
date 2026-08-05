@@ -100,7 +100,12 @@ class ProductsController extends BaseAdminController
             return $this->jsonError($payload['error']);
         }
 
-        $model->update($id, $payload['data']);
+        if (! $model->update($id, $payload['data'])) {
+            $errors = $model->errors();
+            $msg = $errors ? implode(' ', $errors) : 'Failed to update product.';
+
+            return $this->jsonError($msg);
+        }
         $model->syncProductPlans((int) $id, $payload['plans']);
 
         return $this->jsonSuccess('Product updated.');
@@ -124,7 +129,7 @@ class ProductsController extends BaseAdminController
 
     private function validatedPayload(?int $id = null, ?array $existing = null): array
     {
-        $name = trim((string) $this->request->getPost('name'));
+        $name = trim((string) $this->request->getVar('name'));
         if ($name === '') {
             return ['error' => 'Product name is required.'];
         }
@@ -152,6 +157,18 @@ class ProductsController extends BaseAdminController
         $planIds = $this->request->getPost('plan_ids');
         if (! is_array($planIds)) {
             $planIds = $planIds ? [$planIds] : [];
+        }
+
+        $cashAvailable = (int) $this->request->getPost('cash_available') === 1 ? 1 : 0;
+        $installmentAvailable = (int) $this->request->getPost('installment_available') === 1 ? 1 : 0;
+        if ($cashAvailable === 0 && $installmentAvailable === 0) {
+            return ['error' => 'Enable at least cash purchase or installment for this product.'];
+        }
+
+        $comparePriceRaw = trim((string) $this->request->getPost('compare_price'));
+        $comparePrice = $comparePriceRaw !== '' ? (float) $comparePriceRaw : null;
+        if ($comparePrice !== null && $comparePrice <= 0) {
+            $comparePrice = null;
         }
 
         // Preferred: full plan rows from product form
@@ -194,6 +211,10 @@ class ProductsController extends BaseAdminController
             }
         }
 
+        if (! $installmentAvailable) {
+            $plans = [];
+        }
+
         return [
             'data' => [
                 'category_id'           => $this->request->getPost('category_id') ?: null,
@@ -201,10 +222,12 @@ class ProductsController extends BaseAdminController
                 'slug'                  => $this->makeSlug($name, 'products', $id),
                 'sku'                   => $this->request->getPost('sku'),
                 'price'                 => (float) $this->request->getPost('price'),
+                'compare_price'         => $comparePrice,
                 'images'                => json_encode(array_values($images)),
                 'description'           => $this->request->getPost('description'),
                 'stock_status'          => $this->request->getPost('stock_status') === 'out_of_stock' ? 'out_of_stock' : 'in_stock',
-                'installment_available' => (int) $this->request->getPost('installment_available') === 1 ? 1 : 0,
+                'cash_available'        => $cashAvailable,
+                'installment_available' => $installmentAvailable,
                 'status'                => (int) $this->request->getPost('status') === 1 ? 1 : 0,
                 'meta_title'            => $this->request->getPost('meta_title'),
                 'meta_description'      => $this->request->getPost('meta_description'),

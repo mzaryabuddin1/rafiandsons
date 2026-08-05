@@ -3,8 +3,14 @@
 <main class="main qb-main">
     <div class="page-content qb-checkout-page">
         <div class="container">
-            <h1 class="qb-page-title">Installment Checkout</h1>
-            <p class="qb-page-sub">Submit a booking request. This is not automatic financing approval.</p>
+            <h1 class="qb-page-title">Checkout</h1>
+            <p class="qb-page-sub">
+                <?php if ($hasInstallment ?? false): ?>
+                    Review your details and installment breakdown. Our team will verify your booking.
+                <?php else: ?>
+                    Complete your order. Our team will contact you to confirm.
+                <?php endif; ?>
+            </p>
 
             <div class="row">
                 <div class="col-lg-7">
@@ -21,7 +27,7 @@
                             </div>
                             <div class="col-sm-6">
                                 <label>Email</label>
-                                <input type="email" class="form-control" name="customer_email">
+                                <input type="email" class="form-control" name="customer_email" placeholder="For order confirmation">
                             </div>
                             <div class="col-sm-6">
                                 <label>CNIC</label>
@@ -37,46 +43,57 @@
                             </div>
                             <div class="col-12">
                                 <label>Notes</label>
-                                <textarea class="form-control" name="notes" rows="3"></textarea>
+                                <textarea class="form-control" name="notes" rows="3" placeholder="Any special instructions"></textarea>
                             </div>
                         </div>
 
-                        <h3 class="mt-4">Select Installment Plan *</h3>
-                        <div class="qb-plans">
-                            <?php foreach ($plans as $i => $plan): ?>
-                                <?php $active = ((int) ($selectedPlanId ?? 0) === (int) $plan['id'] || ($selectedPlanId === null && $i === 0)); ?>
-                                <label class="qb-plan <?= $active ? 'is-active' : '' ?>">
-                                    <input type="radio" name="installment_plan_id" value="<?= (int) $plan['id'] ?>" <?= $active ? 'checked' : '' ?>>
-                                    <span class="qb-plan-body">
-                                        <strong><?= esc($plan['name']) ?></strong>
-                                        <span>Down payment: PKR <?= number_format((float) $plan['down_payment'], 0) ?></span>
-                                        <span>Monthly: PKR <?= number_format((float) $plan['monthly_installment'], 0) ?> × <?= (int) $plan['months'] ?></span>
-                                        <span>Processing: PKR <?= number_format((float) ($plan['processing_charges'] ?? 0), 0) ?></span>
-                                        <span><b>Total payable: PKR <?= number_format((float) $plan['total_payable'], 0) ?></b></span>
-                                    </span>
-                                </label>
-                            <?php endforeach; ?>
-                        </div>
-
-                        <button type="submit" class="qb-btn qb-btn-primary qb-btn-block" id="checkout-btn">Submit Booking Request</button>
+                        <button type="submit" class="qb-btn qb-btn-primary qb-btn-block mt-4" id="checkout-btn">
+                            <?= ($hasInstallment ?? false) ? 'Submit Booking Request' : 'Place Order' ?>
+                        </button>
                     </form>
                 </div>
                 <aside class="col-lg-5">
-                    <div class="qb-order-summary">
-                        <h3>Your Order</h3>
+                    <div class="qb-order-summary qb-checkout-summary">
+                        <h3>Order Summary</h3>
                         <ul class="qb-order-list">
                             <?php foreach ($items as $item): ?>
-                                <li>
-                                    <span><?= esc($item['name']) ?> × <?= (int) $item['qty'] ?></span>
-                                    <strong>PKR <?= number_format($item['price'] * $item['qty'], 0) ?></strong>
+                                <?php $isInst = ($item['payment_type'] ?? '') === 'installment'; ?>
+                                <li class="qb-checkout-item">
+                                    <div class="qb-checkout-item-head">
+                                        <span><?= esc($item['name']) ?><?= $isInst && ! empty($item['plan_name']) ? ' · ' . esc($item['plan_name']) : '' ?> × <?= (int) $item['qty'] ?></span>
+                                        <strong>PKR <?= number_format($item['price'] * $item['qty'], 0) ?></strong>
+                                    </div>
+                                    <?php if ($isInst): ?>
+                                    <div class="qb-checkout-item-detail">
+                                        <span class="qb-checkout-badge">Installment</span>
+                                        <p>Advance (due now): <strong>PKR <?= number_format((float) $item['down_payment'], 0) ?></strong></p>
+                                        <p>Monthly: <strong>PKR <?= number_format((float) $item['monthly_installment'], 0) ?></strong> × <?= (int) $item['months'] ?> months</p>
+                                        <p>Total payable: <strong>PKR <?= number_format((float) $item['total_payable'], 0) ?></strong></p>
+                                    </div>
+                                    <?php else: ?>
+                                    <div class="qb-checkout-item-detail">
+                                        <span class="qb-checkout-badge qb-checkout-badge--cash">Cash</span>
+                                        <p>Full cash price</p>
+                                    </div>
+                                    <?php endif; ?>
                                 </li>
                             <?php endforeach; ?>
                         </ul>
-                        <div class="qb-order-total">
-                            <span>Cart Subtotal</span>
-                            <strong>PKR <?= number_format($cartSubtotal, 0) ?></strong>
+
+                        <div class="qb-checkout-totals">
+                            <div class="qb-checkout-total-row qb-checkout-total-row--highlight">
+                                <span>Due now</span>
+                                <strong>PKR <?= number_format($cartSubtotal, 0) ?></strong>
+                            </div>
+                            <div class="qb-checkout-total-row">
+                                <span>Total order value</span>
+                                <strong>PKR <?= number_format($cartGrandTotal ?? $cartSubtotal, 0) ?></strong>
+                            </div>
                         </div>
-                        <p class="qb-disclaimer">Final installment totals follow the selected plan. Our team will confirm after review.</p>
+
+                        <?php if ($hasInstallment ?? false): ?>
+                        <p class="qb-disclaimer">Monthly installments start after verification. This is not automatic financing approval.</p>
+                        <?php endif; ?>
                     </div>
                 </aside>
             </div>
@@ -87,13 +104,10 @@
 
 <?= $this->section('scripts') ?>
 <script>
-$(document).on('change', 'input[name="installment_plan_id"]', function () {
-    $('.qb-plan').removeClass('is-active');
-    $(this).closest('.qb-plan').addClass('is-active');
-});
 $('#checkout-form').on('submit', function (e) {
     e.preventDefault();
     var $btn = $('#checkout-btn');
+    var btnText = $btn.text();
     $btn.prop('disabled', true).text('Submitting...');
     StoreApp.request(STORE_BASE + '/checkout/place-order', 'POST', $(this).serialize())
         .done(function (res) {
@@ -101,7 +115,7 @@ $('#checkout-form').on('submit', function (e) {
             window.location.href = res.data.redirect;
         })
         .always(function () {
-            $btn.prop('disabled', false).text('Submit Booking Request');
+            $btn.prop('disabled', false).text(btnText);
         });
 });
 </script>

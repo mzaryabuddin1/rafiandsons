@@ -17,6 +17,7 @@ $routes->get('order/success/(:segment)', 'CartController::success/$1');
 $routes->post('cart/add', 'CartController::add', ['filter' => 'csrf']);
 $routes->post('cart/update', 'CartController::update', ['filter' => 'csrf']);
 $routes->post('cart/set-plan', 'CartController::setPlan', ['filter' => 'csrf']);
+$routes->post('cart/set-payment', 'CartController::setPayment', ['filter' => 'csrf']);
 $routes->post('cart/remove', 'CartController::remove', ['filter' => 'csrf']);
 $routes->post('checkout/place-order', 'CartController::placeOrder', ['filter' => 'csrf']);
 

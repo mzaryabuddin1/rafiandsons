@@ -89,22 +89,41 @@ abstract class BaseStoreController extends BaseController
         }
 
         $advanceMap = [];
-        $rows = $db->table('product_installment_plans pip')
-            ->select('pip.product_id, MIN(COALESCE(pip.down_payment, ip.down_payment)) as min_advance')
-            ->join('installment_plans ip', 'ip.id = pip.installment_plan_id')
-            ->whereIn('pip.product_id', $ids)
-            ->groupBy('pip.product_id')
-            ->get()
-            ->getResultArray();
-        foreach ($rows as $row) {
-            $advanceMap[(int) $row['product_id']] = (float) $row['min_advance'];
+        $installmentIds = array_values(array_filter($ids, static function ($id) use ($products) {
+            foreach ($products as $product) {
+                if ((int) ($product['id'] ?? 0) === $id) {
+                    return (int) ($product['installment_available'] ?? 0) === 1;
+                }
+            }
+
+            return false;
+        }));
+
+        if ($installmentIds) {
+            $rows = $db->table('product_installment_plans pip')
+                ->select('pip.product_id, MIN(COALESCE(pip.down_payment, ip.down_payment)) as min_advance')
+                ->join('installment_plans ip', 'ip.id = pip.installment_plan_id')
+                ->whereIn('pip.product_id', $installmentIds)
+                ->groupBy('pip.product_id')
+                ->get()
+                ->getResultArray();
+            foreach ($rows as $row) {
+                $advanceMap[(int) $row['product_id']] = (float) $row['min_advance'];
+            }
         }
 
         foreach ($products as &$product) {
             $cat = $catMap[(int) ($product['category_id'] ?? 0)] ?? null;
             $product['category_name'] = $cat['name'] ?? 'Product';
             $product['category_slug'] = $cat['slug'] ?? '';
-            $product['min_advance']   = $advanceMap[(int) $product['id']] ?? null;
+            $product['cash_available'] = (int) ($product['cash_available'] ?? 1);
+            $product['installment_available'] = (int) ($product['installment_available'] ?? 0);
+            $product['compare_price'] = isset($product['compare_price']) && $product['compare_price'] !== ''
+                ? (float) $product['compare_price']
+                : null;
+            $product['min_advance'] = $product['installment_available'] === 1
+                ? ($advanceMap[(int) $product['id']] ?? null)
+                : null;
         }
         unset($product);
 

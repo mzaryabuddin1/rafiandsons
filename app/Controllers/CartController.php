@@ -2,8 +2,8 @@
 
 namespace App\Controllers;
 
+use App\Libraries\OrderMailService;
 use App\Models\CustomerModel;
-use App\Models\InstallmentPlanModel;
 use App\Models\OrderItemModel;
 use App\Models\OrderModel;
 use App\Models\ProductModel;
@@ -15,19 +15,33 @@ class CartController extends BaseStoreController
         $items = $this->cart->items();
         $productModel = model(ProductModel::class);
         $plansByProduct = [];
-        foreach ($items as $item) {
+
+        foreach ($items as $key => $item) {
             $pid = (int) $item['product_id'];
-            $plans = $productModel->plansForProduct($pid);
-            $plansByProduct[$pid] = $plans ?: model(InstallmentPlanModel::class)->globalActive();
+            $product = $productModel->find($pid);
+            if ($product) {
+                $items[$key]['name'] = $product['name'];
+                $items[$key]['slug'] = $product['slug'];
+                $items[$key]['cash_available'] = (int) ($product['cash_available'] ?? 1);
+                $items[$key]['installment_available'] = (int) ($product['installment_available'] ?? 0);
+                $items[$key]['compare_price'] = $product['compare_price'] ?? null;
+                if (! isset($items[$key]['cash_price'])) {
+                    $items[$key]['cash_price'] = (float) $product['price'];
+                }
+            }
+            if ((int) ($items[$key]['installment_available'] ?? 0) === 1) {
+                $plansByProduct[$pid] = $productModel->plansForProduct($pid);
+            }
         }
 
         return $this->storeView('cart', [
-            'pageTitle'       => 'Shopping Cart',
-            'activeMenu'      => 'cart',
-            'items'           => $items,
-            'plansByProduct'  => $plansByProduct,
-            'bodyClass'       => 'store-qist',
-            'cssFile'         => 'demo22.min.css',
+            'pageTitle'      => 'Shopping Cart',
+            'activeMenu'     => 'cart',
+            'items'          => $items,
+            'plansByProduct' => $plansByProduct,
+            'cartGrandTotal' => $this->cart->grandTotal(),
+            'bodyClass'      => 'store-qist',
+            'cssFile'        => 'demo22.min.css',
         ]);
     }
 
@@ -38,23 +52,22 @@ class CartController extends BaseStoreController
             return redirect()->to(site_url('cart'))->with('error', 'Your cart is empty.');
         }
 
-        $primary = reset($items);
-        $plans = [];
-        if (! empty($primary['product_id'])) {
-            $plans = model(ProductModel::class)->plansForProduct((int) $primary['product_id']);
-        }
-        if (! $plans) {
-            $plans = model(InstallmentPlanModel::class)->globalActive();
+        foreach ($items as $item) {
+            if (($item['payment_type'] ?? '') === 'installment' && empty($item['plan_id'])) {
+                return redirect()->to(site_url('cart'))->with('error', 'Please select an installment plan for all items.');
+            }
         }
 
         return $this->storeView('checkout', [
-            'pageTitle'  => 'Checkout',
-            'activeMenu' => 'cart',
-            'items'      => $items,
-            'plans'      => $plans,
-            'selectedPlanId' => $primary['plan_id'] ?? null,
-            'bodyClass'  => 'store-qist',
-            'cssFile'    => 'demo22.min.css',
+            'pageTitle'        => 'Checkout',
+            'activeMenu'       => 'cart',
+            'items'            => $items,
+            'hasInstallment'   => $this->cart->hasInstallmentItems(),
+            'hasCash'          => $this->cart->hasCashItems(),
+            'orderPaymentType' => $this->cart->orderPaymentType(),
+            'cartGrandTotal'   => $this->cart->grandTotal(),
+            'bodyClass'        => 'store-qist',
+            'cssFile'          => 'demo22.min.css',
         ]);
     }
 
@@ -62,9 +75,17 @@ class CartController extends BaseStoreController
     {
         $productId = (int) $this->request->getPost('product_id');
         $qty = (int) ($this->request->getPost('qty') ?: 1);
+        $paymentType = trim((string) $this->request->getPost('payment_type'));
         $planId = $this->request->getPost('plan_id') ? (int) $this->request->getPost('plan_id') : null;
 
-        $result = $this->cart->add($productId, $qty, $planId);
+        if ($paymentType === '' && $planId) {
+            $paymentType = 'installment';
+        }
+        if ($paymentType === '') {
+            $paymentType = 'cash';
+        }
+
+        $result = $this->cart->add($productId, $qty, $paymentType, $planId);
         if (! $result['success']) {
             return $this->jsonError($result['message']);
         }
@@ -75,11 +96,14 @@ class CartController extends BaseStoreController
         ]);
     }
 
+    private function cartKeyFromRequest(): string
+    {
+        return trim((string) ($this->request->getPost('cart_key') ?: $this->request->getPost('product_id')));
+    }
+
     public function update()
     {
-        $productId = (int) $this->request->getPost('product_id');
-        $qty = (int) $this->request->getPost('qty');
-        $result = $this->cart->updateQty($productId, $qty);
+        $result = $this->cart->updateQty($this->cartKeyFromRequest(), (int) $this->request->getPost('qty'));
         if (! $result['success']) {
             return $this->jsonError($result['message']);
         }
@@ -89,19 +113,36 @@ class CartController extends BaseStoreController
 
     public function setPlan()
     {
-        $productId = (int) $this->request->getPost('product_id');
         $planId = $this->request->getPost('plan_id') ? (int) $this->request->getPost('plan_id') : null;
-        $result = $this->cart->setPlan($productId, $planId);
+        $result = $this->cart->setPlan($this->cartKeyFromRequest(), $planId);
 
         return $result['success']
-            ? $this->jsonSuccess($result['message'])
+            ? $this->jsonSuccess($result['message'], [
+                'subtotal' => $result['subtotal'] ?? $this->cart->subtotal(),
+                'item'     => $result['item'] ?? null,
+                'cart_key' => $result['cart_key'] ?? null,
+            ])
+            : $this->jsonError($result['message']);
+    }
+
+    public function setPayment()
+    {
+        $paymentType = trim((string) $this->request->getPost('payment_type'));
+        $planId = $this->request->getPost('plan_id') ? (int) $this->request->getPost('plan_id') : null;
+        $result = $this->cart->setPaymentType($this->cartKeyFromRequest(), $paymentType, $planId);
+
+        return $result['success']
+            ? $this->jsonSuccess($result['message'], [
+                'subtotal' => $result['subtotal'] ?? $this->cart->subtotal(),
+                'item'     => $result['item'] ?? null,
+                'cart_key' => $result['cart_key'] ?? null,
+            ])
             : $this->jsonError($result['message']);
     }
 
     public function remove()
     {
-        $productId = (int) $this->request->getPost('product_id');
-        $result = $this->cart->remove($productId);
+        $result = $this->cart->remove($this->cartKeyFromRequest());
 
         return $this->jsonSuccess($result['message'], [
             'count'    => $this->cart->count(),
@@ -122,25 +163,16 @@ class CartController extends BaseStoreController
         $cnic = trim((string) $this->request->getPost('customer_cnic'));
         $address = trim((string) $this->request->getPost('customer_address'));
         $city = trim((string) $this->request->getPost('customer_city'));
-        $planId = (int) $this->request->getPost('installment_plan_id');
         $notes = trim((string) $this->request->getPost('notes'));
 
         if ($name === '' || $phone === '') {
             return $this->jsonError('Name and phone are required.');
         }
 
-        if (! $planId) {
-            // fallback to first item plan
-            $first = reset($items);
-            $planId = (int) ($first['plan_id'] ?? 0);
-        }
-
-        $primaryProductId = (int) (reset($items)['product_id'] ?? 0);
-        $plan = $planId && $primaryProductId
-            ? model(ProductModel::class)->resolvePlan($primaryProductId, $planId)
-            : null;
-        if (! $plan) {
-            return $this->jsonError('Please select an installment plan.');
+        foreach ($items as $item) {
+            if (($item['payment_type'] ?? '') === 'installment' && empty($item['plan_id'])) {
+                return $this->jsonError('Please select an installment plan for: ' . ($item['name'] ?? 'item'));
+            }
         }
 
         $customerId = model(CustomerModel::class)->insert([
@@ -154,8 +186,18 @@ class CartController extends BaseStoreController
             'status'  => 1,
         ]);
 
-        $subtotal = $this->cart->subtotal();
+        $dueNow = $this->cart->subtotal();
+        $grandTotal = $this->cart->grandTotal();
+        $paymentType = $this->cart->orderPaymentType();
         $orderNumber = 'RS-' . date('ymd') . '-' . strtoupper(substr(bin2hex(random_bytes(3)), 0, 6));
+
+        $primaryInstallment = null;
+        foreach ($items as $item) {
+            if (($item['payment_type'] ?? '') === 'installment') {
+                $primaryInstallment = $item;
+                break;
+            }
+        }
 
         $db = db_connect();
         $db->transStart();
@@ -169,34 +211,63 @@ class CartController extends BaseStoreController
             'customer_cnic'       => $cnic,
             'customer_address'    => $address,
             'customer_city'       => $city,
-            'installment_plan_id' => $plan['id'],
-            'plan_name'           => $plan['name'],
-            'down_payment'        => $plan['down_payment'],
-            'monthly_installment' => $plan['monthly_installment'],
-            'months'              => $plan['months'],
-            'processing_charges'  => $plan['processing_charges'],
-            'total_payable'       => $plan['total_payable'],
-            'subtotal'            => $subtotal,
+            'payment_type'        => $paymentType,
+            'installment_plan_id' => $primaryInstallment['plan_id'] ?? null,
+            'plan_name'           => $primaryInstallment['plan_name'] ?? null,
+            'down_payment'        => $primaryInstallment['down_payment'] ?? 0,
+            'monthly_installment' => $primaryInstallment['monthly_installment'] ?? 0,
+            'months'              => $primaryInstallment['months'] ?? 0,
+            'processing_charges'  => 0,
+            'total_payable'       => $grandTotal,
+            'subtotal'            => $dueNow,
             'status'              => 'new',
             'admin_notes'         => $notes,
         ]);
 
+        $orderItems = [];
         foreach ($items as $item) {
-            model(OrderItemModel::class)->insert([
+            $isInstallment = ($item['payment_type'] ?? '') === 'installment';
+            $row = [
                 'order_id'     => $orderId,
                 'product_id'   => $item['product_id'],
                 'product_name' => $item['name'],
                 'sku'          => $item['sku'],
-                'unit_price'   => $item['price'],
+                'payment_type' => $isInstallment ? 'installment' : 'cash',
+                'cash_price'   => (float) ($item['cash_price'] ?? $item['price']),
+                'unit_price'   => (float) $item['price'],
                 'quantity'     => $item['qty'],
                 'line_total'   => $item['price'] * $item['qty'],
-            ]);
+            ];
+
+            if ($isInstallment) {
+                $row['installment_plan_id'] = $item['plan_id'];
+                $row['plan_name']           = $item['plan_name'];
+                $row['down_payment']        = $item['down_payment'];
+                $row['monthly_installment'] = $item['monthly_installment'];
+                $row['months']              = $item['months'];
+                $row['total_payable']       = $item['total_payable'];
+            }
+
+            model(OrderItemModel::class)->insert($row);
+            $orderItems[] = $row;
         }
 
         $db->transComplete();
+
+        $order = model(OrderModel::class)->find($orderId);
+        try {
+            (new OrderMailService())->sendOrderEmails($order, $orderItems);
+        } catch (\Throwable $e) {
+            log_message('error', 'Order email error: ' . $e->getMessage());
+        }
+
         $this->cart->clear();
 
-        return $this->jsonSuccess('Your installment booking request has been submitted.', [
+        $message = $paymentType === 'cash'
+            ? 'Your order has been placed successfully.'
+            : 'Your installment booking request has been submitted.';
+
+        return $this->jsonSuccess($message, [
             'order_number' => $orderNumber,
             'redirect'     => site_url('order/success/' . $orderNumber),
         ]);
@@ -209,12 +280,15 @@ class CartController extends BaseStoreController
             return redirect()->to(site_url('/'));
         }
 
+        $orderItems = model(OrderItemModel::class)->where('order_id', $order['id'])->findAll();
+
         return $this->storeView('order_success', [
-            'pageTitle' => 'Order Submitted',
-            'activeMenu'=> 'cart',
-            'order'     => $order,
-            'bodyClass' => 'store-qist',
-            'cssFile'   => 'demo22.min.css',
+            'pageTitle'  => 'Order Submitted',
+            'activeMenu' => 'cart',
+            'order'      => $order,
+            'orderItems' => $orderItems,
+            'bodyClass'  => 'store-qist',
+            'cssFile'    => 'demo22.min.css',
         ]);
     }
 }

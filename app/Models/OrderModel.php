@@ -14,7 +14,7 @@ class OrderModel extends Model
     protected $useTimestamps    = true;
     protected $allowedFields    = [
         'order_number', 'customer_id', 'customer_name', 'customer_email', 'customer_phone',
-        'customer_cnic', 'customer_address', 'customer_city', 'installment_plan_id',
+        'customer_cnic', 'customer_address', 'customer_city', 'payment_type', 'installment_plan_id',
         'plan_name', 'down_payment', 'monthly_installment', 'months', 'processing_charges',
         'total_payable', 'subtotal', 'status', 'admin_notes',
     ];

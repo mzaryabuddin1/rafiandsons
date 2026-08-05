@@ -74,7 +74,7 @@ class FixQistHomeAssetsSeeder extends Seeder
             $sharedIds[$plan['months']] = (int) $db->insertID();
         }
 
-        // Rebuild pivots: one row per product pointing to 12-month shared plan, keep override amounts
+        // Rebuild pivots: installment products only, keep per-product advance amounts
         $byProduct = [];
         foreach ($links as $row) {
             $pid = (int) $row['product_id'];
@@ -85,6 +85,10 @@ class FixQistHomeAssetsSeeder extends Seeder
 
         $db->table('product_installment_plans')->emptyTable();
         foreach ($byProduct as $pid => $row) {
+            $product = $db->table('products')->where('id', $pid)->where('deleted_at', null)->get()->getFirstRow('array');
+            if (! $product || (int) ($product['installment_available'] ?? 0) !== 1) {
+                continue;
+            }
             $db->table('product_installment_plans')->insert([
                 'product_id'          => $pid,
                 'installment_plan_id' => $sharedIds[12],

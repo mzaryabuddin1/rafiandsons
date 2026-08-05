@@ -63,15 +63,17 @@ class Search extends BaseStoreController
             $img    = $images[0] ?? 'theme/images/demos/demo22/products/1.jpg';
 
             $items[] = [
-                'id'            => (int) $product['id'],
-                'name'          => $product['name'],
-                'slug'          => $product['slug'],
-                'price'         => (float) $product['price'],
-                'price_label'   => 'PKR ' . number_format((float) $product['price'], 0),
-                'category_name' => $product['category_name'] ?? '',
-                'image'         => base_url($img),
-                'url'           => site_url('product/' . $product['slug']),
-                'min_advance'   => $product['min_advance'] ?? null,
+                'id'                    => (int) $product['id'],
+                'name'                  => $product['name'],
+                'slug'                  => $product['slug'],
+                'price'                 => (float) $product['price'],
+                'price_label'           => 'PKR ' . number_format((float) $product['price'], 0),
+                'category_name'         => $product['category_name'] ?? '',
+                'image'                 => base_url($img),
+                'url'                   => site_url('product/' . $product['slug']),
+                'min_advance'           => $product['min_advance'] ?? null,
+                'cash_available'        => (int) ($product['cash_available'] ?? 1),
+                'installment_available' => (int) ($product['installment_available'] ?? 0),
             ];
         }
 

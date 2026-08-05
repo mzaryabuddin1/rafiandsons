@@ -42,17 +42,24 @@
         <div class="qb-qv-media">
             <img src="" alt="" id="qb-qv-image">
         </div>
-        <div class="qb-qv-info">
+            <div class="qb-qv-info">
             <h2 id="qb-qv-title"></h2>
             <div class="qb-qv-meta" id="qb-qv-meta"></div>
-            <div class="qb-product-price-lg" id="qb-qv-price"></div>
-            <div class="qb-advance-badge" id="qb-qv-advance" hidden></div>
+            <div class="qb-qv-payment-wrap" id="qb-qv-payment-wrap" hidden>
+                <h3 class="qb-installment-title">Choose payment method</h3>
+                <div class="qb-payment-tabs qb-qv-payment-tabs" id="qb-qv-payment-tabs"></div>
+            </div>
+            <div class="qb-product-price-lg qb-qv-cash-block" id="qb-qv-price"></div>
             <p class="qb-product-desc" id="qb-qv-desc"></p>
-            <div class="qb-plans" id="qb-qv-plans"></div>
-            <div class="qb-buy-row">
+            <div class="qb-installment-block" id="qb-qv-installment" hidden>
+                <h3 class="qb-installment-title">Select installment plan</h3>
+                <p class="qb-installment-sub">Advance amount will be added to cart.</p>
+                <div class="qb-plan-cards" id="qb-qv-plans"></div>
+            </div>
+            <div class="qb-buy-row" id="qb-qv-buy-row">
                 <input class="qb-qty" type="number" min="1" max="10" value="1" id="qb-qv-qty">
                 <button type="button" class="qb-btn qb-btn-primary" id="qb-qv-add">Add to Cart</button>
-                <a href="#" class="qb-btn qb-btn-dark" id="qb-qv-details">View Details</a>
+                <a href="#" class="qb-btn qb-btn-outline" id="qb-qv-details">View Details</a>
             </div>
         </div>
     </div>

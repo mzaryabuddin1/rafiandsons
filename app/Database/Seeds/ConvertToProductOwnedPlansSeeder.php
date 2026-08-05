@@ -20,6 +20,10 @@ class ConvertToProductOwnedPlansSeeder extends Seeder
         $products = $this->db->table('products')->where('deleted_at', null)->where('status', 1)->get()->getResultArray();
 
         foreach ($products as $product) {
+            if ((int) ($product['installment_available'] ?? 0) !== 1) {
+                continue;
+            }
+
             $resolved = $productModel->plansForProduct((int) $product['id']);
             if ($resolved === []) {
                 continue;

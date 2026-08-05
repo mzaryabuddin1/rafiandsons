@@ -86,10 +86,78 @@
   max-width: none;
 }
 
+.qb-search-box {
+  display: flex;
+  align-items: stretch;
+  background: #fff;
+  border: 2px solid var(--qb-border, #e5e7eb);
+  border-radius: 999px;
+  overflow: visible;
+  min-height: 48px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.qb-search-box:focus-within {
+  border-color: var(--qb-brand, #c8102e);
+  box-shadow: 0 4px 18px rgba(200, 16, 46, 0.12);
+}
+
+.qb-search-cat-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 4px 0 16px;
+  border-right: 1px solid var(--qb-border, #e5e7eb);
+  flex-shrink: 0;
+}
+
+.qb-search-cat-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--qb-muted, #888);
+  margin: 0;
+  white-space: nowrap;
+}
+
 .qb-search-field {
   position: relative;
   flex: 1;
   min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.qb-search-icon {
+  position: absolute;
+  left: 14px;
+  color: #aaa;
+  font-size: 16px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.qb-search-clear {
+  position: absolute;
+  right: 10px;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 50%;
+  background: #f3f4f6;
+  color: #666;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 2;
+  transition: background 0.15s;
+}
+
+.qb-search-clear:hover {
+  background: #e5e7eb;
+  color: #333;
 }
 
 .qb-search-inner {
@@ -177,6 +245,51 @@
   margin-top: 2px;
 }
 
+.qb-search-result-tags {
+  display: flex;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.qb-search-result-tag {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.qb-search-result-tag--cash {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.qb-search-result-tag--inst {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.qb-search-result-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.qb-search-result-actions button {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--qb-border);
+  background: #fff;
+  cursor: pointer;
+}
+
+.qb-search-result-actions button:hover {
+  border-color: var(--qb-brand);
+  color: var(--qb-brand);
+}
+
 .qb-search-view-all {
   display: block;
   padding: 12px 14px;
@@ -223,20 +336,50 @@
 
 .qb-search-cat {
   border: 0;
-  background: #f3f4f6;
-  padding: 0 12px;
-  min-width: 110px;
-  font-size: 14px;
-  color: var(--qb-text);
-  border-right: 1px solid var(--qb-border);
+  background: transparent;
+  padding: 0 28px 0 4px;
+  min-width: 90px;
+  max-width: 130px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--qb-text, #222);
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%23666' d='M1 1l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 4px center;
 }
 
 .qb-search-input {
   flex: 1;
+  width: 100%;
   border: 0;
-  padding: 0 14px;
+  padding: 12px 40px 12px 42px;
   font-size: 14px;
   outline: none;
+  background: transparent;
+}
+
+.qb-search-input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.qb-search-submit {
+  background: var(--qb-brand, #c8102e);
+  color: #fff;
+  border: 0;
+  padding: 0 24px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 0 999px 999px 0;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.qb-search-submit:hover {
+  background: #a50d25;
 }
 
 .qb-search-btn {
@@ -1457,6 +1600,137 @@
   margin-bottom: 12px;
 }
 
+.qb-product-price-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.qb-price-compare {
+  text-decoration: line-through;
+  color: var(--qb-muted);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.qb-product-card .qb-price-compare {
+  font-size: 13px;
+}
+
+.qb-product-card .qb-product-price-wrap {
+  gap: 6px;
+}
+
+.qb-advance-badge--cash {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.qb-card-pay-tags {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.qb-card-pay-tag {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.qb-card-pay-tag--cash {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.qb-card-pay-tag--inst {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.qb-card-dual-price {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.qb-card-price-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.qb-card-price-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #888;
+  min-width: 72px;
+}
+
+.qb-product-price--advance {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--qb-brand, #c8102e);
+}
+
+.qb-qv-payment-wrap {
+  margin: 12px 0 8px;
+}
+
+.qb-qv-payment-wrap .qb-installment-title {
+  margin-bottom: 10px;
+}
+
+.qb-payment-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.qb-payment-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.qb-payment-badge--cash {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.qb-payment-badge--installment {
+  background: #fef2f2;
+  color: var(--qb-brand);
+}
+
+.qb-cash-only-note,
+.qb-cart-cash-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #047857;
+  background: #ecfdf5;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 0;
+}
+
+.qb-cart-item-price .qb-price-compare {
+  display: block;
+  font-size: 12px;
+  margin-bottom: 2px;
+}
+
 .qb-product-desc {
   color: #666;
   font-size: 14px;
@@ -2591,3 +2865,358 @@ body.qb-shop-filters-open {
     transform: translateY(0);
   }
 }
+
+/* Payment choice — product page */
+.qb-payment-choice {
+  margin: 20px 0 16px;
+}
+
+.qb-payment-choice-title,
+.qb-installment-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 12px;
+  color: var(--qb-navy, #1a3a5c);
+}
+
+.qb-installment-sub {
+  font-size: 13px;
+  color: #666;
+  margin: -6px 0 14px;
+}
+
+.qb-payment-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.qb-payment-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 14px 16px;
+  border: 2px solid var(--qb-border, #e5e5e5);
+  border-radius: 10px;
+  cursor: pointer;
+  background: #fff;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+  position: relative;
+}
+
+.qb-payment-tab input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.qb-payment-tab-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #222;
+}
+
+.qb-payment-tab-price {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--qb-brand, #c8102e);
+}
+
+.qb-payment-tab-note {
+  font-size: 12px;
+  color: #888;
+}
+
+.qb-payment-tab.is-active,
+.qb-payment-tab:hover {
+  border-color: var(--qb-brand, #c8102e);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  background: #fffafa;
+}
+
+.qb-cash-price-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+
+/* Plan cards */
+.qb-plan-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.qb-plan-card {
+  display: block;
+  cursor: pointer;
+  position: relative;
+}
+
+.qb-plan-card input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.qb-plan-card-inner {
+  border: 2px solid var(--qb-border, #e5e5e5);
+  border-radius: 10px;
+  padding: 16px 18px;
+  background: #fff;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.qb-plan-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.qb-plan-card-top strong {
+  font-size: 14px;
+  color: #333;
+}
+
+.qb-plan-card-check {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #ccc;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.qb-plan-card-monthly {
+  font-size: 15px;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 6px;
+}
+
+.qb-plan-card-monthly span {
+  font-weight: 400;
+  color: #666;
+}
+
+.qb-plan-card-advance {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--qb-brand, #c8102e);
+}
+
+.qb-plan-card-advance em {
+  font-style: normal;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-left: 6px;
+}
+
+.qb-plan-card.is-active .qb-plan-card-inner,
+.qb-plan-card:hover .qb-plan-card-inner {
+  border-color: var(--qb-brand, #c8102e);
+  box-shadow: 0 4px 16px rgba(200, 16, 46, 0.1);
+}
+
+.qb-plan-card.is-active .qb-plan-card-check {
+  border-color: var(--qb-brand, #c8102e);
+  background: var(--qb-brand, #c8102e);
+  box-shadow: inset 0 0 0 3px #fff;
+}
+
+/* Cart payment toggle */
+.qb-cart-pay-toggle {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.qb-cart-pay-btn {
+  flex: 1;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid var(--qb-border, #ddd);
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.qb-cart-pay-btn.is-active {
+  background: var(--qb-brand, #c8102e);
+  border-color: var(--qb-brand, #c8102e);
+  color: #fff;
+}
+
+.qb-cart-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-top: 4px;
+}
+
+.qb-cart-tag--cash {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.qb-cart-tag--inst {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.qb-cart-due-note,
+.qb-cart-cash-ref {
+  display: block;
+  font-size: 11px;
+  color: #888;
+  margin-top: 2px;
+}
+
+.qb-cart-summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--qb-border, #eee);
+}
+
+.qb-cart-summary-row--muted {
+  color: #666;
+  font-size: 14px;
+}
+
+/* Checkout */
+.qb-checkout-summary .qb-checkout-item {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--qb-border, #eee);
+}
+
+.qb-checkout-item-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14px;
+}
+
+.qb-checkout-item-detail {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #666;
+}
+
+.qb-checkout-item-detail p {
+  margin: 2px 0;
+}
+
+.qb-checkout-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: #fff3e0;
+  color: #e65100;
+  margin-bottom: 6px;
+}
+
+.qb-checkout-badge--cash {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.qb-checkout-totals {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 2px solid var(--qb-navy, #1a3a5c);
+}
+
+.qb-checkout-total-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  font-size: 14px;
+}
+
+.qb-checkout-total-row--highlight {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--qb-brand, #c8102e);
+}
+
+/* Success page */
+.qb-success-page .qb-success-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 40px 32px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+}
+
+.qb-success-icon {
+  font-size: 52px;
+  color: #2e7d32;
+  margin-bottom: 12px;
+}
+
+.qb-success-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.qb-success-details {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 24px 0;
+}
+
+.qb-success-details h3 {
+  font-size: 16px;
+  margin: 0 0 12px;
+}
+
+.qb-success-item {
+  padding: 10px 0;
+  border-bottom: 1px solid #e9ecef;
+  font-size: 14px;
+}
+
+.qb-success-item:last-of-type {
+  border-bottom: none;
+}
+
+.qb-success-item p {
+  margin: 2px 0;
+  color: #666;
+  font-size: 13px;
+}
+
+.qb-success-totals {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 2px solid #dee2e6;
+}
+
+.qb-cart-plan-name {
+  display: block;
+  font-size: 12px;
+  color: var(--qb-brand, #c8102e);
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.qb-qv-payment-tabs {
+  margin: 12px 0;
+}
+

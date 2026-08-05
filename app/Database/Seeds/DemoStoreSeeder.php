@@ -131,32 +131,31 @@ class DemoStoreSeeder extends Seeder
         }
 
         $products = [
-            ['LED Smart TV 43"', 'televisions', 'TV-43', 85000, [1, 2], 'Full HD smart television with streaming apps.'],
-            ['LED Smart TV 55"', 'televisions', 'TV-55', 145000, [3, 4], '4K UHD smart TV with vivid display.'],
-            ['Android Smartphone X1', 'mobiles', 'PHN-X1', 52000, [5, 6], '6.5" display, 128GB storage, dual SIM.'],
-            ['Wireless Earbuds Pro', 'audio', 'AUD-EB1', 8500, [7], 'Noise isolation with long battery life.'],
-            ['Refrigerator 14 Cu Ft', 'kitchen', 'REF-14', 98000, [8, 9], 'Energy efficient frost-free refrigerator.'],
-            ['Automatic Washing Machine', 'laundry', 'WM-7KG', 72000, [10, 11], '7kg fully automatic washer.'],
-            ['Microwave Oven 25L', 'kitchen', 'MW-25', 28000, [12], 'Convection microwave for everyday cooking.'],
-            ['Air Conditioner 1.5 Ton', 'cooling', 'AC-15', 125000, [13, 14], 'Inverter AC with fast cooling.'],
-            ['Laptop Core i5 8GB', 'laptops', 'LAP-I5', 135000, [15, 16], '15.6" laptop for work and study.'],
-            ['Laptop Core i7 16GB', 'laptops', 'LAP-I7', 195000, [17], 'High performance laptop for professionals.'],
-            ['Wireless Mouse & Keyboard', 'computer-accessories', 'ACC-MK', 6500, [18], 'Comfortable wireless combo set.'],
-            ['Gaming Headset', 'computer-accessories', 'ACC-HS', 12000, [19], 'Stereo gaming headset with mic.'],
-            ['Men Casual Jacket', 'men-fashion', 'FAS-J1', 7500, [20], 'Stylish all-season casual jacket.'],
-            ['Women Handbag', 'women-fashion', 'FAS-B1', 9200, [21], 'Premium synthetic leather handbag.'],
-            ['Sports Cap Pack', 'men-fashion', 'FAS-C1', 2500, [22], 'Comfort fit sports cap.'],
-            ['Perfume Gift Set', 'fragrance', 'BEA-P1', 6800, [23], 'Long lasting fragrance gift set.'],
-            ['Skincare Combo', 'skincare', 'BEA-S1', 4500, [24], 'Daily skincare essentials combo.'],
-            ['Office Study Chair', 'office-furniture', 'FUR-C1', 18500, [1, 3], 'Ergonomic chair for home office.'],
-            ['Wooden Coffee Table', 'living-room', 'FUR-T1', 22000, [4, 5], 'Modern wooden coffee table.'],
-            ['Storage Cabinet', 'living-room', 'FUR-S1', 31000, [6, 7], 'Multi-purpose home storage cabinet.'],
+            ['LED Smart TV 43"', 'televisions', 'TV-43', 85000, 95000, [1, 2], 'Full HD smart television with streaming apps.', 1, 1],
+            ['LED Smart TV 55"', 'televisions', 'TV-55', 145000, 165000, [3, 4], '4K UHD smart TV with vivid display.', 1, 1],
+            ['Android Smartphone X1', 'mobiles', 'PHN-X1', 52000, 58000, [5, 6], '6.5" display, 128GB storage, dual SIM.', 1, 1],
+            ['Wireless Earbuds Pro', 'audio', 'AUD-EB1', 8500, 10500, [7], 'Noise isolation with long battery life.', 1, 1],
+            ['Refrigerator 14 Cu Ft', 'kitchen', 'REF-14', 98000, 112000, [8, 9], 'Energy efficient frost-free refrigerator.', 1, 1],
+            ['Automatic Washing Machine', 'laundry', 'WM-7KG', 72000, 82000, [10, 11], '7kg fully automatic washer.', 1, 1],
+            ['Microwave Oven 25L', 'kitchen', 'MW-25', 28000, 32000, [12], 'Convection microwave for everyday cooking.', 1, 1],
+            ['Air Conditioner 1.5 Ton', 'cooling', 'AC-15', 125000, 139000, [13, 14], 'Inverter AC with fast cooling.', 1, 1],
+            ['Laptop Core i5 8GB', 'laptops', 'LAP-I5', 135000, 149000, [15, 16], '15.6" laptop for work and study.', 1, 1],
+            ['Laptop Core i7 16GB', 'laptops', 'LAP-I7', 195000, null, [17], 'High performance laptop for professionals.', 1, 1],
+            ['Wireless Mouse & Keyboard', 'computer-accessories', 'ACC-MK', 6500, 7800, [18], 'Comfortable wireless combo set.', 1, 0],
+            ['Gaming Headset', 'computer-accessories', 'ACC-HS', 12000, 14500, [19], 'Stereo gaming headset with mic.', 1, 0],
+            ['Men Casual Jacket', 'men-fashion', 'FAS-J1', 7500, 9200, [20], 'Stylish all-season casual jacket.', 1, 1],
+            ['Women Handbag', 'women-fashion', 'FAS-B1', 9200, 11000, [21], 'Premium synthetic leather handbag.', 1, 1],
+            ['Sports Cap Pack', 'men-fashion', 'FAS-C1', 2500, 3200, [22], 'Comfort fit sports cap.', 1, 0],
+            ['Perfume Gift Set', 'fragrance', 'BEA-P1', 6800, 8500, [23], 'Long lasting fragrance gift set.', 1, 1],
+            ['Skincare Combo', 'skincare', 'BEA-S1', 4500, 5500, [24], 'Daily skincare essentials combo.', 1, 0],
+            ['Office Study Chair', 'office-furniture', 'FUR-C1', 18500, 22000, [1, 3], 'Ergonomic chair for home office.', 1, 1],
+            ['Wooden Coffee Table', 'living-room', 'FUR-T1', 22000, 26500, [4, 5], 'Modern wooden coffee table.', 1, 1],
+            ['Storage Cabinet', 'living-room', 'FUR-S1', 31000, null, [6, 7], 'Multi-purpose home storage cabinet.', 0, 1],
         ];
 
         $productRows = [];
-        $i = 0;
         foreach ($products as $item) {
-            [$name, $catSlug, $sku, $price, $imgs, $desc] = $item;
+            [$name, $catSlug, $sku, $price, $comparePrice, $imgs, $desc, $cash, $installment] = $item;
             if (! is_array($imgs)) {
                 $imgs = [(int) $imgs];
             }
@@ -171,24 +170,28 @@ class DemoStoreSeeder extends Seeder
                 'slug'                  => url_title($name, '-', true),
                 'sku'                   => $sku,
                 'price'                 => $price,
+                'compare_price'         => $comparePrice,
                 'images'                => json_encode($imagePaths),
                 'description'           => $desc,
                 'stock_status'          => 'in_stock',
-                'installment_available' => 1,
+                'cash_available'        => $cash,
+                'installment_available' => $installment,
                 'status'                => 1,
                 'meta_title'            => $name . ' | Rafi & Sons',
                 'meta_description'      => $desc,
                 'created_at'            => $now,
                 'updated_at'            => $now,
             ];
-            $i++;
         }
         $this->db->table('products')->insertBatch($productRows);
 
         $allProducts = $this->db->table('products')->get()->getResultArray();
         $pivot = [];
         foreach ($allProducts as $index => $product) {
-            // Assign 2–3 plans per product
+            if ((int) ($product['installment_available'] ?? 0) !== 1) {
+                continue;
+            }
+            // Assign 2–3 plans per installment product
             $assigned = array_slice($planIds, $index % max(1, count($planIds) - 2), 3);
             if (count($assigned) < 2) {
                 $assigned = array_slice($planIds, 0, min(3, count($planIds)));
