@@ -25,8 +25,9 @@
     <link rel="stylesheet" type="text/css" href="<?= base_url('theme/vendor/sticky-icon/stickyicon.css') ?>">
     <link rel="stylesheet" type="text/css" href="<?= base_url('theme/css/' . ($cssFile ?? 'demo22.min.css')) ?>">
     <link rel="stylesheet" type="text/css" href="<?= base_url('assets/store/store.css') ?>">
+    <link rel="stylesheet" type="text/css" href="<?= base_url('assets/store/qist-style.css') ?>">
 </head>
-<body class="home">
+<body class="<?= esc($bodyClass ?? 'home') ?>">
 <div class="page-wrapper">
     <h1 class="d-none">Rafi &amp; Sons</h1>
     <?= $this->include('store/partials/header') ?>

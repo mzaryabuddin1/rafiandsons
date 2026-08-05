@@ -11,46 +11,52 @@ class Home extends BaseStoreController
     public function index()
     {
         $productModel = model(ProductModel::class);
-        $categories = model(CategoryModel::class)->parentsOnly(true);
+        $categories   = model(CategoryModel::class)->parentsOnly(true);
+        $bannerModel  = model(BannerModel::class);
 
-        // Attach subcategories (or products) for "Top Categories" lists
         $topCategories = [];
-        foreach (array_slice($categories, 0, 6) as $index => $cat) {
-            $children = model(CategoryModel::class)->childrenOf((int) $cat['id'], true);
-            $cat['products'] = [];
-            if ($children) {
-                foreach ($children as $child) {
-                    $cat['products'][] = [
-                        'slug' => $child['slug'],
-                        'name' => $child['name'],
-                    ];
-                }
-            } else {
-                $products = $productModel
-                    ->where('status', 1)
-                    ->where('category_id', $cat['id'])
-                    ->orderBy('id', 'DESC')
-                    ->findAll(5);
-                $cat['products'] = $products;
-            }
+        $catIcons = [
+            'electronics'     => 'fa-mobile-alt',
+            'home-appliances' => 'fa-blender',
+            'computers'       => 'fa-laptop',
+            'fashion'         => 'fa-tshirt',
+            'beauty'          => 'fa-spa',
+            'furniture'       => 'fa-couch',
+        ];
+        foreach ($categories as $index => $cat) {
+            $cat['icon'] = $catIcons[$cat['slug']] ?? 'fa-box';
             $cat['image_file'] = ! empty($cat['image'])
                 ? $cat['image']
                 : 'theme/images/demos/demo22/categories/' . (($index % 6) + 1) . '.png';
             $topCategories[] = $cat;
         }
 
-        $bannerModel = model(BannerModel::class);
+        $featured = $this->enrichProducts(
+            $productModel->where('status', 1)->orderBy('id', 'DESC')->findAll(12)
+        );
+
+        $categorySections = [];
+        foreach (array_slice($categories, 0, 6) as $cat) {
+            $products = $this->productsForCategory((int) $cat['id'], 8);
+            if ($products) {
+                $categorySections[] = [
+                    'category' => $cat,
+                    'products' => $products,
+                ];
+            }
+        }
 
         return $this->storeView('home', [
-            'pageTitle'     => 'Home',
-            'activeMenu'    => 'home',
-            'showFixedCats' => true,
-            'homeSliders'   => $bannerModel->activeByPosition(BannerModel::POSITION_HOME_SLIDER),
-            'homeSide'      => $bannerModel->activeByPosition(BannerModel::POSITION_HOME_SIDE),
-            'homeMid'       => $bannerModel->activeByPosition(BannerModel::POSITION_HOME_MID),
-            'featured'      => $productModel->where('status', 1)->orderBy('id', 'DESC')->findAll(8),
-            'topCategories' => $topCategories,
-            'cssFile'       => 'demo22.min.css',
+            'pageTitle'        => 'Buy on Easy Installments',
+            'activeMenu'       => 'home',
+            'showFixedCats'    => false,
+            'homeSliders'      => $bannerModel->activeByPosition(BannerModel::POSITION_HOME_SLIDER),
+            'homeMid'          => $bannerModel->activeByPosition(BannerModel::POSITION_HOME_MID),
+            'featured'         => $featured,
+            'topCategories'    => $topCategories,
+            'categorySections' => $categorySections,
+            'bodyClass'        => 'home store-qist',
+            'cssFile'          => 'demo22.min.css',
         ]);
     }
 }

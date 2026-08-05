@@ -68,7 +68,7 @@
                         <?php else: ?>
                             <?php foreach ($products as $product): ?>
                                 <div class="product-wrap mb-4">
-                                    <?= view('store/partials/product_card', ['product' => $product]) ?>
+                                    <?= view('store/partials/product_card', ['product' => $product, 'style' => 'qist']) ?>
                                 </div>
                             <?php endforeach; ?>
                         <?php endif; ?>

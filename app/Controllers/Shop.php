@@ -51,6 +51,7 @@ class Shop extends BaseStoreController
         }
 
         $products = $builder->get()->getResultArray();
+        $products = $this->enrichProducts($products);
 
         return $this->storeView('shop', [
             'pageTitle'      => $activeCategory['name'] ?? 'Shop',
@@ -59,6 +60,7 @@ class Shop extends BaseStoreController
             'search'         => $search,
             'sort'           => $sort,
             'activeCategory' => $activeCategory,
+            'bodyClass'      => 'store-qist',
             'cssFile'        => 'demo22.min.css',
         ]);
     }

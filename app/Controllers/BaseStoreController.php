@@ -32,6 +32,7 @@ abstract class BaseStoreController extends BaseController
         $data['activeMenu'] = $data['activeMenu'] ?? '';
         $data['showFixedCats'] = $data['showFixedCats'] ?? false;
         $data['cssFile'] = $data['cssFile'] ?? 'demo22.min.css';
+        $data['bodyClass'] = $data['bodyClass'] ?? 'store-qist';
 
         return view('store/' . $view, $data);
     }
@@ -65,5 +66,63 @@ abstract class BaseStoreController extends BaseController
     protected function getContent(string $slug): ?array
     {
         return model(ContentModel::class)->where('slug', $slug)->where('status', 1)->first();
+    }
+
+    /**
+     * Attach category names and minimum plan down payment (Advance).
+     */
+    protected function enrichProducts(array $products): array
+    {
+        if ($products === []) {
+            return [];
+        }
+
+        $db  = db_connect();
+        $ids = array_map('intval', array_column($products, 'id'));
+
+        $catIds = array_values(array_unique(array_filter(array_column($products, 'category_id'))));
+        $catMap = [];
+        if ($catIds) {
+            foreach ($db->table('categories')->whereIn('id', $catIds)->get()->getResultArray() as $cat) {
+                $catMap[(int) $cat['id']] = $cat;
+            }
+        }
+
+        $advanceMap = [];
+        $rows = $db->table('product_installment_plans pip')
+            ->select('pip.product_id, MIN(ip.down_payment) as min_advance')
+            ->join('installment_plans ip', 'ip.id = pip.installment_plan_id')
+            ->whereIn('pip.product_id', $ids)
+            ->groupBy('pip.product_id')
+            ->get()
+            ->getResultArray();
+        foreach ($rows as $row) {
+            $advanceMap[(int) $row['product_id']] = (float) $row['min_advance'];
+        }
+
+        foreach ($products as &$product) {
+            $cat = $catMap[(int) ($product['category_id'] ?? 0)] ?? null;
+            $product['category_name'] = $cat['name'] ?? 'Product';
+            $product['category_slug'] = $cat['slug'] ?? '';
+            $product['min_advance']   = $advanceMap[(int) $product['id']] ?? null;
+        }
+        unset($product);
+
+        return $products;
+    }
+
+    protected function productsForCategory(int $categoryId, int $limit = 8): array
+    {
+        $ids = model(CategoryModel::class)->idsWithChildren($categoryId);
+        $products = db_connect()->table('products')
+            ->where('status', 1)
+            ->where('deleted_at', null)
+            ->whereIn('category_id', $ids)
+            ->orderBy('id', 'DESC')
+            ->limit($limit)
+            ->get()
+            ->getResultArray();
+
+        return $this->enrichProducts($products);
     }
 }

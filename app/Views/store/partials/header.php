@@ -1,137 +1,80 @@
 <?php
 $siteName = $settings['site_name'] ?? 'Rafi & Sons';
-$phone = $settings['contact_phone'] ?? '0(800) 123-456';
+$phone = $settings['contact_phone'] ?? '0300-0000000';
+$whatsapp = $settings['whatsapp_number'] ?? $phone;
 $menu = $activeMenu ?? '';
-$showFixedCats = ! empty($showFixedCats);
 $categoryTree = $categoryTree ?? [];
-$catIcons = [
-    'electronics'     => 'd-icon-camera1',
-    'home-appliances' => 'd-icon-cook',
-    'computers'       => 'd-icon-desktop',
-    'fashion'         => 'd-icon-t-shirt1',
-    'beauty'          => 'd-icon-heart',
-    'furniture'       => 'd-icon-cook',
-];
+$searchCategory = $searchCategory ?? '';
 ?>
-<header class="header">
-    <div class="header-top">
+<header class="qb-header">
+    <div class="qb-header-main">
         <div class="container">
-            <div class="header-left">
-                <p class="welcome-msg pb-2">Welcome to <?= esc($siteName) ?> — installment shopping made easy!</p>
-            </div>
-            <div class="header-right">
-                <div class="dropdown dropdown-expanded">
-                    <a href="#dropdown">Links</a>
-                    <ul class="dropdown-box">
-                        <li><a href="<?= site_url('about') ?>">About</a></li>
-                        <li><a href="<?= site_url('faq') ?>">FAQ</a></li>
-                        <li><a href="<?= site_url('installment-terms') ?>">Installment Terms</a></li>
-                        <li><a href="<?= site_url('contact') ?>">Contact</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
+            <div class="qb-header-row">
+                <a href="<?= site_url('home') ?>" class="qb-logo">
+                    <img src="<?= base_url('assets/store/rafi-and-sons-logo.png') ?>" alt="<?= esc($siteName) ?>" height="56">
+                </a>
 
-    <div class="header-middle sticky-header fix-top sticky-content">
-        <div class="container">
-            <div class="header-left">
-                <a href="#" class="mobile-menu-toggle"><i class="d-icon-bars2"></i></a>
-                <a href="<?= site_url('home') ?>" class="logo">
-                    <img src="<?= base_url('theme/images/demos/demo22/logo.png') ?>" alt="<?= esc($siteName) ?>" width="154" height="43">
-                </a>
-                <div class="header-search hs-simple">
-                    <form action="<?= site_url('shop') ?>" method="get" class="input-wrapper">
-                        <input type="text" class="form-control" name="q" value="<?= esc($search ?? '') ?>" placeholder="Search..." required>
-                        <button class="btn btn-search" type="submit" title="submit-button"><i class="d-icon-search"></i></button>
-                    </form>
-                </div>
-            </div>
-            <div class="header-right">
-                <a href="tel:<?= esc(preg_replace('/\s+/', '', $phone)) ?>" class="icon-box icon-box-side">
-                    <div class="icon-box-icon"><i class="d-icon-phone"></i></div>
-                    <div class="icon-box-content d-lg-show">
-                        <h4 class="icon-box-title">Call Us Now:</h4>
-                        <p><?= esc($phone) ?></p>
-                    </div>
-                </a>
-                <span class="divider"></span>
-                <a href="<?= site_url('shop') ?>" class="wishlist" title="Shop">
-                    <i class="d-icon-heart"></i>
-                </a>
-                <span class="divider"></span>
-                <div class="dropdown cart-dropdown type2 off-canvas mr-0 mr-lg-2">
-                    <a href="<?= site_url('cart') ?>" class="cart-toggle label-block link">
-                        <div class="cart-label d-lg-show ls-normal">
-                            <span class="cart-name ls-m">Shopping Cart:</span>
-                            <span class="cart-price" id="header-cart-subtotal">PKR <?= number_format($cartSubtotal ?? 0, 0) ?></span>
-                        </div>
-                        <i class="d-icon-bag"><span class="cart-count" id="header-cart-count"><?= (int) ($cartCount ?? 0) ?></span></i>
-                    </a>
-                </div>
-                <div class="header-search hs-toggle mobile-search">
-                    <a href="#" class="search-toggle"><i class="d-icon-search"></i></a>
-                    <form action="<?= site_url('shop') ?>" method="get" class="input-wrapper">
-                        <input type="text" class="form-control" name="q" placeholder="Search your keyword..." required>
-                        <button class="btn btn-search" type="submit"><i class="d-icon-search"></i></button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="header-bottom has-dropdown pb-0">
-        <div class="container d-flex align-items-center">
-            <div class="dropdown category-dropdown has-border<?= $showFixedCats ? ' fixed' : '' ?>">
-                <a href="#" class="text-white font-weight-semi-bold category-toggle">
-                    <i class="d-icon-bars2"></i><span>Shop By Categories</span>
-                </a>
-                <div class="dropdown-box">
-                    <ul class="menu vertical-menu category-menu">
-                        <li><a href="<?= site_url('shop') ?>" class="menu-title">Browse Our Categories</a></li>
-                        <?php foreach ($categoryTree as $cat): ?>
-                            <?php $icon = $catIcons[$cat['slug']] ?? 'd-icon-category'; ?>
-                            <li class="<?= ! empty($cat['children']) ? 'submenu' : '' ?>">
-                                <a href="<?= site_url('shop?category=' . urlencode($cat['slug'])) ?>">
-                                    <i class="<?= esc($icon) ?>"></i><?= esc($cat['name']) ?>
-                                </a>
-                                <?php if (! empty($cat['children'])): ?>
-                                <ul>
-                                    <?php foreach ($cat['children'] as $child): ?>
-                                        <li><a href="<?= site_url('shop?category=' . urlencode($child['slug'])) ?>"><?= esc($child['name']) ?></a></li>
-                                    <?php endforeach; ?>
-                                </ul>
-                                <?php endif; ?>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
-            </div>
-            <nav class="main-nav ml-4">
-                <ul class="menu">
-                    <li class="<?= $menu === 'home' ? 'active' : '' ?>"><a href="<?= site_url('home') ?>">Home</a></li>
-                    <li class="<?= $menu === 'shop' ? 'active' : '' ?>">
-                        <a href="<?= site_url('shop') ?>">Categories</a>
-                        <ul>
+                <form action="<?= site_url('shop') ?>" method="get" class="qb-search-form">
+                    <div class="qb-search-inner">
+                        <select name="category" class="qb-search-cat" aria-label="Category">
+                            <option value="">All</option>
                             <?php foreach ($categoryTree as $cat): ?>
-                                <li>
-                                    <a href="<?= site_url('shop?category=' . urlencode($cat['slug'])) ?>"><?= esc($cat['name']) ?></a>
-                                    <?php if (! empty($cat['children'])): ?>
-                                    <ul>
-                                        <?php foreach ($cat['children'] as $child): ?>
-                                            <li><a href="<?= site_url('shop?category=' . urlencode($child['slug'])) ?>"><?= esc($child['name']) ?></a></li>
-                                        <?php endforeach; ?>
-                                    </ul>
-                                    <?php endif; ?>
-                                </li>
+                                <option value="<?= esc($cat['slug']) ?>" <?= $searchCategory === $cat['slug'] ? 'selected' : '' ?>>
+                                    <?= esc($cat['name']) ?>
+                                </option>
                             <?php endforeach; ?>
+                        </select>
+                        <input type="text" name="q" value="<?= esc($search ?? '') ?>" placeholder="Search products..." class="qb-search-input">
+                        <button type="submit" class="qb-search-btn">Search</button>
+                    </div>
+                </form>
+
+                <div class="qb-header-actions">
+                    <a href="tel:<?= esc(preg_replace('/\s+/', '', $phone)) ?>" class="qb-call-box">
+                        <i class="fas fa-phone-alt"></i>
+                        <div>
+                            <small>Call now</small>
+                            <strong><?= esc($phone) ?></strong>
+                        </div>
+                    </a>
+                    <a href="<?= site_url('cart') ?>" class="qb-cart-box">
+                        <i class="d-icon-bag"></i>
+                        <span class="qb-cart-count" id="header-cart-count"><?= (int) ($cartCount ?? 0) ?></span>
+                        <span class="d-none d-lg-inline">Cart</span>
+                    </a>
+                    <a href="<?= site_url('contact') ?>" class="qb-account-box d-none d-md-flex">
+                        <i class="far fa-user"></i>
+                        <span>Contact Us</span>
+                    </a>
+                    <button type="button" class="qb-mobile-toggle mobile-menu-toggle" aria-label="Menu">
+                        <i class="d-icon-bars2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="qb-nav-bar">
+        <div class="container">
+            <nav class="qb-nav">
+                <ul class="qb-nav-list">
+                    <li class="<?= $menu === 'home' ? 'active' : '' ?>"><a href="<?= site_url('home') ?>">Home</a></li>
+                    <li class="<?= $menu === 'shop' ? 'active' : '' ?>"><a href="<?= site_url('shop') ?>">Shop</a></li>
+                    <li class="has-submenu">
+                        <a href="#">Pages <i class="fas fa-chevron-down"></i></a>
+                        <ul class="qb-submenu">
+                            <li><a href="<?= site_url('about') ?>">About Us</a></li>
+                            <li><a href="<?= site_url('faq') ?>">FAQs</a></li>
+                            <li><a href="<?= site_url('privacy') ?>">Privacy Policy</a></li>
+                            <li><a href="<?= site_url('terms') ?>">Terms &amp; Conditions</a></li>
                         </ul>
                     </li>
-                    <li><a href="<?= site_url('shop') ?>">Products</a></li>
-                    <li class="<?= $menu === 'about' ? 'active' : '' ?>"><a href="<?= site_url('about') ?>">About</a></li>
-                    <li class="<?= $menu === 'faq' ? 'active' : '' ?>"><a href="<?= site_url('faq') ?>">FAQ</a></li>
+                    <li><a href="<?= site_url('installment-terms') ?>">Payment Method</a></li>
                     <li class="<?= $menu === 'contact' ? 'active' : '' ?>"><a href="<?= site_url('contact') ?>">Contact</a></li>
                 </ul>
+                <div class="qb-nav-right">
+                    <a href="<?= site_url('contact') ?>">Track Your Order</a>
+                </div>
             </nav>
         </div>
     </div>
@@ -164,6 +107,7 @@ $catIcons = [
                     <?php endforeach; ?>
                 </ul>
             </li>
+            <li><a href="<?= site_url('installment-terms') ?>">Payment Method</a></li>
             <li><a href="<?= site_url('about') ?>">About</a></li>
             <li><a href="<?= site_url('faq') ?>">FAQ</a></li>
             <li><a href="<?= site_url('contact') ?>">Contact</a></li>
@@ -171,3 +115,10 @@ $catIcons = [
         </ul>
     </div>
 </div>
+
+<?php if ($whatsapp): ?>
+<a href="https://wa.me/<?= esc(preg_replace('/\D+/', '', $whatsapp)) ?>" class="qb-whatsapp-float" target="_blank" rel="noopener" title="Chat on WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+    <span>Chat With Us</span>
+</a>
+<?php endif; ?>
