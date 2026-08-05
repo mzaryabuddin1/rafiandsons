@@ -3,80 +3,77 @@
 <?php
 $homeSliders = $homeSliders ?? [];
 $catIcons = [
-    'electronics'     => 'fa-mobile-alt',
-    'home-appliances' => 'fa-blender',
-    'computers'       => 'fa-laptop',
-    'fashion'         => 'fa-tshirt',
-    'beauty'          => 'fa-spa',
-    'furniture'       => 'fa-couch',
-    'televisions'     => 'fa-tv',
-    'mobiles'         => 'fa-mobile-alt',
-    'kitchen'         => 'fa-blender',
-    'laptops'         => 'fa-laptop',
+    'electronics'      => 'fa-mobile-alt',
+    'home-appliances'  => 'fa-blender',
+    'computers'        => 'fa-laptop',
+    'fashion'          => 'fa-tshirt',
+    'beauty'           => 'fa-spa',
+    'furniture'        => 'fa-couch',
+    'televisions'      => 'fa-tv',
+    'mobiles'          => 'fa-mobile-alt',
+    'kitchen'          => 'fa-blender',
+    'laptops'          => 'fa-laptop',
+    'led-tv'           => 'fa-tv',
+    'refrigerator'     => 'fa-door-closed',
+    'washing-machine'  => 'fa-soap',
+    'air-conditioner'  => 'fa-snowflake',
+    'small-appliances' => 'fa-th-large',
+    'microwave-oven'   => 'fa-temperature-high',
+    'water-dispenser'  => 'fa-tint',
+    'fans'             => 'fa-fan',
+    'bikes'            => 'fa-motorcycle',
+    'deep-freezer'     => 'fa-box',
+    'batteries'        => 'fa-car-battery',
+    'mattress'         => 'fa-bed',
+    'tyres'            => 'fa-circle',
+    'tablet'           => 'fa-tablet-alt',
+    'solar'            => 'fa-sun',
 ];
 ?>
 <main class="main qb-main">
     <div class="page-content">
-        <!-- Hero: category sidebar + slider (full width) -->
+        <!-- Hero: category sidebar + slider -->
         <section class="qb-hero">
-            <div class="qb-hero-full">
-                <div class="row g-0 qb-hero-row">
-                    <div class="col-lg-3 d-none d-lg-block">
-                        <div class="qb-cat-sidebar">
-                            <ul>
-                                <?php foreach ($categoryTree as $cat): ?>
-                                    <?php $icon = $catIcons[$cat['slug']] ?? 'fa-box'; ?>
-                                    <li class="<?= ! empty($cat['children']) ? 'has-children' : '' ?>">
-                                        <a href="<?= site_url('shop?category=' . urlencode($cat['slug'])) ?>">
-                                            <i class="fas <?= esc($icon) ?>"></i>
-                                            <span><?= esc($cat['name']) ?></span>
-                                            <?php if (! empty($cat['children'])): ?><i class="fas fa-chevron-right qb-cat-arrow"></i><?php endif; ?>
-                                        </a>
-                                        <?php if (! empty($cat['children'])): ?>
-                                        <ul class="qb-cat-sub">
-                                            <?php foreach ($cat['children'] as $child): ?>
-                                                <li><a href="<?= site_url('shop?category=' . urlencode($child['slug'])) ?>"><?= esc($child['name']) ?></a></li>
-                                            <?php endforeach; ?>
-                                        </ul>
-                                        <?php endif; ?>
-                                    </li>
-                                <?php endforeach; ?>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-lg-9">
-                        <div class="qb-hero-slider owl-carousel owl-theme" data-owl-options="{'items':1,'dots':true,'loop':true,'autoplay':true,'autoplayTimeout':5000}">
-                            <?php if ($homeSliders): ?>
-                                <?php foreach ($homeSliders as $i => $slide): ?>
-                                    <?php
-                                    $href = \App\Models\BannerModel::resolveLink($slide['link'] ?? null);
-                                    $img  = $slide['image'] ?: 'theme/images/demos/demo22/slides/' . (($i % 2) + 1) . '.jpg';
-                                    ?>
-                                    <a href="<?= esc($href) ?>" class="qb-slide">
-                                        <img src="<?= base_url($img) ?>" alt="<?= esc($slide['title']) ?>">
-                                        <?php if (! empty($slide['title']) || ! empty($slide['badge_text'])): ?>
-                                        <div class="qb-slide-caption">
-                                            <?php if (! empty($slide['subtitle'])): ?>
-                                                <span class="qb-slide-tag"><?= esc($slide['subtitle']) ?></span>
-                                            <?php endif; ?>
-                                            <h2><?= esc($slide['title']) ?></h2>
-                                            <?php if (! empty($slide['badge_text'])): ?>
-                                                <div class="qb-slide-price"><?= esc($slide['badge_text']) ?></div>
-                                            <?php endif; ?>
-                                        </div>
-                                        <?php endif; ?>
-                                    </a>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <a href="<?= site_url('shop') ?>" class="qb-slide">
-                                    <img src="<?= base_url('theme/images/demos/demo22/slides/1.jpg') ?>" alt="Shop on installments">
-                                    <div class="qb-slide-caption">
-                                        <h2>Shop on Easy Installments</h2>
-                                        <div class="qb-slide-price">Book Today</div>
-                                    </div>
+            <div class="qb-hero-inner">
+                <aside class="qb-cat-sidebar d-none d-lg-block">
+                    <ul>
+                        <?php foreach ($categoryTree as $cat): ?>
+                            <?php $icon = $catIcons[$cat['slug']] ?? 'fa-box'; ?>
+                            <li class="<?= ! empty($cat['children']) ? 'has-children' : '' ?>">
+                                <a href="<?= site_url('shop?category=' . urlencode($cat['slug'])) ?>">
+                                    <i class="fas <?= esc($icon) ?>"></i>
+                                    <span><?= esc($cat['name']) ?></span>
+                                    <?php if (! empty($cat['children'])): ?><i class="fas fa-chevron-right qb-cat-arrow"></i><?php endif; ?>
                                 </a>
-                            <?php endif; ?>
-                        </div>
+                                <?php if (! empty($cat['children'])): ?>
+                                <ul class="qb-cat-sub">
+                                    <?php foreach ($cat['children'] as $child): ?>
+                                        <li><a href="<?= site_url('shop?category=' . urlencode($child['slug'])) ?>"><?= esc($child['name']) ?></a></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                                <?php endif; ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </aside>
+
+                <div class="qb-hero-slider-wrap">
+                    <div class="qb-hero-slider owl-carousel owl-theme" data-owl-options="{'items':1,'dots':true,'nav':false,'loop':true,'autoplay':true,'autoplayTimeout':4500,'smartSpeed':600,'autoHeight':false}">
+                        <?php if ($homeSliders): ?>
+                            <?php foreach ($homeSliders as $i => $slide): ?>
+                                <?php
+                                $href = \App\Models\BannerModel::resolveLink($slide['link'] ?? null);
+                                $img  = $slide['image'] ?: 'theme/images/demos/demo22/slides/' . (($i % 2) + 1) . '.jpg';
+                                ?>
+                                <a href="<?= esc($href) ?>" class="qb-slide">
+                                    <img src="<?= base_url($img) ?>" alt="<?= esc($slide['title'] ?: 'Promo') ?>" loading="<?= $i === 0 ? 'eager' : 'lazy' ?>">
+                                </a>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <a href="<?= site_url('shop') ?>" class="qb-slide">
+                                <img src="<?= base_url('theme/images/demos/demo22/slides/1.jpg') ?>" alt="Shop on installments">
+                            </a>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -99,13 +96,13 @@ $catIcons = [
                     <div class="col-6 col-md-3">
                         <div class="qb-feature-item">
                             <i class="far fa-credit-card"></i>
-                            <span>No Bank Account Required</span>
+                            <span>No Bank Account / Card Required</span>
                         </div>
                     </div>
                     <div class="col-6 col-md-3">
                         <div class="qb-feature-item">
                             <i class="far fa-file-alt"></i>
-                            <span>No Hidden Charges</span>
+                            <span>No Documentation Charges</span>
                         </div>
                     </div>
                 </div>
@@ -129,7 +126,11 @@ $catIcons = [
                     <?php foreach ($topCategories as $cat): ?>
                         <a href="<?= site_url('shop?category=' . urlencode($cat['slug'])) ?>" class="qb-cat-icon-item">
                             <span class="qb-cat-icon-circle">
-                                <i class="fas <?= esc($cat['icon'] ?? 'fa-box') ?>"></i>
+                                <?php if (! empty($cat['image_file']) && is_file(FCPATH . $cat['image_file'])): ?>
+                                    <img src="<?= base_url($cat['image_file']) ?>" alt="<?= esc($cat['name']) ?>">
+                                <?php else: ?>
+                                    <i class="fas <?= esc($cat['icon'] ?? 'fa-box') ?>"></i>
+                                <?php endif; ?>
                             </span>
                             <span class="qb-cat-icon-label"><?= esc($cat['name']) ?></span>
                         </a>
@@ -171,6 +172,15 @@ $catIcons = [
         <?php foreach ($categorySections ?? [] as $section): ?>
         <section class="qb-section qb-cat-products">
             <div class="container">
+                <?php if (! empty($section['banner']['image'])): ?>
+                    <?php
+                    $b = $section['banner'];
+                    $bHref = \App\Models\BannerModel::resolveLink($b['link'] ?? ('shop?category=' . $section['category']['slug']));
+                    ?>
+                    <a href="<?= esc($bHref) ?>" class="qb-section-banner">
+                        <img src="<?= base_url($b['image']) ?>" alt="<?= esc($b['title'] ?: $section['category']['name']) ?>" loading="lazy">
+                    </a>
+                <?php endif; ?>
                 <div class="qb-section-head">
                     <h2 class="qb-section-title mb-0"><?= esc($section['category']['name']) ?></h2>
                     <a href="<?= site_url('shop?category=' . urlencode($section['category']['slug'])) ?>" class="qb-view-all">View All <i class="fas fa-angle-right"></i></a>

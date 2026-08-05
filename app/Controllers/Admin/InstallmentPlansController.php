@@ -24,7 +24,7 @@ class InstallmentPlansController extends BaseAdminController
         }
 
         $search = trim((string) $this->request->getGet('search'));
-        $model = model(InstallmentPlanModel::class);
+        $model = model(InstallmentPlanModel::class)->where('product_id', null);
         if ($search !== '') {
             $model->like('name', $search);
         }
@@ -118,6 +118,7 @@ class InstallmentPlansController extends BaseAdminController
         }
 
         return [
+            'product_id'          => null,
             'name'                => $name,
             'down_payment'        => $down,
             'monthly_installment' => $monthly,

@@ -1,0 +1,380 @@
+[
+    {
+        "slug": "samsung-5",
+        "name": "Samsung",
+        "file": "assets/qist/categories/subCategoryImage_1708325818081.jpg",
+        "parent": "mobiles"
+    },
+    {
+        "slug": "itel-5",
+        "name": "Itel",
+        "file": "assets/qist/categories/subCategoryImage_1724074153515.png",
+        "parent": "mobiles"
+    },
+    {
+        "slug": "oppo-5",
+        "name": "Oppo",
+        "file": "assets/qist/categories/subCategoryImage_1716283072419.webp",
+        "parent": "mobiles"
+    },
+    {
+        "slug": "hp-17",
+        "name": "HP",
+        "file": "assets/qist/categories/subCategoryImage_1706709778820.webp",
+        "parent": "laptops"
+    },
+    {
+        "slug": "dell-17",
+        "name": "Dell",
+        "file": "assets/qist/categories/subCategoryImage_1706709808210.webp",
+        "parent": "laptops"
+    },
+    {
+        "slug": "lenovo-17",
+        "name": "Lenovo",
+        "file": "assets/qist/categories/subCategoryImage_1706709844447.webp",
+        "parent": "laptops"
+    },
+    {
+        "slug": "fujitsu-17",
+        "name": "Fujitsu",
+        "file": "assets/qist/categories/subCategoryImage_1735129417390.webp",
+        "parent": "laptops"
+    },
+    {
+        "slug": "all-in-one-17",
+        "name": "All In One",
+        "file": "assets/qist/categories/subCategoryImage_1735195588896.png",
+        "parent": "laptops"
+    },
+    {
+        "slug": "monitor-17",
+        "name": "Monitor",
+        "file": "assets/qist/categories/subCategoryImage_1735246486842.jpg",
+        "parent": "laptops"
+    },
+    {
+        "slug": "infinix-17",
+        "name": "infinix",
+        "file": "assets/qist/categories/subCategoryImage_1741946263130.jpeg",
+        "parent": "laptops"
+    },
+    {
+        "slug": "acer-17",
+        "name": "Acer",
+        "file": "assets/qist/categories/subCategoryImage_1742031692804.webp",
+        "parent": "laptops"
+    },
+    {
+        "slug": "samsung-17",
+        "name": "Samsung",
+        "file": "assets/qist/categories/subCategoryImage_1745320842981.jpeg",
+        "parent": "laptops"
+    },
+    {
+        "slug": "apple-17",
+        "name": "Apple",
+        "file": "assets/qist/categories/subCategoryImage_1762424768658.jpg",
+        "parent": "laptops"
+    },
+    {
+        "slug": "dawlance-18",
+        "name": "Dawlance",
+        "file": "assets/qist/categories/subCategoryImage_1706272594299.jpg",
+        "parent": "led-tv"
+    },
+    {
+        "slug": "haier-18",
+        "name": "Haier",
+        "file": "assets/qist/categories/subCategoryImage_1706272672878.png",
+        "parent": "led-tv"
+    },
+    {
+        "slug": "pel-18",
+        "name": "Pel",
+        "file": "assets/qist/categories/subCategoryImage_1706273173008.png",
+        "parent": "led-tv"
+    },
+    {
+        "slug": "tcl-18",
+        "name": "TCL",
+        "file": "assets/qist/categories/subCategoryImage_1706273705015.jpg",
+        "parent": "led-tv"
+    },
+    {
+        "slug": "samsung-18",
+        "name": "Samsung",
+        "file": "assets/qist/categories/subCategoryImage_1722513505681.webp",
+        "parent": "led-tv"
+    },
+    {
+        "slug": "xiaomi-18",
+        "name": "Xiaomi",
+        "file": "assets/qist/categories/subCategoryImage_1738758190079.png",
+        "parent": "led-tv"
+    },
+    {
+        "slug": "pel-19",
+        "name": "Pel",
+        "file": "assets/qist/categories/subCategoryImage_1706274223008.png",
+        "parent": "refrigerator"
+    },
+    {
+        "slug": "haier-19",
+        "name": "Haier",
+        "file": "assets/qist/categories/subCategoryImage_1706274414093.png",
+        "parent": "refrigerator"
+    },
+    {
+        "slug": "dawlance-19",
+        "name": "Dawlance",
+        "file": "assets/qist/categories/subCategoryImage_1706274813684.png",
+        "parent": "refrigerator"
+    },
+    {
+        "slug": "samsung-19",
+        "name": "Samsung",
+        "file": "assets/qist/categories/subCategoryImage_1777454934999.avif",
+        "parent": "refrigerator"
+    },
+    {
+        "slug": "dawlance-1",
+        "name": "Dawlance",
+        "file": "assets/qist/categories/subCategoryImage_1706354992498.webp",
+        "parent": "washing-machine"
+    },
+    {
+        "slug": "haier-1",
+        "name": "Haier",
+        "file": "assets/qist/categories/subCategoryImage_1706520941942.jpg",
+        "parent": "washing-machine"
+    },
+    {
+        "slug": "pel-1",
+        "name": "Pel",
+        "file": "assets/qist/categories/subCategoryImage_1706526214068.png",
+        "parent": "washing-machine"
+    },
+    {
+        "slug": "samsung-1",
+        "name": "Samsung",
+        "file": "assets/qist/categories/subCategoryImage_1722517155093.png",
+        "parent": "washing-machine"
+    },
+    {
+        "slug": "dawlance-21",
+        "name": "Dawlance",
+        "file": "assets/qist/categories/subCategoryImage_1706614970468.jpg",
+        "parent": "air-conditioner"
+    },
+    {
+        "slug": "haier-21",
+        "name": "Haier",
+        "file": "assets/qist/categories/subCategoryImage_1706615269452.jpg",
+        "parent": "air-conditioner"
+    },
+    {
+        "slug": "pel-21",
+        "name": "Pel",
+        "file": "assets/qist/categories/subCategoryImage_1706615413384.jpg",
+        "parent": "air-conditioner"
+    },
+    {
+        "slug": "samsung-21",
+        "name": "Samsung",
+        "file": "assets/qist/categories/subCategoryImage_1777455053788.avif",
+        "parent": "air-conditioner"
+    },
+    {
+        "slug": "hisense-21",
+        "name": "Hisense",
+        "file": "assets/qist/categories/subCategoryImage_1780392403126.webp",
+        "parent": "air-conditioner"
+    },
+    {
+        "slug": "westpoint-22",
+        "name": "Westpoint",
+        "file": "assets/qist/categories/subCategoryImage_1712646254185.png",
+        "parent": "small-appliances"
+    },
+    {
+        "slug": "anex-22",
+        "name": "Anex",
+        "file": "assets/qist/categories/subCategoryImage_1727953057358.avif",
+        "parent": "small-appliances"
+    },
+    {
+        "slug": "dawlance-22",
+        "name": "Dawlance",
+        "file": "assets/qist/categories/subCategoryImage_1744942342105.png",
+        "parent": "small-appliances"
+    },
+    {
+        "slug": "haier-22",
+        "name": "Haier",
+        "file": "assets/qist/categories/subCategoryImage_1766668320153.jpg",
+        "parent": "small-appliances"
+    },
+    {
+        "slug": "haier-27",
+        "name": "Haier",
+        "file": "assets/qist/categories/subCategoryImage_1706687357908.png",
+        "parent": "microwave-oven"
+    },
+    {
+        "slug": "pel-27",
+        "name": "Pel",
+        "file": "assets/qist/categories/subCategoryImage_1706687387229.png",
+        "parent": "microwave-oven"
+    },
+    {
+        "slug": "dawlance-27",
+        "name": "Dawlance",
+        "file": "assets/qist/categories/subCategoryImage_1706687409739.png",
+        "parent": "microwave-oven"
+    },
+    {
+        "slug": "dawlance-28",
+        "name": "Dawlance",
+        "file": "assets/qist/categories/subCategoryImage_1706687099662.png",
+        "parent": "water-dispenser"
+    },
+    {
+        "slug": "pel-28",
+        "name": "Pel",
+        "file": "assets/qist/categories/subCategoryImage_1706687285894.png",
+        "parent": "water-dispenser"
+    },
+    {
+        "slug": "royal-36",
+        "name": "Royal",
+        "file": "assets/qist/categories/subCategoryImage_1706617559575.jpg",
+        "parent": "fans"
+    },
+    {
+        "slug": "gfc-36",
+        "name": "GFC",
+        "file": "assets/qist/categories/subCategoryImage_1706617615380.jpg",
+        "parent": "fans"
+    },
+    {
+        "slug": "united-23",
+        "name": "United",
+        "file": "assets/qist/categories/subCategoryImage_1716554805794.png",
+        "parent": "bikes"
+    },
+    {
+        "slug": "super-power-23",
+        "name": "Super power",
+        "file": "assets/qist/categories/subCategoryImage_1741861544232.jpg",
+        "parent": "bikes"
+    },
+    {
+        "slug": "revoo-23",
+        "name": "REVOO",
+        "file": "assets/qist/categories/subCategoryImage_1744791553707.png",
+        "parent": "bikes"
+    },
+    {
+        "slug": "hi-speed-23",
+        "name": "Hi-Speed",
+        "file": "assets/qist/categories/subCategoryImage_1750239238292.png",
+        "parent": "bikes"
+    },
+    {
+        "slug": "crown-23",
+        "name": "Crown",
+        "file": "assets/qist/categories/subCategoryImage_1776502577386.png",
+        "parent": "bikes"
+    },
+    {
+        "slug": "evee-23",
+        "name": "Evee",
+        "file": "assets/qist/categories/subCategoryImage_1781945704713.jpg",
+        "parent": "bikes"
+    },
+    {
+        "slug": "dawlance-24",
+        "name": "Dawlance",
+        "file": "assets/qist/categories/subCategoryImage_1706352609670.jpg",
+        "parent": "deep-freezer"
+    },
+    {
+        "slug": "car-32",
+        "name": "Car",
+        "file": "assets/qist/categories/subCategoryImage_1706533660240.jpg",
+        "parent": "batteries"
+    },
+    {
+        "slug": "home-32",
+        "name": "Home",
+        "file": "assets/qist/categories/subCategoryImage_1706533724753.png",
+        "parent": "batteries"
+    },
+    {
+        "slug": "solar-32",
+        "name": "Solar",
+        "file": "assets/qist/categories/subCategoryImage_1706533757443.jpg",
+        "parent": "batteries"
+    },
+    {
+        "slug": "exide-32",
+        "name": "Exide",
+        "file": "assets/qist/categories/subCategoryImage_1752565577431.png",
+        "parent": "batteries"
+    },
+    {
+        "slug": "diamond-supreme-25",
+        "name": "Diamond Supreme",
+        "file": "assets/qist/categories/subCategoryImage_1778663581072.jpg",
+        "parent": "mattress"
+    },
+    {
+        "slug": "car-33",
+        "name": "Car",
+        "file": "assets/qist/categories/subCategoryImage_1706535146391.jpg",
+        "parent": "tyres"
+    },
+    {
+        "slug": "lenovo-48",
+        "name": "lenovo",
+        "file": "assets/qist/categories/subCategoryImage_1740147918717.webp",
+        "parent": "tablet"
+    },
+    {
+        "slug": "ipad-48",
+        "name": "IPad",
+        "file": "assets/qist/categories/subCategoryImage_1766487565644.webp",
+        "parent": "tablet"
+    },
+    {
+        "slug": "samsung-48",
+        "name": "Samsung",
+        "file": "assets/qist/categories/subCategoryImage_1771580866239.avif",
+        "parent": "tablet"
+    },
+    {
+        "slug": "lithiuum-battery-49",
+        "name": "Lithiuum Battery",
+        "file": "assets/qist/categories/subCategoryImage_1727337739092.jpg",
+        "parent": "solar"
+    },
+    {
+        "slug": "inverter-49",
+        "name": "Inverter",
+        "file": "assets/qist/categories/subCategoryImage_1729950074718.webp",
+        "parent": "solar"
+    },
+    {
+        "slug": "panels-49",
+        "name": "Panels",
+        "file": "assets/qist/categories/subCategoryImage_1729950185709.webp",
+        "parent": "solar"
+    },
+    {
+        "slug": "complete-solution-and-installation-49",
+        "name": "Complete Solution and Installation",
+        "file": "assets/qist/categories/subCategoryImage_1730196000437.jfif",
+        "parent": "solar"
+    }
+]

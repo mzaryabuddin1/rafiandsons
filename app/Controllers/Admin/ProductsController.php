@@ -17,7 +17,7 @@ class ProductsController extends BaseAdminController
             'canUpdate'  => $this->auth->can('products.update'),
             'canDelete'  => $this->auth->can('products.delete'),
             'categories' => model(CategoryModel::class)->flatOptions(),
-            'plans'      => model(InstallmentPlanModel::class)->where('status', 1)->orderBy('name')->findAll(),
+            'plans'      => model(InstallmentPlanModel::class)->globalActive(),
         ]);
     }
 
@@ -59,6 +59,7 @@ class ProductsController extends BaseAdminController
         }
 
         $row['plan_ids'] = $model->planIds((int) $id);
+        $row['plans'] = $model->plansForProduct((int) $id);
         $row['images_list'] = $row['images'] ? json_decode($row['images'], true) : [];
 
         return $this->jsonSuccess('Product loaded.', $row);
@@ -77,7 +78,7 @@ class ProductsController extends BaseAdminController
 
         $model = model(ProductModel::class);
         $id = $model->insert($payload['data']);
-        $model->syncPlans((int) $id, $payload['plan_ids']);
+        $model->syncProductPlans((int) $id, $payload['plans']);
 
         return $this->jsonSuccess('Product created.', ['id' => $id]);
     }
@@ -100,7 +101,7 @@ class ProductsController extends BaseAdminController
         }
 
         $model->update($id, $payload['data']);
-        $model->syncPlans((int) $id, $payload['plan_ids']);
+        $model->syncProductPlans((int) $id, $payload['plans']);
 
         return $this->jsonSuccess('Product updated.');
     }
@@ -153,6 +154,46 @@ class ProductsController extends BaseAdminController
             $planIds = $planIds ? [$planIds] : [];
         }
 
+        // Preferred: full plan rows from product form
+        $plansRaw = $this->request->getPost('plans');
+        $plans = [];
+        if (is_array($plansRaw)) {
+            foreach ($plansRaw as $row) {
+                if (! is_array($row)) {
+                    continue;
+                }
+                $name = trim((string) ($row['name'] ?? ''));
+                $months = (int) ($row['months'] ?? 0);
+                $down = (float) ($row['down_payment'] ?? 0);
+                $monthly = (float) ($row['monthly_installment'] ?? 0);
+                if ($name === '' && $months <= 0 && $down <= 0 && $monthly <= 0) {
+                    continue;
+                }
+                $plans[] = [
+                    'id'                  => ! empty($row['id']) ? (int) $row['id'] : null,
+                    'name'                => $name !== '' ? $name : ($months . ' Month Plan'),
+                    'down_payment'        => $down,
+                    'monthly_installment' => $monthly,
+                    'months'              => max(1, $months ?: 12),
+                ];
+            }
+        } elseif ($planIds) {
+            // Backward compatible: selected global template IDs → copy as product plans
+            foreach ($planIds as $pid) {
+                $template = model(InstallmentPlanModel::class)->find((int) $pid);
+                if (! $template) {
+                    continue;
+                }
+                $plans[] = [
+                    'id'                  => null,
+                    'name'                => $template['name'],
+                    'down_payment'        => (float) $template['down_payment'],
+                    'monthly_installment' => (float) $template['monthly_installment'],
+                    'months'              => (int) $template['months'],
+                ];
+            }
+        }
+
         return [
             'data' => [
                 'category_id'           => $this->request->getPost('category_id') ?: null,
@@ -168,7 +209,7 @@ class ProductsController extends BaseAdminController
                 'meta_title'            => $this->request->getPost('meta_title'),
                 'meta_description'      => $this->request->getPost('meta_description'),
             ],
-            'plan_ids' => $planIds,
+            'plans' => $plans,
         ];
     }
 }

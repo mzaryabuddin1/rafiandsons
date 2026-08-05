@@ -24,7 +24,7 @@ $searchCategory = $searchCategory ?? '';
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                        <input type="text" name="q" value="<?= esc($search ?? '') ?>" placeholder="Search products..." class="qb-search-input">
+                        <input type="text" name="q" value="<?= esc($search ?? '') ?>" placeholder="I'm shopping for..." class="qb-search-input">
                         <button type="submit" class="qb-search-btn">Search</button>
                     </div>
                 </form>

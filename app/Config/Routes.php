@@ -6,6 +6,7 @@ use CodeIgniter\Router\RouteCollection;
 $routes->get('/', 'ComingSoon::index');
 $routes->get('home', 'Home::index');
 $routes->get('shop', 'Shop::index');
+$routes->get('product/(:segment)/quick', 'ProductController::quick/$1');
 $routes->get('product/(:segment)', 'ProductController::show/$1');
 $routes->get('cart', 'CartController::index');
 $routes->get('checkout', 'CartController::checkout');

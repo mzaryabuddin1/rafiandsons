@@ -90,7 +90,7 @@ abstract class BaseStoreController extends BaseController
 
         $advanceMap = [];
         $rows = $db->table('product_installment_plans pip')
-            ->select('pip.product_id, MIN(ip.down_payment) as min_advance')
+            ->select('pip.product_id, MIN(COALESCE(pip.down_payment, ip.down_payment)) as min_advance')
             ->join('installment_plans ip', 'ip.id = pip.installment_plan_id')
             ->whereIn('pip.product_id', $ids)
             ->groupBy('pip.product_id')

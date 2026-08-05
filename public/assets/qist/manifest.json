@@ -1,0 +1,518 @@
+{
+    "sliders": [
+        {
+            "file": "assets/qist/sliders/sliderImage_1785529122321.jpeg",
+            "link": "/product/infinix-hot-60i-or-6gb-128gb",
+            "order": 1,
+            "title": "Slide 242"
+        },
+        {
+            "file": "assets/qist/sliders/sliderImage_1784296456635.jpeg",
+            "link": "/product-category/special-offer/ac-special-offer-43",
+            "order": 3,
+            "title": "Slide 247"
+        },
+        {
+            "file": "assets/qist/sliders/sliderImage_1785756306576.jpeg",
+            "link": "/product/tecno-spark-50-or-6gb-128gb",
+            "order": 4,
+            "title": "Slide 241"
+        },
+        {
+            "file": "assets/qist/sliders/sliderImage_1785156622296.jpeg",
+            "link": "/product-category/special-offer/special-offer-2-43",
+            "order": 5,
+            "title": "Slide 240"
+        },
+        {
+            "file": "assets/qist/sliders/sliderImage_1780316653354.jpeg",
+            "link": "/product/superpower-or-70-cc-or-motorbike",
+            "order": 6,
+            "title": "Slide 236"
+        },
+        {
+            "file": "assets/qist/sliders/sliderImage_1783077995057.jpeg",
+            "link": "/product-category/special-offer/samsung-led-tv-43",
+            "order": 9,
+            "title": "Slide 245"
+        },
+        {
+            "file": "assets/qist/sliders/sliderImage_1784531750641.jpeg",
+            "link": "/product-category/special-offer/vivo-43",
+            "order": 10,
+            "title": "Slide 246"
+        }
+    ],
+    "categories": [
+        {
+            "name": "Mobiles",
+            "slug": "mobiles",
+            "icon": "fa-phone-square",
+            "file": "assets/qist/categories/categoryImage_1704404997920.jpg"
+        },
+        {
+            "name": "Laptops",
+            "slug": "laptops",
+            "icon": "fa-laptop",
+            "file": "assets/qist/categories/categoryImage_1704575943178.webp"
+        },
+        {
+            "name": "LED TV",
+            "slug": "led-tv",
+            "icon": "fa-desktop",
+            "file": "assets/qist/categories/categoryImage_1704575989669.webp"
+        },
+        {
+            "name": "Refrigerator",
+            "slug": "refrigerator",
+            "icon": "fa-server",
+            "file": "assets/qist/categories/categoryImage_1704576033932.webp"
+        },
+        {
+            "name": "Washing Machine",
+            "slug": "washing-machine",
+            "icon": "fa-cube",
+            "file": "assets/qist/categories/categoryImage_1706790215906.webp"
+        },
+        {
+            "name": "Air Conditioner",
+            "slug": "air-conditioner",
+            "icon": "fa-snowflake-o",
+            "file": "assets/qist/categories/categoryImage_1705461829675.jpg"
+        },
+        {
+            "name": "Small Appliances",
+            "slug": "small-appliances",
+            "icon": "fa-th-large",
+            "file": "assets/qist/categories/categoryImage_1705460997319.jpg"
+        },
+        {
+            "name": "Microwave Oven",
+            "slug": "microwave-oven",
+            "icon": "fa-thermometer-full",
+            "file": "assets/qist/categories/categoryImage_1706687445408.png"
+        },
+        {
+            "name": "Water Dispenser",
+            "slug": "water-dispenser",
+            "icon": "fa-tint",
+            "file": "assets/qist/categories/categoryImage_1706687459848.png"
+        },
+        {
+            "name": "Fans",
+            "slug": "fans",
+            "icon": "fa fa-refresh",
+            "file": "assets/qist/categories/categoryImage_1706617467639.jpg"
+        },
+        {
+            "name": "Bikes",
+            "slug": "bikes",
+            "icon": "fa-bicycle",
+            "file": "assets/qist/categories/categoryImage_1705461060297.webp"
+        },
+        {
+            "name": "Deep Freezer",
+            "slug": "deep-freezer",
+            "icon": "fa-bars",
+            "file": "assets/qist/categories/categoryImage_1705460942592.jpg"
+        },
+        {
+            "name": "Batteries",
+            "slug": "batteries",
+            "icon": "fa-battery-full",
+            "file": "assets/qist/categories/categoryImage_1706695934339.webp"
+        },
+        {
+            "name": "Mattress",
+            "slug": "mattress",
+            "icon": "fa-bed",
+            "file": "assets/qist/categories/categoryImage_1705531594903.webp"
+        },
+        {
+            "name": "Tyres",
+            "slug": "tyres",
+            "icon": "fa-dot-circle-o",
+            "file": "assets/qist/categories/categoryImage_1706695902711.webp"
+        },
+        {
+            "name": "Tablet",
+            "slug": "tablet",
+            "icon": "fa-tablet",
+            "file": "assets/qist/categories/categoryImage_1723877185672.jpg"
+        },
+        {
+            "name": "Solar",
+            "slug": "solar",
+            "icon": "fa fa-sun-o",
+            "file": "assets/qist/categories/categoryImage_1727335798329.avif"
+        }
+    ],
+    "products": [
+        {
+            "title": "Infinix Hot 60i | 6GB-128GB",
+            "advance": 5950,
+            "old": 8900,
+            "file": "assets/qist/products/productImage_1785499187111.jpeg",
+            "section": "deal-of-the-day"
+        },
+        {
+            "title": "Hisense |  KB Series T3 Cool Only | 1 Ton Inverter Air Conditioner |",
+            "advance": 19900,
+            "old": null,
+            "file": "assets/qist/products/productImage_1780393933209.jpeg",
+            "section": "deal-of-the-day"
+        },
+        {
+            "title": "Samsung A07 | 6GB-128GB |",
+            "advance": 5900,
+            "old": null,
+            "file": "assets/qist/products/productImage_1780335868240.jpeg",
+            "section": "deal-of-the-day"
+        },
+        {
+            "title": "SuperPower | 70 CC | Motorbike |",
+            "advance": 24900,
+            "old": null,
+            "file": "assets/qist/products/productImage_1776949746150.jpeg",
+            "section": "deal-of-the-day"
+        },
+        {
+            "title": "Tecno Spark Go 3 | 4GB-64GB |",
+            "advance": 4900,
+            "old": null,
+            "file": "assets/qist/products/productImage_1784297333844.jpeg",
+            "section": "deal-of-the-day"
+        },
+        {
+            "title": "Itel City 200 | 4GB-128GB |",
+            "advance": 4900,
+            "old": null,
+            "file": "assets/qist/products/productImage_1780989123744.jpeg",
+            "section": "deal-of-the-day"
+        },
+        {
+            "title": "Dawlance | Chillex 1 Ton Inverter | Air Conditioner |",
+            "advance": 27900,
+            "old": null,
+            "file": "assets/qist/products/productImage_1784287507156.jpeg",
+            "section": "deal-of-the-day"
+        },
+        {
+            "title": "Itel A100C | 4GB-64 GB ",
+            "advance": 3600,
+            "old": null,
+            "file": "assets/qist/products/productImage_1780335650074.jpeg",
+            "section": "deal-of-the-day"
+        },
+        {
+            "title": "Tecno Spark 50 | 6GB-128GB |",
+            "advance": 8900,
+            "old": null,
+            "file": "assets/qist/products/productImage_1780335568346.jpeg",
+            "section": "deal-of-the-day"
+        },
+        {
+            "title": "Tecno Spark Go 3 | 4GB-128GB |",
+            "advance": 5900,
+            "old": null,
+            "file": "assets/qist/products/productImage_1780337185291.jpeg",
+            "section": "deal-of-the-day"
+        },
+        {
+            "title": "Samsung A07 | 4GB-64GB ",
+            "advance": 4900,
+            "old": null,
+            "file": "assets/qist/products/productImage_1773220077500.webp",
+            "section": "mobiles"
+        },
+        {
+            "title": "Infinix Hot 60i | 6GB-128 GB",
+            "advance": 5950,
+            "old": 8900,
+            "file": "assets/qist/products/productImage_1755941232160.webp",
+            "section": "mobiles"
+        },
+        {
+            "title": "Itel City 200 | 4GB-128GB",
+            "advance": 4900,
+            "old": null,
+            "file": "assets/qist/products/productImage_1774595652369.webp",
+            "section": "mobiles"
+        },
+        {
+            "title": "Samsung A07 | 6GB-128GB ",
+            "advance": 5900,
+            "old": null,
+            "file": "assets/qist/products/productImage_1760337906896.webp",
+            "section": "mobiles"
+        },
+        {
+            "title": "Tecno Spark Go 3 | 4GB-64GB ",
+            "advance": 4900,
+            "old": null,
+            "file": "assets/qist/products/productImage_1772539600791.webp",
+            "section": "mobiles"
+        },
+        {
+            "title": "Tecno Spark 50 | 6GB-128GB",
+            "advance": 8900,
+            "old": null,
+            "file": "assets/qist/products/productImage_1777474060372.webp",
+            "section": "mobiles"
+        },
+        {
+            "title": "Dawlance | 9140WB Avante | 8 CF Refrigerator",
+            "advance": 18600,
+            "old": null,
+            "file": "assets/qist/products/productImage_1758610142194.webp",
+            "section": "refrigerator"
+        },
+        {
+            "title": " Pel | Life Pro PRLP-2350 | 9 CF Refrigerator",
+            "advance": 21850,
+            "old": null,
+            "file": "assets/qist/products/productImage_1748329424903.png",
+            "section": "refrigerator"
+        },
+        {
+            "title": "Dawlance | 9169 WB Avante+ | 12 CF Refrigerator",
+            "advance": 25000,
+            "old": null,
+            "file": "assets/qist/products/productImage_1780926052884.webp",
+            "section": "refrigerator"
+        },
+        {
+            "title": "Dawlance | 9178LF AVANTE+ | 13 Cf Refrigerator",
+            "advance": 29400,
+            "old": null,
+            "file": "assets/qist/products/productImage_1710755628085.png",
+            "section": "refrigerator"
+        },
+        {
+            "title": "Dawlance | 9193LF CHROME | 17 CF Refrigerator",
+            "advance": 28500,
+            "old": null,
+            "file": "assets/qist/products/productImage_1709984013481.png",
+            "section": "refrigerator"
+        },
+        {
+            "title": "Dawlance | 9193 LF Acce-Pro |Inverter Refrigerator",
+            "advance": 33500,
+            "old": null,
+            "file": "assets/qist/products/productImage_1780920243497.png",
+            "section": "refrigerator"
+        },
+        {
+            "title": "Lenovo ThinkPad x270 Laptop | i7-7th  | 8 GB | 128 GB M.2 SSD | 12.5\" HD ",
+            "advance": 8000,
+            "old": null,
+            "file": "assets/qist/products/productImage_1784558299094.jpg",
+            "section": "laptops"
+        },
+        {
+            "title": "HP EliteBook 850 G6 | i5-8350U | 8 GB | 256 GB M.2 SSD | 15.6\" FHD Screen",
+            "advance": 14100,
+            "old": null,
+            "file": "assets/qist/products/productImage_1780389794883.jpg",
+            "section": "laptops"
+        },
+        {
+            "title": "HP Laptop 15-fd0240TU | i5-1334U | 8GB| 512GB M.2 SSD | 15.6 Screen",
+            "advance": 42900,
+            "old": null,
+            "file": "assets/qist/products/productImage_1725887691065.jpg",
+            "section": "laptops"
+        },
+        {
+            "title": "Lenovo ChromeBook 300E x360 | Intel Celeron | 4 GB RAM | 32 GB Storage | Touch Screen",
+            "advance": 2900,
+            "old": null,
+            "file": "assets/qist/products/productImage_1777969028412.jpg",
+            "section": "laptops"
+        },
+        {
+            "title": "DELL E7470 i7-6TH | 8GB | 256SSD | 14 Screen",
+            "advance": 11400,
+            "old": null,
+            "file": "assets/qist/products/productImage_1730817498932.webp",
+            "section": "laptops"
+        },
+        {
+            "title": "Dell LATITUDE 5420 - CORE I5 11TH GEN - 8GB-256GB - 14\u201d - 1 year warranty (USED)",
+            "advance": 17850,
+            "old": null,
+            "file": "assets/qist/products/productImage_1777300469255.jpeg",
+            "section": "laptops"
+        },
+        {
+            "title": "Hp Probook 650 G1 - Core i5 4th gen - 8gb - 256gb - 15.6\" - 3 months warranty (USED)",
+            "advance": 8000,
+            "old": null,
+            "file": "assets/qist/products/productImage_1777486539743.jpg",
+            "section": "laptops"
+        },
+        {
+            "title": "Hp Probook 650 G2 - Core i5 6th gen - 8gb - 256gb - 15.6\" - 3 months warranty (USED)",
+            "advance": 10500,
+            "old": null,
+            "file": "assets/qist/products/productImage_1777719038215.jpg",
+            "section": "laptops"
+        },
+        {
+            "title": "Dawlance 32\" | Kore HD Google\u00a0TV",
+            "advance": 8900,
+            "old": null,
+            "file": "assets/qist/products/productImage_1774515576542.webp",
+            "section": "led-tv"
+        },
+        {
+            "title": "Xiaomi 43\" | 43A2026 | FHD LED TV",
+            "advance": 14900,
+            "old": null,
+            "file": "assets/qist/products/productImage_1775199819046.webp",
+            "section": "led-tv"
+        },
+        {
+            "title": "Dawlance 40\" | 40 Kore FHD Google TV LED | LED TV |",
+            "advance": 9900,
+            "old": null,
+            "file": "assets/qist/products/productImage_1780123261822.png",
+            "section": "led-tv"
+        },
+        {
+            "title": "Samsung 32\" HD | UA32H5000FUSMM | Smart TV",
+            "advance": 9900,
+            "old": null,
+            "file": "assets/qist/products/productImage_1777879276537.png",
+            "section": "led-tv"
+        },
+        {
+            "title": "Dawlance 43\" | Radiant Series Google TV 4k UHD | 43G22",
+            "advance": 18900,
+            "old": null,
+            "file": "assets/qist/products/productImage_1709792173351.png",
+            "section": "led-tv"
+        },
+        {
+            "title": "Samsung 43\" Full HD | UA43F6000FUSMM | Smart TV",
+            "advance": 14900,
+            "old": null,
+            "file": "assets/qist/products/productImage_1777879018694.png",
+            "section": "led-tv"
+        },
+        {
+            "title": "SuperPower | 70 CC | Motorbike",
+            "advance": 24900,
+            "old": null,
+            "file": "assets/qist/products/productImage_1779693737065.png",
+            "section": "bikes"
+        },
+        {
+            "title": "REVOO - A11",
+            "advance": 39900,
+            "old": null,
+            "file": "assets/qist/products/productImage_1750941851399.jpg",
+            "section": "bikes"
+        },
+        {
+            "title": "Evee - Gen-Z (Lithium)",
+            "advance": 58900,
+            "old": null,
+            "file": "assets/qist/products/productImage_1781949272761.png",
+            "section": "bikes"
+        },
+        {
+            "title": "United  | 70 CC | Motorbike",
+            "advance": 29900,
+            "old": null,
+            "file": "assets/qist/products/productImage_1775133111351.png",
+            "section": "bikes"
+        },
+        {
+            "title": "Hi-Speed | 70 CC  | Motorbike (Gold Edition)",
+            "advance": 30900,
+            "old": null,
+            "file": "assets/qist/products/productImage_1772531891550.png",
+            "section": "bikes"
+        },
+        {
+            "title": "United | 125 CC | Motorbike",
+            "advance": 49000,
+            "old": null,
+            "file": "assets/qist/products/productImage_1744100473817.png",
+            "section": "bikes"
+        },
+        {
+            "title": "Crown Electric Mobility - FAIRY",
+            "advance": 59900,
+            "old": null,
+            "file": "assets/qist/products/productImage_1776770568150.png",
+            "section": "bikes"
+        },
+        {
+            "title": "Hisense | KB Series T3 Cool Only | 1 Ton Inverter Air Conditioner",
+            "advance": 19900,
+            "old": null,
+            "file": "assets/qist/products/productImage_1778074117090.png",
+            "section": "air-conditioner"
+        },
+        {
+            "title": "Dawlance | Chillex 1 Ton Inverter | Air Conditioner",
+            "advance": 27900,
+            "old": null,
+            "file": "assets/qist/products/productImage_1784108924414.webp",
+            "section": "air-conditioner"
+        },
+        {
+            "title": "Dawlance |Frost 20 - 1.25 Ton Inverter (Cool Only)| Air Conditioner |",
+            "advance": 34900,
+            "old": null,
+            "file": "assets/qist/products/productImage_1775908486656.jpg",
+            "section": "air-conditioner"
+        },
+        {
+            "title": "Pel |PINV ATOM 12K (H&C) 1.0 Ton| INVERTER Air Conditioner",
+            "advance": 29900,
+            "old": null,
+            "file": "assets/qist/products/productImage_1775459764756.webp",
+            "section": "air-conditioner"
+        },
+        {
+            "title": "Pel |PINV AERO EXTEND 12K (H&C) 1.0 Ton | INV Air Conditioner",
+            "advance": 29900,
+            "old": null,
+            "file": "assets/qist/products/productImage_1785505464075.png",
+            "section": "air-conditioner"
+        },
+        {
+            "title": "Dawlance | Elegance X 1 Ton | Inverter Air Conditioner ",
+            "advance": 34900,
+            "old": null,
+            "file": "assets/qist/products/productImage_1779362655746.png",
+            "section": "air-conditioner"
+        },
+        {
+            "title": "Pel |PINV AERO EXTEND 18K (H&C) 1.5 Ton| INVERTER Air Conditioner",
+            "advance": 37350,
+            "old": null,
+            "file": "assets/qist/products/productImage_1741866909150.png",
+            "section": "air-conditioner"
+        },
+        {
+            "title": "Dawlance | Chillex 1.5 Ton Inverter | Air Conditioner",
+            "advance": 40900,
+            "old": null,
+            "file": "assets/qist/products/productImage_1784109128638.webp",
+            "section": "air-conditioner"
+        }
+    ],
+    "static": [
+        "assets/qist/static/QB-logo.png",
+        "assets/qist/static/QB-Icon.png",
+        "assets/qist/static/app-store-2.png",
+        "assets/qist/static/google-play-2.png",
+        "assets/qist/static/default-product-thumbnail.png",
+        "assets/qist/static/bootstrap.min.css",
+        "assets/qist/static/qist-next.css"
+    ]
+}

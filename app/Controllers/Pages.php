@@ -10,7 +10,8 @@ class Pages extends BaseStoreController
             'pageTitle'  => 'About Us',
             'activeMenu' => 'about',
             'content'    => $this->getContent('about-us'),
-            'cssFile'    => 'style.min.css',
+            'cssFile'    => 'demo22.min.css',
+            'bodyClass'  => 'store-qist',
         ]);
     }
 
@@ -20,7 +21,8 @@ class Pages extends BaseStoreController
             'pageTitle'  => 'Contact Us',
             'activeMenu' => 'contact',
             'content'    => $this->getContent('contact-us'),
-            'cssFile'    => 'style.min.css',
+            'cssFile'    => 'demo22.min.css',
+            'bodyClass'  => 'store-qist',
         ]);
     }
 
@@ -33,7 +35,8 @@ class Pages extends BaseStoreController
                 'title' => 'Frequently Asked Questions',
                 'body'  => '<h3>How do installments work?</h3><p>Choose a product, select a plan, and submit a booking request. Our team verifies details before approval.</p><h3>Is booking automatic approval?</h3><p>No. Submitting an order is a booking request only.</p><h3>What documents are needed?</h3><p>Valid CNIC and reachable phone number are typically required.</p>',
             ],
-            'cssFile'    => 'style.min.css',
+            'cssFile'    => 'demo22.min.css',
+            'bodyClass'  => 'store-qist',
         ]);
     }
 
@@ -42,7 +45,8 @@ class Pages extends BaseStoreController
         return $this->storeView('page', [
             'pageTitle' => 'Privacy Policy',
             'content'   => $this->getContent('privacy-policy'),
-            'cssFile'   => 'style.min.css',
+            'cssFile'   => 'demo22.min.css',
+            'bodyClass' => 'store-qist',
         ]);
     }
 
@@ -51,7 +55,8 @@ class Pages extends BaseStoreController
         return $this->storeView('page', [
             'pageTitle' => 'Terms & Conditions',
             'content'   => $this->getContent('terms-and-conditions'),
-            'cssFile'   => 'style.min.css',
+            'cssFile'   => 'demo22.min.css',
+            'bodyClass' => 'store-qist',
         ]);
     }
 
@@ -60,7 +65,8 @@ class Pages extends BaseStoreController
         return $this->storeView('page', [
             'pageTitle' => 'Installment Terms',
             'content'   => $this->getContent('installment-terms'),
-            'cssFile'   => 'style.min.css',
+            'cssFile'   => 'demo22.min.css',
+            'bodyClass' => 'store-qist',
         ]);
     }
 }

@@ -27,12 +27,35 @@
     <link rel="stylesheet" type="text/css" href="<?= base_url('assets/store/store.css') ?>">
     <link rel="stylesheet" type="text/css" href="<?= base_url('assets/store/qist-style.css') ?>">
 </head>
-<body class="<?= esc($bodyClass ?? 'home') ?>">
+<body class="<?= esc($bodyClass ?? 'store-qist') ?>">
 <div class="page-wrapper">
     <h1 class="d-none">Rafi &amp; Sons</h1>
     <?= $this->include('store/partials/header') ?>
     <?= $this->renderSection('content') ?>
     <?= $this->include('store/partials/footer') ?>
+</div>
+
+<div class="qb-qv-overlay" id="qb-qv-overlay" hidden></div>
+<div class="qb-qv-modal" id="qb-qv-modal" hidden role="dialog" aria-modal="true" aria-labelledby="qb-qv-title">
+    <button type="button" class="qb-qv-close" id="qb-qv-close" aria-label="Close">&times;</button>
+    <div class="qb-qv-grid">
+        <div class="qb-qv-media">
+            <img src="" alt="" id="qb-qv-image">
+        </div>
+        <div class="qb-qv-info">
+            <h2 id="qb-qv-title"></h2>
+            <div class="qb-qv-meta" id="qb-qv-meta"></div>
+            <div class="qb-product-price-lg" id="qb-qv-price"></div>
+            <div class="qb-advance-badge" id="qb-qv-advance" hidden></div>
+            <p class="qb-product-desc" id="qb-qv-desc"></p>
+            <div class="qb-plans" id="qb-qv-plans"></div>
+            <div class="qb-buy-row">
+                <input class="qb-qty" type="number" min="1" max="10" value="1" id="qb-qv-qty">
+                <button type="button" class="qb-btn qb-btn-primary" id="qb-qv-add">Add to Cart</button>
+                <a href="#" class="qb-btn qb-btn-dark" id="qb-qv-details">View Details</a>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>

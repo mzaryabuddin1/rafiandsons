@@ -1,74 +1,70 @@
 <?= $this->extend('store/layout') ?>
 <?= $this->section('content') ?>
-<main class="main cart">
-    <div class="page-content pt-8 pb-10">
+<main class="main qb-main">
+    <div class="page-content qb-cart-page">
         <div class="container">
-            <h2 class="title title-center mb-6">Shopping Cart</h2>
+            <h1 class="qb-page-title">Shopping Cart</h1>
             <?php if (empty($items)): ?>
-                <div class="text-center">
+                <div class="qb-form-card text-center">
                     <p>Your cart is empty.</p>
-                    <a href="<?= site_url('shop') ?>" class="btn btn-primary btn-rounded">Continue Shopping</a>
+                    <a href="<?= site_url('shop') ?>" class="qb-btn qb-btn-primary">Continue Shopping</a>
                 </div>
             <?php else: ?>
                 <div class="row">
                     <div class="col-lg-8">
-                        <table class="shop-table cart-table">
-                            <thead>
-                            <tr>
-                                <th><span>Product</span></th>
-                                <th><span>Price</span></th>
-                                <th><span>Quantity</span></th>
-                                <th><span>Plan</span></th>
-                                <th><span>Subtotal</span></th>
-                                <th></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <?php foreach ($items as $item): ?>
-                                <tr data-product-id="<?= (int) $item['product_id'] ?>">
-                                    <td class="product-thumbnail">
-                                        <div class="p-relative">
-                                            <a href="<?= site_url('product/' . $item['slug']) ?>">
-                                                <figure>
-                                                    <img src="<?= base_url($item['image']) ?>" width="100" height="100" alt="<?= esc($item['name']) ?>">
-                                                </figure>
-                                            </a>
-                                        </div>
-                                        <a href="<?= site_url('product/' . $item['slug']) ?>" class="product-name"><?= esc($item['name']) ?></a>
-                                    </td>
-                                    <td>PKR <?= number_format($item['price'], 0) ?></td>
-                                    <td>
-                                        <input type="number" class="form-control cart-qty" min="1" value="<?= (int) $item['qty'] ?>" style="width:70px;">
-                                    </td>
-                                    <td>
-                                        <select class="form-control cart-plan" style="min-width:160px;">
-                                            <option value="">Select plan</option>
-                                            <?php foreach (($plansByProduct[$item['product_id']] ?? []) as $plan): ?>
-                                                <option value="<?= (int) $plan['id'] ?>" <?= ((int) ($item['plan_id'] ?? 0) === (int) $plan['id']) ? 'selected' : '' ?>>
-                                                    <?= esc($plan['name']) ?>
-                                                </option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </td>
-                                    <td class="line-total">PKR <?= number_format($item['price'] * $item['qty'], 0) ?></td>
-                                    <td>
-                                        <a href="#" class="btn btn-link btn-close cart-remove"><i class="fas fa-times"></i></a>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                    <aside class="col-lg-4 sticky-sidebar-wrapper">
-                        <div class="summary mb-4">
-                            <h3 class="summary-title">Cart Totals</h3>
-                            <table class="shipping">
+                        <div class="qb-form-card">
+                            <table class="table qb-cart-table">
+                                <thead>
                                 <tr>
-                                    <td>Subtotal</td>
-                                    <td id="cart-subtotal-label"><strong>PKR <?= number_format($cartSubtotal, 0) ?></strong></td>
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th>Qty</th>
+                                    <th>Plan</th>
+                                    <th>Subtotal</th>
+                                    <th></th>
                                 </tr>
+                                </thead>
+                                <tbody>
+                                <?php foreach ($items as $item): ?>
+                                    <tr data-product-id="<?= (int) $item['product_id'] ?>">
+                                        <td>
+                                            <div class="qb-cart-product">
+                                                <img src="<?= base_url($item['image']) ?>" alt="<?= esc($item['name']) ?>" width="64" height="64">
+                                                <a href="<?= site_url('product/' . $item['slug']) ?>"><?= esc($item['name']) ?></a>
+                                            </div>
+                                        </td>
+                                        <td>PKR <?= number_format($item['price'], 0) ?></td>
+                                        <td>
+                                            <input type="number" class="form-control cart-qty qb-qty" min="1" value="<?= (int) $item['qty'] ?>">
+                                        </td>
+                                        <td>
+                                            <select class="form-control cart-plan">
+                                                <option value="">Select plan</option>
+                                                <?php foreach (($plansByProduct[$item['product_id']] ?? []) as $plan): ?>
+                                                    <option value="<?= (int) $plan['id'] ?>" <?= ((int) ($item['plan_id'] ?? 0) === (int) $plan['id']) ? 'selected' : '' ?>>
+                                                        <?= esc($plan['name']) ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </td>
+                                        <td class="line-total">PKR <?= number_format($item['price'] * $item['qty'], 0) ?></td>
+                                        <td>
+                                            <a href="#" class="cart-remove" title="Remove">&times;</a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                                </tbody>
                             </table>
-                            <a href="<?= site_url('checkout') ?>" class="btn btn-dark btn-rounded btn-checkout">Proceed to Checkout</a>
+                        </div>
+                    </div>
+                    <aside class="col-lg-4">
+                        <div class="qb-order-summary">
+                            <h3>Cart Totals</h3>
+                            <div class="qb-order-total">
+                                <span>Subtotal</span>
+                                <strong id="cart-subtotal-label">PKR <?= number_format($cartSubtotal, 0) ?></strong>
+                            </div>
+                            <a href="<?= site_url('checkout') ?>" class="qb-btn qb-btn-primary qb-btn-block">Proceed to Checkout</a>
                         </div>
                     </aside>
                 </div>

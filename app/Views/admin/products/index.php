@@ -25,7 +25,45 @@
 <div class="form-group"><label>Description</label><textarea class="form-control" name="description" id="f-description" rows="3"></textarea></div>
 <div class="form-group"><label>Images</label><input type="file" class="form-control" name="images[]" id="f-images" accept="image/*" multiple></div>
 <div class="form-group"><label>Installment Available</label><select class="form-control" name="installment_available" id="f-installment"><option value="1">Yes</option><option value="0">No</option></select></div>
-<div class="form-group"><label>Assign Plans</label><select class="form-control" name="plan_ids[]" id="f-plans" multiple size="5"><?php foreach ($plans as $p): ?><option value="<?= $p['id'] ?>"><?= esc($p['name']) ?></option><?php endforeach; ?></select></div>
+
+<div class="form-group">
+    <label>Product Installment Plans</label>
+    <p class="text-muted" style="margin-top:0;">Each product can have its own plans. Set down payment, monthly installment, and months below.</p>
+    <div class="table-responsive">
+        <table class="table table-bordered table-sm" id="plans-table">
+            <thead>
+                <tr>
+                    <th>Plan Name</th>
+                    <th width="120">Down</th>
+                    <th width="120">Monthly</th>
+                    <th width="90">Months</th>
+                    <th width="50"></th>
+                </tr>
+            </thead>
+            <tbody id="plans-body"></tbody>
+        </table>
+    </div>
+    <button type="button" class="btn btn-xs btn-primary" id="btn-add-plan"><i class="fa fa-plus"></i> Add Plan</button>
+    <?php if (! empty($plans)): ?>
+    <div class="m-t-sm">
+        <label class="text-muted">Copy from template:</label>
+        <select id="f-template" class="form-control input-sm" style="max-width:280px;display:inline-block;">
+            <option value="">Select template...</option>
+            <?php foreach ($plans as $p): ?>
+                <option value="<?= (int) $p['id'] ?>"
+                    data-name="<?= esc($p['name']) ?>"
+                    data-down="<?= esc($p['down_payment']) ?>"
+                    data-monthly="<?= esc($p['monthly_installment']) ?>"
+                    data-months="<?= esc($p['months']) ?>">
+                    <?= esc($p['name']) ?> (<?= (int) $p['months'] ?>m)
+                </option>
+            <?php endforeach; ?>
+        </select>
+        <button type="button" class="btn btn-xs btn-white" id="btn-use-template">Add from template</button>
+    </div>
+    <?php endif; ?>
+</div>
+
 <div class="row"><div class="col-md-6"><div class="form-group"><label>Meta Title</label><input class="form-control" name="meta_title" id="f-meta-title"></div></div>
 <div class="col-md-6"><div class="form-group"><label>Meta Description</label><input class="form-control" name="meta_description" id="f-meta-description"></div></div></div>
 </div>
@@ -35,11 +73,55 @@
 <?= $this->section('scripts') ?>
 <script>
 var canUpdate=<?= !empty($canUpdate)?'true':'false' ?>, canDelete=<?= !empty($canDelete)?'true':'false' ?>;
+var planRowIndex=0;
+
+function planRowHtml(plan){
+    plan = plan || {};
+    var i = planRowIndex++;
+    return '<tr class="plan-row">'
+        + '<td><input type="hidden" name="plans['+i+'][id]" value="'+(plan.id||'')+'">'
+        + '<input class="form-control input-sm" name="plans['+i+'][name]" value="'+(plan.name||'')+'" placeholder="e.g. 12 Month Plan"></td>'
+        + '<td><input type="number" step="0.01" class="form-control input-sm" name="plans['+i+'][down_payment]" value="'+(plan.down_payment!=null?plan.down_payment:'')+'" placeholder="0"></td>'
+        + '<td><input type="number" step="0.01" class="form-control input-sm" name="plans['+i+'][monthly_installment]" value="'+(plan.monthly_installment!=null?plan.monthly_installment:'')+'" placeholder="0"></td>'
+        + '<td><input type="number" class="form-control input-sm" name="plans['+i+'][months]" value="'+(plan.months||12)+'" min="1"></td>'
+        + '<td><button type="button" class="btn btn-xs btn-danger btn-remove-plan"><i class="fa fa-times"></i></button></td>'
+        + '</tr>';
+}
+
+function resetPlans(plans){
+    planRowIndex=0;
+    $('#plans-body').empty();
+    if(plans && plans.length){
+        plans.forEach(function(p){ $('#plans-body').append(planRowHtml(p)); });
+    } else {
+        $('#plans-body').append(planRowHtml({name:'12 Month Plan', months:12}));
+    }
+}
+
 function loadList(){AdminApp.request(ADMIN_BASE+'/api/products','GET',{search:$('#search').val()}).done(function(res){var h='';(res.data.items||[]).forEach(function(r){var a='';if(canUpdate)a+='<button class="btn btn-xs btn-primary btn-edit" data-id="'+r.id+'"><i class="fa fa-pencil"></i></button> ';if(canDelete)a+='<button class="btn btn-xs btn-danger btn-delete" data-id="'+r.id+'"><i class="fa fa-trash"></i></button>';h+='<tr><td>'+r.id+'</td><td>'+r.name+'</td><td>'+(r.sku||'')+'</td><td>'+(r.category_name||'-')+'</td><td>'+r.price+'</td><td>'+r.stock_status+'</td><td>'+(r.status==1?'Active':'Inactive')+'</td><td>'+a+'</td></tr>';});if(!h)h='<tr><td colspan="8" class="text-center text-muted">No products found</td></tr>';$('#data-table tbody').html(h);});}
-$('#btn-add').on('click',function(){$('#main-form')[0].reset();$('#record-id').val('');$('#f-plans').val([]);$('#modal-title').text('Add Product');$('#form-modal').modal('show');});
+
+$('#btn-add').on('click',function(){
+    $('#main-form')[0].reset();
+    $('#record-id').val('');
+    resetPlans([{name:'12 Month Plan', down_payment:'', monthly_installment:'', months:12}]);
+    $('#modal-title').text('Add Product');
+    $('#form-modal').modal('show');
+});
+$('#btn-add-plan').on('click',function(){ $('#plans-body').append(planRowHtml({months:12})); });
+$(document).on('click','.btn-remove-plan',function(){ $(this).closest('tr').remove(); });
+$('#btn-use-template').on('click',function(){
+    var opt=$('#f-template option:selected');
+    if(!opt.val()) return;
+    $('#plans-body').append(planRowHtml({
+        name: opt.data('name'),
+        down_payment: opt.data('down'),
+        monthly_installment: opt.data('monthly'),
+        months: opt.data('months')
+    }));
+});
 $('#search').on('keyup',loadList);
 $('#main-form').on('submit',function(e){e.preventDefault();var id=$('#record-id').val(),url=id?ADMIN_BASE+'/api/products/'+id:ADMIN_BASE+'/api/products',$btn=$('#save-btn');AdminApp.setButtonLoading($btn,true);AdminApp.request(url,'POST',new FormData(this)).done(function(res){AdminApp.toast('success',res.message);$('#form-modal').modal('hide');loadList();}).always(function(){AdminApp.setButtonLoading($btn,false);});});
-$(document).on('click','.btn-edit',function(){AdminApp.request(ADMIN_BASE+'/api/products/'+$(this).data('id'),'GET').done(function(res){var r=res.data;$('#record-id').val(r.id);$('#f-name').val(r.name);$('#f-sku').val(r.sku);$('#f-price').val(r.price);$('#f-category').val(r.category_id||'');$('#f-stock').val(r.stock_status);$('#f-status').val(r.status);$('#f-description').val(r.description||'');$('#f-installment').val(r.installment_available);$('#f-plans').val((r.plan_ids||[]).map(String));$('#f-meta-title').val(r.meta_title||'');$('#f-meta-description').val(r.meta_description||'');$('#modal-title').text('Edit Product');$('#form-modal').modal('show');});});
+$(document).on('click','.btn-edit',function(){AdminApp.request(ADMIN_BASE+'/api/products/'+$(this).data('id'),'GET').done(function(res){var r=res.data;$('#record-id').val(r.id);$('#f-name').val(r.name);$('#f-sku').val(r.sku);$('#f-price').val(r.price);$('#f-category').val(r.category_id||'');$('#f-stock').val(r.stock_status);$('#f-status').val(r.status);$('#f-description').val(r.description||'');$('#f-installment').val(r.installment_available);$('#f-meta-title').val(r.meta_title||'');$('#f-meta-description').val(r.meta_description||'');resetPlans(r.plans||[]);$('#modal-title').text('Edit Product');$('#form-modal').modal('show');});});
 $(document).on('click','.btn-delete',function(){var id=$(this).data('id');AdminApp.confirmDelete(function(){AdminApp.request(ADMIN_BASE+'/api/products/'+id+'/delete','POST').done(function(res){AdminApp.toast('success',res.message);loadList();});});});
 $(loadList);
 </script>

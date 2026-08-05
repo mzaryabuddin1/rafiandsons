@@ -13,20 +13,12 @@ class CartController extends BaseStoreController
     public function index()
     {
         $items = $this->cart->items();
-        $planIds = [];
-        foreach ($items as $item) {
-            if (! empty($item['plan_id'])) {
-                $planIds[] = (int) $item['plan_id'];
-            }
-        }
-
-        $plans = model(InstallmentPlanModel::class)->where('status', 1)->findAll();
+        $productModel = model(ProductModel::class);
         $plansByProduct = [];
         foreach ($items as $item) {
-            $ids = model(ProductModel::class)->planIds((int) $item['product_id']);
-            $plansByProduct[$item['product_id']] = $ids
-                ? model(InstallmentPlanModel::class)->whereIn('id', $ids)->where('status', 1)->findAll()
-                : $plans;
+            $pid = (int) $item['product_id'];
+            $plans = $productModel->plansForProduct($pid);
+            $plansByProduct[$pid] = $plans ?: model(InstallmentPlanModel::class)->globalActive();
         }
 
         return $this->storeView('cart', [
@@ -34,7 +26,8 @@ class CartController extends BaseStoreController
             'activeMenu'      => 'cart',
             'items'           => $items,
             'plansByProduct'  => $plansByProduct,
-            'cssFile'         => 'style.min.css',
+            'bodyClass'       => 'store-qist',
+            'cssFile'         => 'demo22.min.css',
         ]);
     }
 
@@ -48,13 +41,10 @@ class CartController extends BaseStoreController
         $primary = reset($items);
         $plans = [];
         if (! empty($primary['product_id'])) {
-            $ids = model(ProductModel::class)->planIds((int) $primary['product_id']);
-            if ($ids) {
-                $plans = model(InstallmentPlanModel::class)->whereIn('id', $ids)->where('status', 1)->findAll();
-            }
+            $plans = model(ProductModel::class)->plansForProduct((int) $primary['product_id']);
         }
         if (! $plans) {
-            $plans = model(InstallmentPlanModel::class)->where('status', 1)->findAll();
+            $plans = model(InstallmentPlanModel::class)->globalActive();
         }
 
         return $this->storeView('checkout', [
@@ -63,7 +53,8 @@ class CartController extends BaseStoreController
             'items'      => $items,
             'plans'      => $plans,
             'selectedPlanId' => $primary['plan_id'] ?? null,
-            'cssFile'    => 'style.min.css',
+            'bodyClass'  => 'store-qist',
+            'cssFile'    => 'demo22.min.css',
         ]);
     }
 
@@ -144,7 +135,10 @@ class CartController extends BaseStoreController
             $planId = (int) ($first['plan_id'] ?? 0);
         }
 
-        $plan = $planId ? model(InstallmentPlanModel::class)->where('status', 1)->find($planId) : null;
+        $primaryProductId = (int) (reset($items)['product_id'] ?? 0);
+        $plan = $planId && $primaryProductId
+            ? model(ProductModel::class)->resolvePlan($primaryProductId, $planId)
+            : null;
         if (! $plan) {
             return $this->jsonError('Please select an installment plan.');
         }
@@ -219,7 +213,8 @@ class CartController extends BaseStoreController
             'pageTitle' => 'Order Submitted',
             'activeMenu'=> 'cart',
             'order'     => $order,
-            'cssFile'   => 'style.min.css',
+            'bodyClass' => 'store-qist',
+            'cssFile'   => 'demo22.min.css',
         ]);
     }
 }

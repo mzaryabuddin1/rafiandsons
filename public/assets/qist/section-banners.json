@@ -1,0 +1,32 @@
+[
+    {
+        "slug": "mobiles",
+        "title": "Mobiles",
+        "file": "assets/qist/section-banners/mobiles-web.jpg"
+    },
+    {
+        "slug": "refrigerator",
+        "title": "Refrigerator",
+        "file": "assets/qist/section-banners/refrigerator-web.jpg"
+    },
+    {
+        "slug": "laptops",
+        "title": "Laptops",
+        "file": "assets/qist/section-banners/laptops-web.jpg"
+    },
+    {
+        "slug": "led-tv",
+        "title": "LED",
+        "file": "assets/qist/section-banners/led-web.jpg"
+    },
+    {
+        "slug": "bikes",
+        "title": "Bikes",
+        "file": "assets/qist/section-banners/bike.jpeg"
+    },
+    {
+        "slug": "air-conditioner",
+        "title": "Air Conditioner",
+        "file": "assets/qist/section-banners/air-conditioner-web.jpg"
+    }
+]

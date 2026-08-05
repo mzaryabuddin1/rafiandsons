@@ -10,7 +10,7 @@ $address = $settings['contact_address'] ?? '';
             <div class="row align-items-center">
                 <div class="col-lg-3">
                     <a href="<?= site_url('home') ?>" class="logo-footer">
-                        <img src="<?= base_url('theme/images/demos/demo22/logo-footer.png') ?>" alt="<?= esc($siteName) ?>" width="154" height="43">
+                        <img src="<?= base_url('assets/images/logo.png') ?>" alt="<?= esc($siteName) ?>" width="72" height="72" style="height:56px;width:auto;">
                     </a>
                 </div>
                 <div class="col-lg-9">

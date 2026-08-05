@@ -16,12 +16,26 @@ class Home extends BaseStoreController
 
         $topCategories = [];
         $catIcons = [
-            'electronics'     => 'fa-mobile-alt',
-            'home-appliances' => 'fa-blender',
-            'computers'       => 'fa-laptop',
-            'fashion'         => 'fa-tshirt',
-            'beauty'          => 'fa-spa',
-            'furniture'       => 'fa-couch',
+            'electronics'       => 'fa-mobile-alt',
+            'home-appliances'   => 'fa-blender',
+            'computers'         => 'fa-laptop',
+            'mobiles'           => 'fa-mobile-alt',
+            'laptops'           => 'fa-laptop',
+            'led-tv'            => 'fa-tv',
+            'refrigerator'      => 'fa-door-closed',
+            'washing-machine'   => 'fa-soap',
+            'air-conditioner'   => 'fa-snowflake',
+            'small-appliances'  => 'fa-th-large',
+            'microwave-oven'    => 'fa-temperature-high',
+            'water-dispenser'   => 'fa-tint',
+            'fans'              => 'fa-fan',
+            'bikes'             => 'fa-motorcycle',
+            'deep-freezer'      => 'fa-box',
+            'batteries'         => 'fa-car-battery',
+            'mattress'          => 'fa-bed',
+            'tyres'             => 'fa-circle',
+            'tablet'            => 'fa-tablet-alt',
+            'solar'             => 'fa-sun',
         ];
         foreach ($categories as $index => $cat) {
             $cat['icon'] = $catIcons[$cat['slug']] ?? 'fa-box';
@@ -35,13 +49,45 @@ class Home extends BaseStoreController
             $productModel->where('status', 1)->orderBy('id', 'DESC')->findAll(12)
         );
 
+        // Prefer Qist homepage section order when available
+        $sectionOrder = ['mobiles', 'refrigerator', 'laptops', 'led-tv', 'bikes', 'air-conditioner'];
+        $bySlug = [];
+        foreach ($categories as $cat) {
+            $bySlug[$cat['slug']] = $cat;
+        }
+
+        $sectionCats = [];
+        foreach ($sectionOrder as $slug) {
+            if (isset($bySlug[$slug])) {
+                $sectionCats[] = $bySlug[$slug];
+            }
+        }
+        // Fallback / extras
+        foreach ($categories as $cat) {
+            if (! in_array($cat['slug'], $sectionOrder, true)) {
+                $sectionCats[] = $cat;
+            }
+            if (count($sectionCats) >= 8) {
+                break;
+            }
+        }
+
+        $sectionBanners = [];
+        foreach ($bannerModel->activeByPosition(BannerModel::POSITION_CATEGORY_SECTION) as $banner) {
+            $key = trim((string) ($banner['subtitle'] ?: $banner['title']));
+            if ($key !== '') {
+                $sectionBanners[strtolower($key)] = $banner;
+            }
+        }
+
         $categorySections = [];
-        foreach (array_slice($categories, 0, 6) as $cat) {
+        foreach ($sectionCats as $cat) {
             $products = $this->productsForCategory((int) $cat['id'], 8);
             if ($products) {
                 $categorySections[] = [
                     'category' => $cat,
                     'products' => $products,
+                    'banner'   => $sectionBanners[$cat['slug']] ?? null,
                 ];
             }
         }
