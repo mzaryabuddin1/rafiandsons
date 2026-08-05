@@ -1,0 +1,129 @@
+/* Rafi & Sons admin dashboard — INSPINIA-inspired */
+
+.dashboard-heading {
+    margin: -15px -15px 20px;
+    padding: 20px 15px 10px;
+}
+
+.dashboard-heading-actions {
+    padding-top: 28px;
+}
+
+.dashboard-widgets .ibox {
+    margin-bottom: 20px;
+}
+
+.dashboard-stat .ibox-content {
+    padding: 20px 22px 18px;
+    border-top: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard-stat h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #676a6c;
+}
+
+.dashboard-stat h5 {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.dashboard-revenue {
+    font-size: 22px !important;
+}
+
+.dashboard-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 22px;
+    margin-top: 6px;
+}
+
+.dashboard-icon.bg-navy { background: #1c84c6; }
+.dashboard-icon.bg-primary { background: #1ab394; }
+.dashboard-icon.bg-info { background: #23c6c8; }
+.dashboard-icon.bg-success { background: #1ab394; }
+
+.dashboard-sparkline {
+    display: block;
+    margin-top: 12px;
+}
+
+.dashboard-flot {
+    height: 280px;
+}
+
+.dashboard-flot .flot-chart-content {
+    width: 100%;
+    height: 280px;
+}
+
+.dashboard-donut {
+    height: 240px;
+}
+
+.dashboard-mini-stat {
+    padding: 10px 0;
+}
+
+.dashboard-mini-stat .chart {
+    display: inline-block;
+    width: 90px;
+    height: 90px;
+    line-height: 90px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #676a6c;
+}
+
+.stat-list li {
+    margin-bottom: 18px;
+}
+
+.stat-list h2 {
+    font-size: 22px;
+    color: #676a6c;
+}
+
+#recent-orders-table tbody td {
+    vertical-align: middle;
+}
+
+.status-badge-new { background: #1ab394; }
+.status-badge-under_review,
+.status-badge-customer_contacted,
+.status-badge-processing { background: #f8ac59; color: #fff; }
+.status-badge-approved { background: #1c84c6; }
+.status-badge-completed { background: #1ab394; }
+.status-badge-rejected,
+.status-badge-cancelled { background: #ed5565; }
+
+.text-change-up { color: #1ab394; }
+.text-change-down { color: #ed5565; }
+
+.dashboard-stat .stat-percent {
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+@media (max-width: 991px) {
+    .dashboard-heading-actions {
+        padding-top: 0;
+        text-align: left !important;
+        margin-bottom: 10px;
+    }
+
+    .dashboard-flot,
+    .dashboard-flot .flot-chart-content {
+        height: 220px;
+    }
+}

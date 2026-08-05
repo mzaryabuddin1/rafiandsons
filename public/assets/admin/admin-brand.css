@@ -1,0 +1,41 @@
+/* Light layout helpers only — uses INSPINIA default palette (#1ab394, etc.) */
+
+.stat-widget {
+  border-radius: 4px;
+  padding: 18px 20px;
+  color: #fff;
+  margin-bottom: 20px;
+}
+
+.stat-widget h2 {
+  margin: 0;
+  font-weight: 700;
+}
+
+.stat-widget span {
+  opacity: 0.9;
+  font-size: 13px;
+}
+
+.sidebar-brand {
+  color: #fff;
+  font-weight: 700;
+  font-size: 15px;
+  padding: 8px 0 4px;
+}
+
+.sidebar-brand small {
+  display: block;
+  color: rgba(255, 255, 255, 0.65);
+  font-weight: 500;
+  font-size: 11px;
+}
+
+.modal-header.navy-bg .close {
+  color: #fff;
+  opacity: 0.85;
+}
+
+.modal-header.navy-bg .modal-title {
+  color: #fff;
+}
