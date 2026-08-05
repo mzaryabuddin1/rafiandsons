@@ -1,4 +1,53 @@
-/* Light layout helpers only — uses INSPINIA default palette (#1ab394, etc.) */
+/* Rafi & Sons brand overrides */
+
+:root {
+  --brand-primary: #d2070d;
+  --brand-primary-dark: #b0060b;
+  --brand-primary-darker: #960509;
+}
+
+/* Admin primary buttons */
+.btn-primary,
+.btn-primary:focus,
+.btn-primary:active:focus {
+  background-color: var(--brand-primary);
+  border-color: var(--brand-primary);
+  color: #fff;
+}
+
+.btn-primary:hover,
+.btn-primary:focus:hover,
+.btn-primary:active,
+.btn-primary.active,
+.open .dropdown-toggle.btn-primary,
+.btn-primary:active:hover,
+.btn-primary.active:hover,
+.btn-primary:active:focus,
+.btn-primary.active:focus {
+  background-color: var(--brand-primary-dark);
+  border-color: var(--brand-primary-darker);
+  color: #fff;
+}
+
+.btn-primary.disabled,
+.btn-primary[disabled],
+.btn-primary.disabled:hover,
+.btn-primary[disabled]:hover {
+  background-color: var(--brand-primary);
+  border-color: var(--brand-primary);
+  opacity: 0.65;
+}
+
+.minimalize-styl-2.btn-primary {
+  background: var(--brand-primary);
+  border-color: var(--brand-primary);
+}
+
+.minimalize-styl-2.btn-primary:hover,
+.minimalize-styl-2.btn-primary:focus {
+  background: var(--brand-primary-dark);
+  border-color: var(--brand-primary-darker);
+}
 
 .stat-widget {
   border-radius: 4px;
@@ -22,6 +71,41 @@
   font-weight: 700;
   font-size: 15px;
   padding: 8px 0 4px;
+}
+
+.admin-logo {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto 10px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  background: #fff;
+}
+
+.admin-logo-mini {
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+  margin: 0 auto;
+  background: #fff;
+}
+
+body.mini-navbar .logo-element .admin-logo-mini {
+  margin-top: 8px;
+}
+
+.admin-login-logo {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin: 0 auto 16px;
+  display: block;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 .sidebar-brand small {

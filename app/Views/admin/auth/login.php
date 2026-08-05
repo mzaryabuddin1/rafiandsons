@@ -18,7 +18,7 @@
 <div class="middle-box text-center loginscreen animated fadeInDown">
     <div>
         <div>
-            <h1 class="logo-name">RS</h1>
+            <img src="<?= base_url('assets/admin/rafi-and-sons-logo.png') ?>" alt="Rafi &amp; Sons" class="admin-login-logo">
         </div>
         <h3>Rafi &amp; Sons Admin</h3>
         <p>Sign in to manage products, installments, and orders.</p>

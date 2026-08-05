@@ -3,7 +3,7 @@
 <main class="main">
     <div class="page-content pt-10 pb-10">
         <div class="container text-center" style="max-width:720px;">
-            <i class="fas fa-check-circle" style="font-size:48px;color:#05b895;"></i>
+            <i class="fas fa-check-circle brand-icon-success" style="font-size:48px;"></i>
             <h2 class="title title-center mt-3 mb-3">Booking Request Submitted</h2>
             <p class="mb-2">Thank you, <?= esc($order['customer_name']) ?>.</p>
             <p class="mb-4">Your order number is <strong><?= esc($order['order_number']) ?></strong>.</p>

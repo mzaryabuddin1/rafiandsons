@@ -8,6 +8,7 @@ $menu = $activeMenu ?? '';
         <ul class="nav metismenu" id="side-menu">
             <li class="nav-header">
                 <div class="dropdown profile-element">
+                    <img src="<?= base_url('assets/admin/rafi-and-sons-logo.png') ?>" alt="Rafi &amp; Sons" class="admin-logo rounded-circle">
                     <div class="sidebar-brand">
                         Rafi &amp; Sons
                         <small>Admin Panel</small>
@@ -20,7 +21,9 @@ $menu = $activeMenu ?? '';
                         <li><a class="dropdown-item admin-logout-btn" href="#">Logout</a></li>
                     </ul>
                 </div>
-                <div class="logo-element">RS</div>
+                <div class="logo-element">
+                    <img src="<?= base_url('assets/admin/rafi-and-sons-logo.png') ?>" alt="Rafi &amp; Sons" class="admin-logo-mini">
+                </div>
             </li>
 
             <?php if ($auth->can('dashboard.view')): ?>

@@ -159,7 +159,7 @@ $sideBanner  = $homeSide[0] ?? null;
                         <?php
                         $midHref = \App\Models\BannerModel::resolveLink($mid['link'] ?? null);
                         $midBtn  = $mid['button_text'] ?: 'Shop Now';
-                        $midBg   = $mid['bg_color'] ?: ($i % 2 === 0 ? '#3cbea4' : '#444443');
+                        $midBg   = $mid['bg_color'] ?: ($i % 2 === 0 ? '#d2070d' : '#444443');
                         $midImg  = $mid['image'] ?: 'theme/images/demos/demo22/banner/' . (($i % 2) + 1) . '.jpg';
                         ?>
                         <div class="banner<?= ($i % 2) + 1 ?> banner banner-fixed overlay-zoom" style="background-color: <?= esc($midBg) ?>">
@@ -176,7 +176,7 @@ $sideBanner  = $homeSide[0] ?? null;
                         </div>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <div class="banner1 banner banner-fixed overlay-zoom" style="background-color: #3cbea4">
+                    <div class="banner1 banner banner-fixed overlay-zoom" style="background-color: #d2070d">
                         <figure>
                             <img src="<?= base_url('theme/images/demos/demo22/banner/1.jpg') ?>" alt="banner" width="580" height="219">
                         </figure>
