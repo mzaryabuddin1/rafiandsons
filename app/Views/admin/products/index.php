@@ -48,24 +48,6 @@
         </table>
     </div>
     <button type="button" class="btn btn-xs btn-primary" id="btn-add-plan"><i class="fa fa-plus"></i> Add Plan</button>
-    <?php if (! empty($plans)): ?>
-    <div class="m-t-sm">
-        <label class="text-muted">Copy from template:</label>
-        <select id="f-template" class="form-control input-sm" style="max-width:280px;display:inline-block;">
-            <option value="">Select template...</option>
-            <?php foreach ($plans as $p): ?>
-                <option value="<?= (int) $p['id'] ?>"
-                    data-name="<?= esc($p['name']) ?>"
-                    data-down="<?= esc($p['down_payment']) ?>"
-                    data-monthly="<?= esc($p['monthly_installment']) ?>"
-                    data-months="<?= esc($p['months']) ?>">
-                    <?= esc($p['name']) ?> (<?= (int) $p['months'] ?>m)
-                </option>
-            <?php endforeach; ?>
-        </select>
-        <button type="button" class="btn btn-xs btn-white" id="btn-use-template">Add from template</button>
-    </div>
-    <?php endif; ?>
 </div>
 
 <div class="row"><div class="col-md-6"><div class="form-group"><label>Meta Title</label><input class="form-control" name="meta_title" id="f-meta-title"></div></div>
@@ -131,16 +113,6 @@ $('#btn-add').on('click',function(){
 $('#f-installment').on('change', togglePlansSection);
 $('#btn-add-plan').on('click',function(){ $('#plans-body').append(planRowHtml({months:12})); });
 $(document).on('click','.btn-remove-plan',function(){ $(this).closest('tr').remove(); });
-$('#btn-use-template').on('click',function(){
-    var opt=$('#f-template option:selected');
-    if(!opt.val()) return;
-    $('#plans-body').append(planRowHtml({
-        name: opt.data('name'),
-        down_payment: opt.data('down'),
-        monthly_installment: opt.data('monthly'),
-        months: opt.data('months')
-    }));
-});
 $('#search').on('keyup',loadList);
 $('#main-form').on('submit',function(e){
     e.preventDefault();

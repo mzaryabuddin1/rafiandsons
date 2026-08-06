@@ -3,7 +3,6 @@
 namespace App\Controllers\Admin;
 
 use App\Models\CategoryModel;
-use App\Models\InstallmentPlanModel;
 use App\Models\ProductModel;
 
 class ProductsController extends BaseAdminController
@@ -17,7 +16,6 @@ class ProductsController extends BaseAdminController
             'canUpdate'  => $this->auth->can('products.update'),
             'canDelete'  => $this->auth->can('products.delete'),
             'categories' => model(CategoryModel::class)->flatOptions(),
-            'plans'      => model(InstallmentPlanModel::class)->globalActive(),
         ]);
     }
 
@@ -58,7 +56,6 @@ class ProductsController extends BaseAdminController
             return $this->jsonError('Product not found.', null, 404);
         }
 
-        $row['plan_ids'] = $model->planIds((int) $id);
         $row['plans'] = $model->plansForProduct((int) $id);
         $row['images_list'] = $row['images'] ? json_decode($row['images'], true) : [];
 
@@ -154,11 +151,6 @@ class ProductsController extends BaseAdminController
             }
         }
 
-        $planIds = $this->request->getPost('plan_ids');
-        if (! is_array($planIds)) {
-            $planIds = $planIds ? [$planIds] : [];
-        }
-
         $cashAvailable = (int) $this->request->getPost('cash_available') === 1 ? 1 : 0;
         $installmentAvailable = (int) $this->request->getPost('installment_available') === 1 ? 1 : 0;
         if ($cashAvailable === 0 && $installmentAvailable === 0) {
@@ -171,7 +163,6 @@ class ProductsController extends BaseAdminController
             $comparePrice = null;
         }
 
-        // Preferred: full plan rows from product form
         $plansRaw = $this->request->getPost('plans');
         $plans = [];
         if (is_array($plansRaw)) {
@@ -192,21 +183,6 @@ class ProductsController extends BaseAdminController
                     'down_payment'        => $down,
                     'monthly_installment' => $monthly,
                     'months'              => max(1, $months ?: 12),
-                ];
-            }
-        } elseif ($planIds) {
-            // Backward compatible: selected global template IDs → copy as product plans
-            foreach ($planIds as $pid) {
-                $template = model(InstallmentPlanModel::class)->find((int) $pid);
-                if (! $template) {
-                    continue;
-                }
-                $plans[] = [
-                    'id'                  => null,
-                    'name'                => $template['name'],
-                    'down_payment'        => (float) $template['down_payment'],
-                    'monthly_installment' => (float) $template['monthly_installment'],
-                    'months'              => (int) $template['months'],
                 ];
             }
         }

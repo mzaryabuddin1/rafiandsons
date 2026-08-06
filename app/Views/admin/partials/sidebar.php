@@ -32,18 +32,15 @@ $menu = $activeMenu ?? '';
             </li>
             <?php endif; ?>
 
-            <?php if ($auth->canAny(['categories.view', 'products.view', 'installment_plans.view'])): ?>
-            <li class="<?= in_array($menu, ['categories', 'products', 'plans'], true) ? 'active' : '' ?>">
+            <?php if ($auth->canAny(['categories.view', 'products.view'])): ?>
+            <li class="<?= in_array($menu, ['categories', 'products'], true) ? 'active' : '' ?>">
                 <a href="#"><i class="fa fa-cube"></i> <span class="nav-label">Catalog</span><span class="fa arrow"></span></a>
-                <ul class="nav nav-second-level collapse <?= in_array($menu, ['categories', 'products', 'plans'], true) ? 'in' : '' ?>">
+                <ul class="nav nav-second-level collapse <?= in_array($menu, ['categories', 'products'], true) ? 'in' : '' ?>">
                     <?php if ($auth->can('categories.view')): ?>
                     <li class="<?= $menu === 'categories' ? 'active' : '' ?>"><a href="<?= site_url('admin/categories') ?>">Categories</a></li>
                     <?php endif; ?>
                     <?php if ($auth->can('products.view')): ?>
                     <li class="<?= $menu === 'products' ? 'active' : '' ?>"><a href="<?= site_url('admin/products') ?>">Products</a></li>
-                    <?php endif; ?>
-                    <?php if ($auth->can('installment_plans.view')): ?>
-                    <li class="<?= $menu === 'plans' ? 'active' : '' ?>"><a href="<?= site_url('admin/installment-plans') ?>">Installment Plans</a></li>
                     <?php endif; ?>
                 </ul>
             </li>

@@ -33,15 +33,30 @@ window.StoreApp = (function ($) {
     setTimeout(function () { $el.removeClass('show'); }, 2800);
   }
 
-  function request(url, method, data) {
+  function request(url, method, data, isFormData) {
     method = (method || 'GET').toUpperCase();
-    return $.ajax({
+    var ajaxData = data;
+    var options = {
       url: url,
       method: method,
       dataType: 'json',
-      headers: csrfHeader(),
-      data: method === 'GET' ? (data || {}) : withCsrf(data)
-    }).fail(function (xhr) {
+      headers: csrfHeader()
+    };
+
+    if (method === 'GET') {
+      ajaxData = data || {};
+    } else if (isFormData && data instanceof FormData) {
+      data.append(csrfName(), csrfToken());
+      ajaxData = data;
+      options.processData = false;
+      options.contentType = false;
+    } else {
+      ajaxData = withCsrf(data);
+    }
+
+    options.data = ajaxData;
+
+    return $.ajax(options).fail(function (xhr) {
       var msg = (xhr.responseJSON && xhr.responseJSON.message) || 'Request failed';
       toast(msg);
     });
@@ -480,6 +495,35 @@ window.StoreApp = (function ($) {
   }
 
   initProductSearch();
+
+  function initAccountMenu() {
+    var $toggle = $('#qb-account-toggle');
+    var $dropdown = $('#qb-account-dropdown');
+
+    $toggle.on('click', function (e) {
+      e.stopPropagation();
+      var open = $dropdown.hasClass('is-open');
+      $dropdown.toggleClass('is-open', !open);
+      $toggle.attr('aria-expanded', open ? 'false' : 'true');
+    });
+
+    $(document).on('click', function () {
+      $dropdown.removeClass('is-open');
+      $toggle.attr('aria-expanded', 'false');
+    });
+
+    function logout(e) {
+      e.preventDefault();
+      request((window.STORE_BASE || '') + '/account/logout', 'POST', {})
+        .done(function (res) {
+          window.location.href = res.data.redirect;
+        });
+    }
+
+    $('#header-logout-link, .mobile-logout-link').on('click', logout);
+  }
+
+  initAccountMenu();
 
   return {
     request: request,

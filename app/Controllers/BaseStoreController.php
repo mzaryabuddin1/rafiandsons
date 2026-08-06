@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Libraries\CartService;
+use App\Libraries\StoreAuth;
 use App\Models\CategoryModel;
 use App\Models\ContentModel;
 use App\Models\SettingModel;
@@ -28,6 +29,7 @@ abstract class BaseStoreController extends BaseController
         $data['cartCount'] = $this->cart->count();
         $data['cartItems'] = $this->cart->items();
         $data['cartSubtotal'] = $this->cart->subtotal();
+        $data['storeCustomer'] = (new StoreAuth())->user();
         $data['pageTitle'] = $data['pageTitle'] ?? ($settings['site_name'] ?? 'Rafi & Sons');
         $data['activeMenu'] = $data['activeMenu'] ?? '';
         $data['showFixedCats'] = $data['showFixedCats'] ?? false;

@@ -57,11 +57,7 @@ foreach ($items ?? [] as $item) {
                             <?php foreach ($items as $item): ?>
                                 <?php
                                 $cartKey = $item['cart_key'] ?? (string) $item['product_id'];
-                                $productPlans = $plansByProduct[$item['product_id']] ?? [];
                                 $isInstallment = ($item['payment_type'] ?? 'cash') === 'installment';
-                                $itemCash = (int) ($item['cash_available'] ?? 1) === 1;
-                                $itemInst = (int) ($item['installment_available'] ?? 0) === 1;
-                                $bothModes = $itemCash && $itemInst;
                                 $cashPrice = (float) ($item['cash_price'] ?? $item['price']);
                                 $lineTotal = (float) $item['price'] * (int) $item['qty'];
                                 ?>
@@ -107,37 +103,17 @@ foreach ($items ?? [] as $item) {
                                     </div>
 
                                     <div class="qb-cart-item-plan" data-label="Payment">
-                                        <?php if ($bothModes): ?>
-                                        <div class="qb-cart-pay-toggle">
-                                            <button type="button" class="qb-cart-pay-btn <?= ! $isInstallment ? 'is-active' : '' ?>" data-payment="cash">Cash</button>
-                                            <button type="button" class="qb-cart-pay-btn <?= $isInstallment ? 'is-active' : '' ?>" data-payment="installment">Installment</button>
-                                        </div>
-                                        <?php endif; ?>
-
-                                        <?php if ($itemInst): ?>
-                                        <div class="qb-cart-plan-wrap" <?= $bothModes && ! $isInstallment ? 'hidden' : '' ?>>
-                                            <select class="cart-plan qb-cart-plan-select">
-                                                <?php foreach ($productPlans as $plan): ?>
-                                                    <option
-                                                        value="<?= (int) $plan['id'] ?>"
-                                                        <?= ((int) ($item['plan_id'] ?? 0) === (int) $plan['id']) ? 'selected' : '' ?>
-                                                        data-down="<?= (float) ($plan['down_payment'] ?? 0) ?>"
-                                                        data-monthly="<?= (float) ($plan['monthly_installment'] ?? 0) ?>"
-                                                        data-months="<?= (int) ($plan['months'] ?? 0) ?>"
-                                                        data-total="<?= (float) ($plan['total_payable'] ?? 0) ?>"
-                                                    ><?= esc($plan['name']) ?></option>
-                                                <?php endforeach; ?>
-                                            </select>
-                                            <p class="qb-cart-plan-hint">
-                                                <?php if ($isInstallment && ! empty($item['monthly_installment'])): ?>
+                                        <?php if ($isInstallment): ?>
+                                            <?php if (! empty($item['plan_name'])): ?>
+                                                <span class="qb-cart-pay-label"><?= esc($item['plan_name']) ?></span>
+                                            <?php endif; ?>
+                                            <?php if (! empty($item['monthly_installment'])): ?>
+                                                <p class="qb-cart-plan-hint">
                                                     Rs. <?= number_format((float) $item['monthly_installment'], 0) ?> × <?= (int) $item['months'] ?> months
                                                     · Total Rs. <?= number_format((float) ($item['total_payable'] ?? 0), 0) ?>
-                                                <?php else: ?>
-                                                    Select installment plan
-                                                <?php endif; ?>
-                                            </p>
-                                        </div>
-                                        <?php elseif ($itemCash): ?>
+                                                </p>
+                                            <?php endif; ?>
+                                        <?php else: ?>
                                             <span class="qb-cart-cash-label">Full cash · PKR <?= number_format($cashPrice, 0) ?></span>
                                         <?php endif; ?>
                                     </div>
@@ -164,7 +140,7 @@ foreach ($items ?? [] as $item) {
                             <span>Total order value</span>
                             <strong id="cart-grand-label">PKR <?= number_format($cartGrandTotal ?? $cartSubtotal, 0) ?></strong>
                         </div>
-                        <p class="qb-cart-summary-note">Same product with different payment or plan appears as separate lines. Identical lines merge automatically.</p>
+                        <p class="qb-cart-summary-note">Payment type is chosen when adding to cart. To change it, remove the item and add again with your preferred option.</p>
                         <a href="<?= site_url('checkout') ?>" class="qb-btn qb-btn-primary qb-btn-block">Proceed to Checkout</a>
                         <a href="<?= site_url('shop') ?>" class="qb-btn qb-btn-outline qb-btn-block">Continue Shopping</a>
                     </div>
@@ -202,19 +178,6 @@ foreach ($items ?? [] as $item) {
         $('#cart-subtotal-label').text(formatMoney(dueNow));
     }
 
-    function updatePlanHint($select) {
-        var $option = $select.find('option:selected');
-        var $hint = $select.siblings('.qb-cart-plan-hint');
-        if (!$option.val()) {
-            $hint.text('Select installment plan');
-            return;
-        }
-        var monthly = Number($option.data('monthly') || 0);
-        var months = Number($option.data('months') || 0);
-        var total = Number($option.data('total') || 0);
-        $hint.text('Rs. ' + monthly.toLocaleString() + ' × ' + months + ' months · Total Rs. ' + total.toLocaleString());
-    }
-
     $(document).on('click', '.qb-qty-minus', function () {
         var $input = $(this).siblings('.cart-qty');
         var qty = Math.max(1, (parseInt($input.val(), 10) || 1) - 1);
@@ -240,43 +203,6 @@ foreach ($items ?? [] as $item) {
             updateLineTotal($item);
             updateSubtotal();
             if (res.data) StoreApp.updateCartBadge(res.data.count, res.data.subtotal);
-        });
-    });
-
-    $(document).on('change', '.cart-plan', function () {
-        var $item = $(this).closest('.qb-cart-item');
-        updatePlanHint($(this));
-
-        StoreApp.request(STORE_BASE + '/cart/set-plan', 'POST', {
-            cart_key: cartKey($item),
-            plan_id: $(this).val()
-        }).done(function (res) {
-            StoreApp.toast(res.message);
-            if (res.data && res.data.cart_key && res.data.cart_key !== cartKey($item)) {
-                location.reload();
-                return;
-            }
-            if (res.data && res.data.item) {
-                $item.data('unit-price', res.data.item.price);
-                $item.find('.qb-cart-item-price strong').first().text(formatMoney(res.data.item.price));
-                updateLineTotal($item);
-                updateSubtotal();
-                StoreApp.updateCartBadge(null, res.data.subtotal);
-            }
-        });
-    });
-
-    $(document).on('click', '.qb-cart-pay-btn', function () {
-        var $item = $(this).closest('.qb-cart-item');
-        var payment = $(this).data('payment');
-        var planId = payment === 'installment' ? $item.find('.cart-plan').val() : '';
-
-        StoreApp.request(STORE_BASE + '/cart/set-payment', 'POST', {
-            cart_key: cartKey($item),
-            payment_type: payment,
-            plan_id: planId
-        }).done(function (res) {
-            if (res.success) location.reload();
         });
     });
 

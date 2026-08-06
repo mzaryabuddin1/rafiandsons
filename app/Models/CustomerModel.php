@@ -13,6 +13,6 @@ class CustomerModel extends Model
     protected $useSoftDeletes   = true;
     protected $useTimestamps    = true;
     protected $allowedFields    = [
-        'name', 'email', 'phone', 'cnic', 'address', 'city', 'notes', 'status',
+        'name', 'email', 'phone', 'password', 'profile_image', 'cnic', 'address', 'city', 'notes', 'status', 'last_login_at',
     ];
 }

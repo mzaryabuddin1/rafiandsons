@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Libraries\OrderMailService;
+use App\Libraries\StoreAuth;
 use App\Models\CustomerModel;
 use App\Models\OrderItemModel;
 use App\Models\OrderModel;
@@ -14,7 +15,6 @@ class CartController extends BaseStoreController
     {
         $items = $this->cart->items();
         $productModel = model(ProductModel::class);
-        $plansByProduct = [];
 
         foreach ($items as $key => $item) {
             $pid = (int) $item['product_id'];
@@ -29,16 +29,12 @@ class CartController extends BaseStoreController
                     $items[$key]['cash_price'] = (float) $product['price'];
                 }
             }
-            if ((int) ($items[$key]['installment_available'] ?? 0) === 1) {
-                $plansByProduct[$pid] = $productModel->plansForProduct($pid);
-            }
         }
 
         return $this->storeView('cart', [
             'pageTitle'      => 'Shopping Cart',
             'activeMenu'     => 'cart',
             'items'          => $items,
-            'plansByProduct' => $plansByProduct,
             'cartGrandTotal' => $this->cart->grandTotal(),
             'bodyClass'      => 'store-qist',
             'cssFile'        => 'demo22.min.css',
@@ -66,9 +62,23 @@ class CartController extends BaseStoreController
             'hasCash'          => $this->cart->hasCashItems(),
             'orderPaymentType' => $this->cart->orderPaymentType(),
             'cartGrandTotal'   => $this->cart->grandTotal(),
+            'checkoutCustomer' => $this->checkoutCustomerData(),
+            'isLoggedIn'       => (new StoreAuth())->check(),
             'bodyClass'        => 'store-qist',
             'cssFile'          => 'demo22.min.css',
         ]);
+    }
+
+    protected function checkoutCustomerData(): array
+    {
+        $auth = new StoreAuth();
+        if (! $auth->check()) {
+            return [];
+        }
+
+        $customer = model(CustomerModel::class)->find($auth->id());
+
+        return is_array($customer) ? $customer : ($auth->user() ?? []);
     }
 
     public function add()
@@ -175,7 +185,9 @@ class CartController extends BaseStoreController
             }
         }
 
-        $customerId = model(CustomerModel::class)->insert([
+        $customerModel = model(CustomerModel::class);
+        $auth = new StoreAuth();
+        $customerPayload = [
             'name'    => $name,
             'email'   => $email ?: null,
             'phone'   => $phone,
@@ -184,7 +196,21 @@ class CartController extends BaseStoreController
             'city'    => $city ?: null,
             'notes'   => $notes ?: null,
             'status'  => 1,
-        ]);
+        ];
+
+        if ($auth->check()) {
+            $customerId = $auth->id();
+            $customerModel->update($customerId, $customerPayload);
+            $auth->refreshFromDb();
+        } else {
+            $existing = $customerModel->where('phone', $phone)->first();
+            if ($existing) {
+                $customerModel->update($existing['id'], $customerPayload);
+                $customerId = (int) $existing['id'];
+            } else {
+                $customerId = $customerModel->insert($customerPayload);
+            }
+        }
 
         $dueNow = $this->cart->subtotal();
         $grandTotal = $this->cart->grandTotal();
@@ -220,7 +246,7 @@ class CartController extends BaseStoreController
             'processing_charges'  => 0,
             'total_payable'       => $grandTotal,
             'subtotal'            => $dueNow,
-            'status'              => 'new',
+            'status'              => 'processing',
             'admin_notes'         => $notes,
         ]);
 

@@ -25,6 +25,7 @@ class CustomersController extends BaseAdminController
         }
 
         $search = trim((string) $this->request->getGet('search'));
+        $registered = $this->request->getGet('registered');
         $model = model(CustomerModel::class);
         if ($search !== '') {
             $model->groupStart()
@@ -34,9 +35,31 @@ class CustomersController extends BaseAdminController
                 ->groupEnd();
         }
 
+        if ($registered === '1') {
+            $model->where('password IS NOT NULL', null, false)
+                ->where('password !=', '');
+        } elseif ($registered === '0') {
+            $model->groupStart()
+                ->where('password', null)
+                ->orWhere('password', '')
+            ->groupEnd();
+        }
+
+        $items = $model->orderBy('id', 'DESC')->findAll();
+        foreach ($items as &$item) {
+            $item['is_registered'] = $this->isRegisteredCustomer($item);
+            unset($item['password']);
+        }
+        unset($item);
+
         return $this->jsonSuccess('Customers loaded.', [
-            'items' => $model->orderBy('id', 'DESC')->findAll(),
+            'items' => $items,
         ]);
+    }
+
+    private function isRegisteredCustomer(array $customer): bool
+    {
+        return trim((string) ($customer['password'] ?? '')) !== '';
     }
 
     public function show($id)
@@ -51,6 +74,8 @@ class CustomersController extends BaseAdminController
         }
 
         $orders = model(OrderModel::class)->where('customer_id', $id)->orderBy('id', 'DESC')->findAll(20);
+        $row['is_registered'] = $this->isRegisteredCustomer($row);
+        unset($row['password']);
         $row['orders'] = $orders;
 
         return $this->jsonSuccess('Customer loaded.', $row);

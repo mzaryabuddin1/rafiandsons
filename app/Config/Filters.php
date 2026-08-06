@@ -36,6 +36,8 @@ class Filters extends BaseFilters
         'performance'   => PerformanceMetrics::class,
         'adminauth'     => \App\Filters\AdminAuthFilter::class,
         'guestadmin'    => \App\Filters\GuestAdminFilter::class,
+        'storeauth'     => \App\Filters\StoreAuthFilter::class,
+        'gueststore'    => \App\Filters\GuestStoreFilter::class,
         'permission'    => \App\Filters\PermissionFilter::class,
     ];
 

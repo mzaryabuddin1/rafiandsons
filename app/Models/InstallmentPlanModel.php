@@ -16,14 +16,4 @@ class InstallmentPlanModel extends Model
         'product_id', 'name', 'down_payment', 'monthly_installment', 'months', 'total_payable',
         'processing_charges', 'terms', 'status',
     ];
-
-    /** Global reusable templates (not tied to one product). */
-    public function globalActive(): array
-    {
-        return $this->where('status', 1)
-            ->where('product_id', null)
-            ->orderBy('months', 'ASC')
-            ->orderBy('name', 'ASC')
-            ->findAll();
-    }
 }

@@ -5,6 +5,9 @@ $whatsapp = $settings['whatsapp_number'] ?? $phone;
 $menu = $activeMenu ?? '';
 $categoryTree = $categoryTree ?? [];
 $searchCategory = $searchCategory ?? '';
+$storeAuth = new \App\Libraries\StoreAuth();
+$isLoggedIn = ! empty($storeCustomer);
+$avatarUrl = $isLoggedIn ? $storeAuth->profileImageUrl($storeCustomer) : '';
 ?>
 <header class="qb-header">
     <div class="qb-header-main">
@@ -71,10 +74,32 @@ $searchCategory = $searchCategory ?? '';
                         <span class="qb-cart-count" id="header-cart-count"><?= (int) ($cartCount ?? 0) ?></span>
                         <span class="d-none d-lg-inline">Cart</span>
                     </a>
-                    <a href="<?= site_url('contact') ?>" class="qb-account-box d-none d-md-flex">
-                        <i class="far fa-user"></i>
-                        <span>Contact Us</span>
-                    </a>
+                    <?php if ($isLoggedIn): ?>
+                    <div class="qb-account-menu">
+                        <button type="button" class="qb-account-box qb-account-box--logged" id="qb-account-toggle" aria-haspopup="true" aria-expanded="false">
+                            <img src="<?= esc($avatarUrl) ?>" alt="" class="qb-account-thumb">
+                            <span class="d-none d-lg-inline"><?= esc($storeCustomer['name'] ?? 'Account') ?></span>
+                            <i class="fas fa-chevron-down qb-account-chevron d-none d-lg-inline"></i>
+                        </button>
+                        <div class="qb-account-dropdown" id="qb-account-dropdown">
+                            <a href="<?= site_url('account/profile') ?>"><i class="far fa-user"></i> Profile</a>
+                            <a href="<?= site_url('account/orders') ?>"><i class="d-icon-bag"></i> My Orders</a>
+                            <a href="#" id="header-logout-link"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
+                        </div>
+                    </div>
+                    <?php else: ?>
+                    <div class="qb-account-menu">
+                        <button type="button" class="qb-account-box" id="qb-account-toggle" aria-haspopup="true" aria-expanded="false">
+                            <i class="far fa-user"></i>
+                            <span class="d-none d-lg-inline">Account</span>
+                            <i class="fas fa-chevron-down qb-account-chevron d-none d-lg-inline"></i>
+                        </button>
+                        <div class="qb-account-dropdown" id="qb-account-dropdown">
+                            <a href="<?= site_url('account/login') ?>"><i class="fas fa-sign-in-alt"></i> Sign In</a>
+                            <a href="<?= site_url('account/register') ?>"><i class="fas fa-user-plus"></i> Sign Up</a>
+                        </div>
+                    </div>
+                    <?php endif; ?>
                     <button type="button" class="qb-mobile-toggle mobile-menu-toggle" aria-label="Menu">
                         <i class="d-icon-bars2"></i>
                     </button>
@@ -102,7 +127,13 @@ $searchCategory = $searchCategory ?? '';
                     <li class="<?= $menu === 'contact' ? 'active' : '' ?>"><a href="<?= site_url('contact') ?>">Contact</a></li>
                 </ul>
                 <div class="qb-nav-right">
-                    <a href="<?= site_url('contact') ?>">Track Your Order</a>
+                    <?php if ($isLoggedIn): ?>
+                        <a href="<?= site_url('account/profile') ?>">My Account</a>
+                    <?php else: ?>
+                        <a href="<?= site_url('account/login') ?>">Sign In</a>
+                        <a href="<?= site_url('account/register') ?>" class="qb-nav-signup">Sign Up</a>
+                    <?php endif; ?>
+                    <a href="<?= site_url('track-order') ?>">Track Your Order</a>
                 </div>
             </nav>
         </div>
@@ -140,7 +171,16 @@ $searchCategory = $searchCategory ?? '';
             <li><a href="<?= site_url('about') ?>">About</a></li>
             <li><a href="<?= site_url('faq') ?>">FAQ</a></li>
             <li><a href="<?= site_url('contact') ?>">Contact</a></li>
+            <li><a href="<?= site_url('track-order') ?>">Track Your Order</a></li>
             <li><a href="<?= site_url('cart') ?>">Cart</a></li>
+            <?php if ($isLoggedIn): ?>
+            <li><a href="<?= site_url('account/profile') ?>">My Profile</a></li>
+            <li><a href="<?= site_url('account/orders') ?>">My Orders</a></li>
+            <li><a href="#" class="mobile-logout-link">Sign Out</a></li>
+            <?php else: ?>
+            <li><a href="<?= site_url('account/login') ?>">Sign In</a></li>
+            <li><a href="<?= site_url('account/register') ?>">Sign Up</a></li>
+            <?php endif; ?>
         </ul>
     </div>
 </div>

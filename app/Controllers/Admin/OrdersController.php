@@ -19,7 +19,11 @@ class OrdersController extends BaseAdminController
             'canUpdate'  => $this->auth->can('orders.update'),
             'canDelete'  => $this->auth->can('orders.delete'),
             'statuses'   => OrderModel::STATUSES,
-            'plans'      => model(InstallmentPlanModel::class)->where('status', 1)->findAll(),
+            'plans'      => model(InstallmentPlanModel::class)
+                ->where('status', 1)
+                ->where('product_id IS NOT NULL', null, false)
+                ->orderBy('name', 'ASC')
+                ->findAll(),
             'products'   => model(ProductModel::class)->where('status', 1)->findAll(),
             'customers'  => model(CustomerModel::class)->where('status', 1)->orderBy('name')->findAll(),
         ]);
@@ -123,7 +127,7 @@ class OrdersController extends BaseAdminController
             'customer_address' => $this->request->getPost('customer_address'),
             'customer_city'    => $this->request->getPost('customer_city'),
             'admin_notes'      => $this->request->getPost('admin_notes'),
-            'status'           => $this->request->getPost('status') ?: 'new',
+            'status'           => $this->request->getPost('status') ?: 'processing',
         ];
 
         if (! array_key_exists($data['status'], OrderModel::STATUSES)) {
@@ -227,7 +231,7 @@ class OrdersController extends BaseAdminController
                 'processing_charges'  => $plan['processing_charges'] ?? 0,
                 'total_payable'       => $plan['total_payable'] ?? $line,
                 'subtotal'            => $line,
-                'status'              => 'new',
+                'status'              => 'processing',
                 'admin_notes'         => $this->request->getPost('admin_notes'),
             ],
             'items' => [[

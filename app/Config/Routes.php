@@ -21,8 +21,31 @@ $routes->post('cart/set-payment', 'CartController::setPayment', ['filter' => 'cs
 $routes->post('cart/remove', 'CartController::remove', ['filter' => 'csrf']);
 $routes->post('checkout/place-order', 'CartController::placeOrder', ['filter' => 'csrf']);
 
+$routes->group('account', static function ($routes) {
+    $routes->group('', ['filter' => 'gueststore'], static function ($routes) {
+        $routes->get('login', 'AccountController::login');
+        $routes->post('login', 'AccountController::attemptLogin', ['filter' => 'csrf']);
+        $routes->get('register', 'AccountController::register');
+        $routes->post('register/send-otp', 'AccountController::sendRegisterOtp', ['filter' => 'csrf']);
+        $routes->post('register/verify-otp', 'AccountController::verifyRegisterOtp', ['filter' => 'csrf']);
+        $routes->get('forgot-password', 'AccountController::forgotPassword');
+        $routes->post('forgot-password/send-otp', 'AccountController::sendForgotOtp', ['filter' => 'csrf']);
+        $routes->post('forgot-password/reset', 'AccountController::resetPasswordWithOtp', ['filter' => 'csrf']);
+    });
+
+    $routes->post('logout', 'AccountController::logout', ['filter' => 'csrf']);
+
+    $routes->group('', ['filter' => 'storeauth'], static function ($routes) {
+        $routes->get('profile', 'AccountController::profile');
+        $routes->post('profile', 'AccountController::updateProfile', ['filter' => 'csrf']);
+        $routes->get('orders', 'AccountController::orders');
+    });
+});
+
 $routes->get('about', 'Pages::about');
 $routes->get('contact', 'Pages::contact');
+$routes->get('track-order', 'TrackOrderController::index');
+$routes->post('track-order/lookup', 'TrackOrderController::lookup', ['filter' => 'csrf']);
 $routes->get('faq', 'Pages::faq');
 $routes->get('privacy', 'Pages::privacy');
 $routes->get('terms', 'Pages::terms');
@@ -56,14 +79,6 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], static functio
         $routes->post('api/products', 'ProductsController::store', ['filter' => ['csrf', 'permission:products.create']]);
         $routes->post('api/products/(:num)', 'ProductsController::update/$1', ['filter' => ['csrf', 'permission:products.update']]);
         $routes->post('api/products/(:num)/delete', 'ProductsController::delete/$1', ['filter' => ['csrf', 'permission:products.delete']]);
-
-        // Installment plans
-        $routes->get('installment-plans', 'InstallmentPlansController::index', ['filter' => 'permission:installment_plans.view']);
-        $routes->get('api/installment-plans', 'InstallmentPlansController::list', ['filter' => 'permission:installment_plans.view']);
-        $routes->get('api/installment-plans/(:num)', 'InstallmentPlansController::show/$1', ['filter' => 'permission:installment_plans.view']);
-        $routes->post('api/installment-plans', 'InstallmentPlansController::store', ['filter' => ['csrf', 'permission:installment_plans.create']]);
-        $routes->post('api/installment-plans/(:num)', 'InstallmentPlansController::update/$1', ['filter' => ['csrf', 'permission:installment_plans.update']]);
-        $routes->post('api/installment-plans/(:num)/delete', 'InstallmentPlansController::delete/$1', ['filter' => ['csrf', 'permission:installment_plans.delete']]);
 
         // Customers
         $routes->get('customers', 'CustomersController::index', ['filter' => 'permission:customers.view']);
