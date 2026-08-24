@@ -2136,6 +2136,15 @@ body.qb-qv-open {
   margin-top: 0;
 }
 
+.store-qist .footer .widget-body {
+  max-height: none;
+  overflow: visible;
+}
+
+.store-qist .footer .widget-body li {
+  margin-bottom: 6px;
+}
+
 /* Responsive */
 @media (max-width: 991px) {
   .qb-search-form {

@@ -32,16 +32,23 @@ $address = $settings['contact_address'] ?? '';
                         <ul class="widget-body">
                             <?php if ($phone): ?><li><label>Phone:</label> <a href="tel:<?= esc($phone) ?>"><?= esc($phone) ?></a></li><?php endif; ?>
                             <?php if ($email): ?><li><label>Email:</label> <a href="mailto:<?= esc($email) ?>"><?= esc($email) ?></a></li><?php endif; ?>
-                            <?php if ($address): ?><li><label>Address:</label> <a href="#"><?= esc($address) ?></a></li><?php endif; ?>
+                            <?php if ($address): ?><li><label>Address:</label> <a href="<?= site_url('contact') ?>"><?= esc($address) ?></a></li><?php endif; ?>
+                            <li><a href="<?= site_url('contact') ?>">Contact Us</a></li>
+                            <li><a href="<?= site_url('faq') ?>">FAQ</a></li>
+                            <li><a href="<?= site_url('track-order') ?>">Track Order</a></li>
                         </ul>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <div class="widget ml-lg-4">
-                        <h4 class="widget-title">About Us</h4>
+                        <h4 class="widget-title">Information</h4>
                         <ul class="widget-body">
                             <li><a href="<?= site_url('about') ?>">About Us</a></li>
-                            <li><a href="<?= site_url('installment-terms') ?>">Installment Terms</a></li>
+                            <li><a href="<?= site_url('installment-terms') ?>">Installment Policy</a></li>
+                            <li><a href="<?= site_url('return-policy') ?>">Return and Refund Policy</a></li>
+                            <li><a href="<?= site_url('delivery-policy') ?>">Delivery Policy</a></li>
+                            <li><a href="<?= site_url('payment-policy') ?>">Payment Policy</a></li>
+                            <li><a href="<?= site_url('furniture-policy') ?>">Furniture Policy</a></li>
                             <li><a href="<?= site_url('terms') ?>">Terms &amp; Conditions</a></li>
                             <li><a href="<?= site_url('privacy') ?>">Privacy Policy</a></li>
                         </ul>
@@ -51,7 +58,7 @@ $address = $settings['contact_address'] ?? '';
                     <div class="widget ml-lg-4">
                         <h4 class="widget-title">Categories</h4>
                         <ul class="widget-body">
-                            <?php foreach (array_slice($categoryTree ?? $categories, 0, 6) as $cat): ?>
+                            <?php foreach (array_slice($categoryTree ?? $categories, 0, 8) as $cat): ?>
                                 <li><a href="<?= site_url('shop?category=' . urlencode($cat['slug'])) ?>"><?= esc($cat['name']) ?></a></li>
                             <?php endforeach; ?>
                         </ul>
@@ -59,12 +66,14 @@ $address = $settings['contact_address'] ?? '';
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <div class="widget">
-                        <h4 class="widget-title">My Cart</h4>
+                        <h4 class="widget-title">My Account</h4>
                         <ul class="widget-body">
+                            <li><a href="<?= site_url('account/login') ?>">Sign In</a></li>
+                            <li><a href="<?= site_url('account/register') ?>">Create Account</a></li>
                             <li><a href="<?= site_url('cart') ?>">View Cart</a></li>
                             <li><a href="<?= site_url('checkout') ?>">Checkout</a></li>
-                            <li><a href="<?= site_url('faq') ?>">FAQ</a></li>
-                            <li><a href="<?= site_url('contact') ?>">Contact</a></li>
+                            <li><a href="<?= site_url('account/orders') ?>">My Orders</a></li>
+                            <li><a href="<?= site_url('shop') ?>">Shop</a></li>
                         </ul>
                     </div>
                 </div>

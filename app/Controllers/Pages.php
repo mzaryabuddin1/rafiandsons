@@ -6,13 +6,7 @@ class Pages extends BaseStoreController
 {
     public function about()
     {
-        return $this->storeView('page', [
-            'pageTitle'  => 'About Us',
-            'activeMenu' => 'about',
-            'content'    => $this->getContent('about-us'),
-            'cssFile'    => 'demo22.min.css',
-            'bodyClass'  => 'store-qist',
-        ]);
+        return $this->page('About Us', 'about-us', 'about');
     }
 
     public function contact()
@@ -42,31 +36,50 @@ class Pages extends BaseStoreController
 
     public function privacy()
     {
-        return $this->storeView('page', [
-            'pageTitle' => 'Privacy Policy',
-            'content'   => $this->getContent('privacy-policy'),
-            'cssFile'   => 'demo22.min.css',
-            'bodyClass' => 'store-qist',
-        ]);
+        return $this->page('Privacy Policy', 'privacy-policy');
     }
 
     public function terms()
     {
-        return $this->storeView('page', [
-            'pageTitle' => 'Terms & Conditions',
-            'content'   => $this->getContent('terms-and-conditions'),
-            'cssFile'   => 'demo22.min.css',
-            'bodyClass' => 'store-qist',
-        ]);
+        return $this->page('Terms & Conditions', 'terms-and-conditions');
     }
 
     public function installmentTerms()
     {
+        return $this->page('Installment Policy', 'installment-terms');
+    }
+
+    public function returnPolicy()
+    {
+        return $this->page('Return and Refund Policy', 'return-policy');
+    }
+
+    public function deliveryPolicy()
+    {
+        return $this->page('Delivery Policy', 'delivery-policy');
+    }
+
+    public function paymentPolicy()
+    {
+        return $this->page('Payment Policy', 'payment-policy');
+    }
+
+    public function furniturePolicy()
+    {
+        return $this->page('Furniture Policy', 'furniture-policy');
+    }
+
+    private function page(string $title, string $slug, string $activeMenu = ''): string
+    {
         return $this->storeView('page', [
-            'pageTitle' => 'Installment Terms',
-            'content'   => $this->getContent('installment-terms'),
-            'cssFile'   => 'demo22.min.css',
-            'bodyClass' => 'store-qist',
+            'pageTitle'  => $title,
+            'activeMenu' => $activeMenu,
+            'content'    => $this->getContent($slug) ?: [
+                'title' => $title,
+                'body'  => '<p>Content coming soon.</p>',
+            ],
+            'cssFile'    => 'demo22.min.css',
+            'bodyClass'  => 'store-qist',
         ]);
     }
 }

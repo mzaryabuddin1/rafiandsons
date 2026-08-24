@@ -50,6 +50,10 @@ $routes->get('faq', 'Pages::faq');
 $routes->get('privacy', 'Pages::privacy');
 $routes->get('terms', 'Pages::terms');
 $routes->get('installment-terms', 'Pages::installmentTerms');
+$routes->get('return-policy', 'Pages::returnPolicy');
+$routes->get('delivery-policy', 'Pages::deliveryPolicy');
+$routes->get('payment-policy', 'Pages::paymentPolicy');
+$routes->get('furniture-policy', 'Pages::furniturePolicy');
 
 $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], static function ($routes) {
     $routes->group('', ['filter' => 'guestadmin'], static function ($routes) {
