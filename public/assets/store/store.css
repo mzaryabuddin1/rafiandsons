@@ -253,14 +253,56 @@ a:hover,
 }
 
 .page-content-body {
-  font-size: 1.5rem;
+  font-size: 15px;
   line-height: 1.7;
-  color: #666;
+  color: #555;
 }
 
-.page-content-body h3 {
+.page-content-body p,
+.page-content-body li,
+.page-content-body span,
+.page-content-body strong,
+.page-content-body b,
+.page-content-body em,
+.page-content-body a,
+.page-content-body td,
+.page-content-body th,
+.page-content-body div,
+.page-content-body font {
+  font-size: 15px !important;
+  line-height: 1.7 !important;
+}
+
+.page-content-body h1,
+.page-content-body h2,
+.page-content-body h3,
+.page-content-body h4,
+.page-content-body h5,
+.page-content-body h6 {
+  font-size: 15px !important;
+  font-weight: 700;
   color: #222;
-  margin: 2rem 0 1rem;
+  margin: 1.25rem 0 0.6rem;
+  line-height: 1.5 !important;
+}
+
+.page-content-body ul,
+.page-content-body ol {
+  padding-left: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.page-content-body li {
+  margin-bottom: 0.35rem;
+}
+
+.page-content-body p {
+  margin-bottom: 0.85rem;
+}
+
+.page-content-body img {
+  max-width: 100%;
+  height: auto;
 }
 
 .brand-icon-success {

@@ -112,8 +112,21 @@ class ContentsController extends BaseAdminController
         return [
             'title'  => $title,
             'slug'   => $slug,
-            'body'   => $this->request->getPost('body'),
+            'body'   => $this->normalizeBodyHtml((string) $this->request->getPost('body')),
             'status' => (int) $this->request->getPost('status') === 1 ? 1 : 0,
         ];
+    }
+
+    /**
+     * Keep editor HTML but strip pasted oversized font styles.
+     */
+    private function normalizeBodyHtml(string $html): string
+    {
+        $html = preg_replace('/\s*font-size\s*:\s*[^;"\']+;?/i', '', $html) ?? $html;
+        $html = preg_replace('/\s*line-height\s*:\s*[^;"\']+;?/i', '', $html) ?? $html;
+        $html = preg_replace('/\sstyle=("|\')\s*\1/i', '', $html) ?? $html;
+        $html = preg_replace('/<\/?font\b[^>]*>/i', '', $html) ?? $html;
+
+        return $html;
     }
 }

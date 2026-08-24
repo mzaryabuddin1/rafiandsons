@@ -2131,6 +2131,58 @@ body.qb-qv-open {
   background: var(--qb-brand) !important;
 }
 
+/* Footer / CMS policy pages */
+.qb-cms-page {
+  padding: 28px 0 48px;
+  background: #fff;
+}
+
+.qb-cms-wrap {
+  max-width: 900px !important;
+  margin: 0 auto;
+}
+
+.qb-cms-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #111;
+  margin: 0 0 18px;
+  line-height: 1.3;
+}
+
+.store-qist .page-content-body,
+.store-qist .page-content-body p,
+.store-qist .page-content-body li,
+.store-qist .page-content-body span,
+.store-qist .page-content-body strong,
+.store-qist .page-content-body b,
+.store-qist .page-content-body em,
+.store-qist .page-content-body a,
+.store-qist .page-content-body td,
+.store-qist .page-content-body th,
+.store-qist .page-content-body div,
+.store-qist .page-content-body font,
+.store-qist .page-content-body h1,
+.store-qist .page-content-body h2,
+.store-qist .page-content-body h3,
+.store-qist .page-content-body h4,
+.store-qist .page-content-body h5,
+.store-qist .page-content-body h6 {
+  font-size: 15px !important;
+  line-height: 1.7 !important;
+}
+
+.store-qist .page-content-body h1,
+.store-qist .page-content-body h2,
+.store-qist .page-content-body h3,
+.store-qist .page-content-body h4,
+.store-qist .page-content-body h5,
+.store-qist .page-content-body h6 {
+  font-weight: 700;
+  color: #222;
+  margin: 1.25rem 0 0.6rem;
+}
+
 /* Footer tweaks on qist layout */
 .store-qist .footer {
   margin-top: 0;

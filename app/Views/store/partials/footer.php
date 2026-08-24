@@ -48,7 +48,6 @@ $address = $settings['contact_address'] ?? '';
                             <li><a href="<?= site_url('return-policy') ?>">Return and Refund Policy</a></li>
                             <li><a href="<?= site_url('delivery-policy') ?>">Delivery Policy</a></li>
                             <li><a href="<?= site_url('payment-policy') ?>">Payment Policy</a></li>
-                            <li><a href="<?= site_url('furniture-policy') ?>">Furniture Policy</a></li>
                             <li><a href="<?= site_url('terms') ?>">Terms &amp; Conditions</a></li>
                             <li><a href="<?= site_url('privacy') ?>">Privacy Policy</a></li>
                         </ul>
