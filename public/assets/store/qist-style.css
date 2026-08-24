@@ -74,10 +74,14 @@
   gap: 20px;
 }
 
+.qb-logo {
+  flex-shrink: 0;
+}
+
 .qb-logo img {
-  height: 56px;
+  height: 52px;
   width: auto;
-  max-width: 260px;
+  max-width: 220px;
   display: block;
   object-fit: contain;
 }
@@ -502,6 +506,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
+  min-width: 0;
 }
 
 .qb-nav-list {
@@ -510,18 +516,25 @@
   padding: 0;
   display: flex;
   align-items: center;
+  flex-wrap: nowrap;
   gap: 0;
+  min-width: 0;
+}
+
+.qb-nav-list > li {
+  flex-shrink: 0;
 }
 
 .qb-nav-list > li > a {
   display: block;
-  padding: 14px 18px;
+  padding: 14px 16px;
   font-weight: 700;
   font-size: 13px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--qb-text);
   text-decoration: none !important;
+  white-space: nowrap;
 }
 
 .qb-nav-list > li.active > a,
@@ -574,6 +587,8 @@
   font-size: 13px;
   font-weight: 600;
   text-decoration: none !important;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .qb-nav-right a:hover {
@@ -3558,15 +3573,21 @@ body.qb-shop-filters-open {
 .qb-nav-right {
   align-items: center;
   display: flex;
-  gap: 18px;
+  flex-direction: row;
+  flex-shrink: 0;
+  flex-wrap: nowrap;
+  gap: 16px;
+  white-space: nowrap;
 }
 
 .qb-nav-right .qb-nav-signup {
   background: var(--qb-brand, #c8102e);
   border-radius: 4px;
   color: #fff !important;
+  display: inline-block;
   font-weight: 600;
   padding: 6px 14px;
+  white-space: nowrap;
 }
 
 .qb-nav-right .qb-nav-signup:hover {
