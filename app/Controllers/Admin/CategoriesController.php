@@ -199,6 +199,7 @@ class CategoriesController extends BaseAdminController
             'parent_id'        => $parentId,
             'name'             => $name,
             'slug'             => $this->makeSlug($name, 'categories', $id),
+            'icon'             => $this->normalizeIcon((string) $this->request->getPost('icon')),
             'description'      => $this->request->getPost('description'),
             'status'           => (int) $this->request->getPost('status') === 1 ? 1 : 0,
             'sort_order'       => (int) $this->request->getPost('sort_order'),
@@ -214,5 +215,22 @@ class CategoriesController extends BaseAdminController
         }
 
         return ['data' => $data];
+    }
+
+    private function normalizeIcon(string $icon): ?string
+    {
+        $icon = trim($icon);
+        if ($icon === '') {
+            return null;
+        }
+
+        $parts = preg_split('/\s+/', $icon) ?: [];
+        foreach ($parts as $part) {
+            if (str_starts_with($part, 'fa-')) {
+                return $part;
+            }
+        }
+
+        return null;
     }
 }

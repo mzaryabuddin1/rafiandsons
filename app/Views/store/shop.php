@@ -100,7 +100,7 @@ $hasPriceFilter = $minPrice !== null || $maxPrice !== null;
                                     <li class="qb-filter-parent <?= $hasChildren ? 'has-children' : '' ?> <?= $isParentActive ? 'is-active is-open' : '' ?>">
                                         <div class="qb-filter-parent-row">
                                             <a href="<?= shop_query_url(['category' => $cat['slug']]) ?>">
-                                                <i class="fas <?= esc(category_fa_icon($cat['slug'], $cat['description'] ?? null)) ?>"></i>
+                                                <i class="fas <?= esc(category_fa_icon($cat['slug'], $cat['icon'] ?? $cat['description'] ?? null)) ?>"></i>
                                                 <?= esc($cat['name']) ?>
                                             </a>
                                             <?php if ($hasChildren): ?>

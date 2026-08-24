@@ -13,7 +13,7 @@ class CategoryModel extends Model
     protected $useSoftDeletes   = true;
     protected $useTimestamps    = true;
     protected $allowedFields    = [
-        'parent_id', 'name', 'slug', 'image', 'description', 'status', 'sort_order',
+        'parent_id', 'name', 'slug', 'image', 'icon', 'description', 'status', 'sort_order',
         'meta_title', 'meta_description',
     ];
 

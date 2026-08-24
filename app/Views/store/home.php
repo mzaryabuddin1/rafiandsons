@@ -8,7 +8,7 @@
                 <aside class="qb-cat-sidebar d-none d-lg-block">
                     <ul>
                         <?php foreach ($categoryTree as $cat): ?>
-                            <?php $icon = category_fa_icon($cat['slug'] ?? '', $cat['description'] ?? null); ?>
+                            <?php $icon = category_fa_icon($cat['slug'] ?? '', $cat['icon'] ?? $cat['description'] ?? null); ?>
                             <li class="<?= ! empty($cat['children']) ? 'has-children' : '' ?>">
                                 <a href="<?= site_url('shop?category=' . urlencode($cat['slug'])) ?>">
                                     <i class="fas <?= esc($icon) ?>" aria-hidden="true"></i>

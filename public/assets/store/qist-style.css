@@ -75,8 +75,9 @@
 }
 
 .qb-logo img {
-  height: 72px;
+  height: 56px;
   width: auto;
+  max-width: 260px;
   display: block;
   object-fit: contain;
 }

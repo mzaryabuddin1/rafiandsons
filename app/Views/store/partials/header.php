@@ -14,7 +14,7 @@ $avatarUrl = $isLoggedIn ? $storeAuth->profileImageUrl($storeCustomer) : '';
         <div class="container">
             <div class="qb-header-row">
                 <a href="<?= site_url('home') ?>" class="qb-logo">
-                    <img src="<?= base_url('assets/images/logo.png') ?>" alt="<?= esc($siteName) ?>" height="72" style="height:72px;width:auto;display:block;">
+                    <img src="<?= base_url('assets/images/logo.png') ?>" alt="<?= esc($siteName) ?>" height="56" style="height:56px;width:auto;max-width:260px;display:block;object-fit:contain;">
                 </a>
 
                 <form action="<?= site_url('search') ?>" method="get" class="qb-search-form" id="qb-search-form" role="search">
