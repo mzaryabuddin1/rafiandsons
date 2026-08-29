@@ -17,6 +17,7 @@ class OrderModel extends Model
         'customer_cnic', 'customer_address', 'customer_city', 'payment_type', 'installment_plan_id',
         'plan_name', 'down_payment', 'monthly_installment', 'months', 'processing_charges',
         'total_payable', 'subtotal', 'status', 'admin_notes',
+        'receipt_image', 'payment_verified', 'payment_verified_at',
     ];
 
     public const STATUSES = [

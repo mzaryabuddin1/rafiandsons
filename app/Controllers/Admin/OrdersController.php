@@ -61,6 +61,8 @@ class OrdersController extends BaseAdminController
         $rows = $model->orderBy('id', 'DESC')->findAll();
         foreach ($rows as &$row) {
             $row['status_label'] = OrderModel::STATUSES[$row['status']] ?? $row['status'];
+            $row['payment_verified'] = (int) ($row['payment_verified'] ?? 0);
+            $row['receipt_url'] = ! empty($row['receipt_image']) ? base_url($row['receipt_image']) : null;
         }
 
         return $this->jsonSuccess('Orders loaded.', ['items' => $rows]);
@@ -78,6 +80,8 @@ class OrdersController extends BaseAdminController
         }
 
         $row['status_label'] = OrderModel::STATUSES[$row['status']] ?? $row['status'];
+        $row['payment_verified'] = (int) ($row['payment_verified'] ?? 0);
+        $row['receipt_url'] = ! empty($row['receipt_image']) ? base_url($row['receipt_image']) : null;
         $row['items'] = model(OrderItemModel::class)->where('order_id', $id)->findAll();
 
         return $this->jsonSuccess('Order loaded.', $row);
@@ -161,6 +165,34 @@ class OrdersController extends BaseAdminController
         ]);
 
         return $this->jsonSuccess('Order status updated.');
+    }
+
+    public function verifyPayment($id)
+    {
+        if ($denied = $this->requirePermission('orders.update')) {
+            return $denied;
+        }
+
+        $model = model(OrderModel::class);
+        $order = $model->find($id);
+        if (! $order) {
+            return $this->jsonError('Order not found.', null, 404);
+        }
+
+        if (empty($order['receipt_image'])) {
+            return $this->jsonError('No payment receipt uploaded for this order.');
+        }
+
+        if ((int) ($order['payment_verified'] ?? 0) === 1) {
+            return $this->jsonSuccess('Payment is already verified.');
+        }
+
+        $model->update($id, [
+            'payment_verified'    => 1,
+            'payment_verified_at' => date('Y-m-d H:i:s'),
+        ]);
+
+        return $this->jsonSuccess('Payment verified successfully.');
     }
 
     public function delete($id)

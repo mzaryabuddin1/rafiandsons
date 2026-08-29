@@ -129,9 +129,6 @@ $avatarUrl = $isLoggedIn ? $storeAuth->profileImageUrl($storeCustomer) : '';
                 <div class="qb-nav-right">
                     <?php if ($isLoggedIn): ?>
                         <a href="<?= site_url('account/profile') ?>">My Account</a>
-                    <?php else: ?>
-                        <a href="<?= site_url('account/login') ?>">Sign In</a>
-                        <a href="<?= site_url('account/register') ?>" class="qb-nav-signup">Sign Up</a>
                     <?php endif; ?>
                     <a href="<?= site_url('track-order') ?>">Track Your Order</a>
                 </div>

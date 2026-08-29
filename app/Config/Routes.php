@@ -99,7 +99,16 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], static functio
         $routes->post('api/orders', 'OrdersController::store', ['filter' => ['csrf', 'permission:orders.create']]);
         $routes->post('api/orders/(:num)', 'OrdersController::update/$1', ['filter' => ['csrf', 'permission:orders.update']]);
         $routes->post('api/orders/(:num)/status', 'OrdersController::updateStatus/$1', ['filter' => ['csrf', 'permission:orders.update']]);
+        $routes->post('api/orders/(:num)/verify-payment', 'OrdersController::verifyPayment/$1', ['filter' => ['csrf', 'permission:orders.update']]);
         $routes->post('api/orders/(:num)/delete', 'OrdersController::delete/$1', ['filter' => ['csrf', 'permission:orders.delete']]);
+
+        // Bank Accounts
+        $routes->get('bank-accounts', 'BankAccountsController::index', ['filter' => 'permission:bank_accounts.view']);
+        $routes->get('api/bank-accounts', 'BankAccountsController::list', ['filter' => 'permission:bank_accounts.view']);
+        $routes->get('api/bank-accounts/(:num)', 'BankAccountsController::show/$1', ['filter' => 'permission:bank_accounts.view']);
+        $routes->post('api/bank-accounts', 'BankAccountsController::store', ['filter' => ['csrf', 'permission:bank_accounts.create']]);
+        $routes->post('api/bank-accounts/(:num)', 'BankAccountsController::update/$1', ['filter' => ['csrf', 'permission:bank_accounts.update']]);
+        $routes->post('api/bank-accounts/(:num)/delete', 'BankAccountsController::delete/$1', ['filter' => ['csrf', 'permission:bank_accounts.delete']]);
 
         // Contents
         $routes->get('contents', 'ContentsController::index', ['filter' => 'permission:contents.view']);

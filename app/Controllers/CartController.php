@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Libraries\OrderMailService;
 use App\Libraries\StoreAuth;
+use App\Models\BankAccountModel;
 use App\Models\CustomerModel;
 use App\Models\OrderItemModel;
 use App\Models\OrderModel;
@@ -63,6 +64,7 @@ class CartController extends BaseStoreController
             'orderPaymentType' => $this->cart->orderPaymentType(),
             'cartGrandTotal'   => $this->cart->grandTotal(),
             'checkoutCustomer' => $this->checkoutCustomerData(),
+            'bankAccounts'     => model(BankAccountModel::class)->activeAccounts(),
             'isLoggedIn'       => (new StoreAuth())->check(),
             'bodyClass'        => 'store-qist',
             'cssFile'          => 'demo22.min.css',
@@ -179,6 +181,32 @@ class CartController extends BaseStoreController
             return $this->jsonError('Name and phone are required.');
         }
 
+        $receiptImage = null;
+        $receiptFile = $this->request->getFile('receipt_image');
+        if ($receiptFile && $receiptFile->getError() !== UPLOAD_ERR_NO_FILE) {
+            if (! $receiptFile->isValid() || $receiptFile->hasMoved()) {
+                return $this->jsonError('Invalid receipt file. Please upload a valid image.');
+            }
+
+            $allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+            if (! in_array($receiptFile->getMimeType(), $allowed, true)) {
+                return $this->jsonError('Receipt must be an image (JPG, PNG, WEBP, or GIF).');
+            }
+
+            if ($receiptFile->getSize() > 5 * 1024 * 1024) {
+                return $this->jsonError('Receipt image must be 5MB or smaller.');
+            }
+
+            $target = FCPATH . 'uploads/receipts';
+            if (! is_dir($target)) {
+                mkdir($target, 0755, true);
+            }
+
+            $nameFile = $receiptFile->getRandomName();
+            $receiptFile->move($target, $nameFile);
+            $receiptImage = 'uploads/receipts/' . $nameFile;
+        }
+
         foreach ($items as $item) {
             if (($item['payment_type'] ?? '') === 'installment' && empty($item['plan_id'])) {
                 return $this->jsonError('Please select an installment plan for: ' . ($item['name'] ?? 'item'));
@@ -248,6 +276,9 @@ class CartController extends BaseStoreController
             'subtotal'            => $dueNow,
             'status'              => 'processing',
             'admin_notes'         => $notes,
+            'receipt_image'       => $receiptImage,
+            'payment_verified'    => 0,
+            'payment_verified_at' => null,
         ]);
 
         $orderItems = [];

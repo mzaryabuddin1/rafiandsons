@@ -1,6 +1,7 @@
 <?= $this->extend('store/layout') ?>
 <?php
 $customer = $checkoutCustomer ?? [];
+$bankAccounts = $bankAccounts ?? [];
 ?>
 <?= $this->section('content') ?>
 <main class="main qb-main">
@@ -22,7 +23,7 @@ $customer = $checkoutCustomer ?? [];
 
             <div class="row">
                 <div class="col-lg-7">
-                    <form id="checkout-form" class="qb-form-card">
+                    <form id="checkout-form" class="qb-form-card" enctype="multipart/form-data">
                         <h3>Your Details</h3>
                         <div class="row">
                             <div class="col-sm-6">
@@ -53,6 +54,42 @@ $customer = $checkoutCustomer ?? [];
                                 <label>Notes</label>
                                 <textarea class="form-control" name="notes" rows="3" placeholder="Any special instructions"></textarea>
                             </div>
+                        </div>
+
+                        <?php if ($bankAccounts): ?>
+                        <div class="qb-bank-accounts">
+                            <h3>Bank Transfer Details</h3>
+                            <p class="qb-bank-hint">Transfer payment to any of the accounts below, then if you wish upload your receipt or share a screenshot on the given number.</p>
+                            <p class="qb-bank-hint qb-bank-hint--urdu" dir="rtl" lang="ur">نیچے دیے گئے کسی بھی اکاؤنٹ میں ادائیگی منتقل کریں، پھر اگر چاہیں تو اپنی رسید اپ لوڈ کریں یا دیے گئے نمبر پر اسکرین شاٹ شیئر کریں۔</p>
+                            <div class="qb-bank-list">
+                                <?php foreach ($bankAccounts as $account): ?>
+                                    <div class="qb-bank-card">
+                                        <div class="qb-bank-card-head">
+                                            <?php if (! empty($account['logo'])): ?>
+                                                <img src="<?= base_url($account['logo']) ?>" alt="<?= esc($account['bank_name']) ?>" class="qb-bank-logo">
+                                            <?php endif; ?>
+                                            <strong class="qb-bank-name"><?= esc($account['bank_name']) ?></strong>
+                                        </div>
+                                        <p><span>Account Title</span> <?= esc($account['account_title']) ?></p>
+                                        <p><span>Account Number</span> <em><?= esc($account['account_number']) ?></em></p>
+                                        <?php if (! empty($account['iban'])): ?>
+                                            <p><span>IBAN</span> <em><?= esc($account['iban']) ?></em></p>
+                                        <?php endif; ?>
+                                        <?php if (! empty($account['branch'])): ?>
+                                            <p><span>Branch</span> <?= esc($account['branch']) ?></p>
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                        <?php endif; ?>
+
+                        <div class="qb-receipt-upload">
+                            <h3>Payment Receipt <small>(optional)</small></h3>
+                            <p class="qb-bank-hint">Upload a clear image of your transfer receipt if you have already paid.</p>
+                            <label>Receipt Image</label>
+                            <input type="file" class="form-control" name="receipt_image" id="receipt_image" accept="image/jpeg,image/png,image/webp,image/gif">
+                            <p class="qb-receipt-preview" id="receipt-preview" hidden></p>
                         </div>
 
                         <button type="submit" class="qb-btn qb-btn-primary qb-btn-block mt-4" id="checkout-btn">
@@ -112,12 +149,23 @@ $customer = $checkoutCustomer ?? [];
 
 <?= $this->section('scripts') ?>
 <script>
+$('#receipt_image').on('change', function () {
+    var file = this.files && this.files[0];
+    var $preview = $('#receipt-preview');
+    if (!file) {
+        $preview.attr('hidden', true).empty();
+        return;
+    }
+    $preview.removeAttr('hidden').text('Selected: ' + file.name);
+});
+
 $('#checkout-form').on('submit', function (e) {
     e.preventDefault();
     var $btn = $('#checkout-btn');
     var btnText = $btn.text();
     $btn.prop('disabled', true).text('Submitting...');
-    StoreApp.request(STORE_BASE + '/checkout/place-order', 'POST', $(this).serialize())
+    var formData = new FormData(this);
+    StoreApp.request(STORE_BASE + '/checkout/place-order', 'POST', formData, true)
         .done(function (res) {
             StoreApp.toast(res.message);
             window.location.href = res.data.redirect;

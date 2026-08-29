@@ -58,15 +58,18 @@ $menu = $activeMenu ?? '';
             </li>
             <?php endif; ?>
 
-            <?php if ($auth->canAny(['contents.view', 'banners.view', 'settings.view'])): ?>
-            <li class="<?= in_array($menu, ['contents', 'banners', 'settings'], true) ? 'active' : '' ?>">
+            <?php if ($auth->canAny(['contents.view', 'banners.view', 'bank_accounts.view', 'settings.view'])): ?>
+            <li class="<?= in_array($menu, ['contents', 'banners', 'bank_accounts', 'settings'], true) ? 'active' : '' ?>">
                 <a href="#"><i class="fa fa-desktop"></i> <span class="nav-label">Website</span><span class="fa arrow"></span></a>
-                <ul class="nav nav-second-level collapse <?= in_array($menu, ['contents', 'banners', 'settings'], true) ? 'in' : '' ?>">
+                <ul class="nav nav-second-level collapse <?= in_array($menu, ['contents', 'banners', 'bank_accounts', 'settings'], true) ? 'in' : '' ?>">
                     <?php if ($auth->can('contents.view')): ?>
                     <li class="<?= $menu === 'contents' ? 'active' : '' ?>"><a href="<?= site_url('admin/contents') ?>">Contents</a></li>
                     <?php endif; ?>
                     <?php if ($auth->can('banners.view')): ?>
                     <li class="<?= $menu === 'banners' ? 'active' : '' ?>"><a href="<?= site_url('admin/banners') ?>">Homepage Banners</a></li>
+                    <?php endif; ?>
+                    <?php if ($auth->can('bank_accounts.view')): ?>
+                    <li class="<?= $menu === 'bank_accounts' ? 'active' : '' ?>"><a href="<?= site_url('admin/bank-accounts') ?>">Bank Accounts</a></li>
                     <?php endif; ?>
                     <?php if ($auth->can('settings.view')): ?>
                     <li class="<?= $menu === 'settings' ? 'active' : '' ?>"><a href="<?= site_url('admin/settings') ?>">Settings</a></li>

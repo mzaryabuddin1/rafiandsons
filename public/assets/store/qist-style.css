@@ -3924,3 +3924,97 @@ body.qb-shop-filters-open {
   }
 }
 
+.qb-bank-accounts,
+.qb-receipt-upload {
+  border-top: 1px solid var(--qb-border, #e5e7eb);
+  margin-top: 8px;
+  padding-top: 18px;
+}
+
+.qb-bank-accounts h3,
+.qb-receipt-upload h3 {
+  margin-bottom: 8px;
+}
+
+.qb-bank-accounts h3 small,
+.qb-receipt-upload h3 small {
+  color: var(--qb-muted, #6b7280);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.qb-bank-hint {
+  color: var(--qb-muted, #6b7280);
+  font-size: 13px;
+  margin: 0 0 14px;
+}
+
+.qb-bank-hint--urdu {
+  font-family: "Noto Nastaliq Urdu", "Jameel Noori Nastaleeq", "Alvi Nastaleeq", "Segoe UI", Tahoma, sans-serif;
+  font-size: 15px;
+  line-height: 1.9;
+  text-align: right;
+}
+
+.qb-bank-list {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.qb-bank-card {
+  background: #fafafa;
+  border: 1px solid var(--qb-border, #e5e7eb);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+
+.qb-bank-card-head {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.qb-bank-logo {
+  background: #fff;
+  border: 1px solid var(--qb-border, #e5e7eb);
+  border-radius: 6px;
+  flex: 0 0 auto;
+  height: 40px;
+  object-fit: contain;
+  padding: 4px;
+  width: 64px;
+}
+
+.qb-bank-name {
+  color: #111;
+  display: block;
+  font-size: 15px;
+  margin: 0;
+}
+
+.qb-bank-card p {
+  color: #333;
+  font-size: 13px;
+  margin: 0 0 4px;
+}
+
+.qb-bank-card p span {
+  color: var(--qb-muted, #6b7280);
+  display: inline-block;
+  min-width: 120px;
+}
+
+.qb-bank-card em {
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.qb-receipt-preview {
+  color: #166534;
+  font-size: 13px;
+  margin: 6px 0 0;
+}
+
