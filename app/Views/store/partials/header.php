@@ -133,7 +133,7 @@ $avatarUrl = $isLoggedIn ? $storeAuth->profileImageUrl($storeCustomer) : '';
                     <?php if ($isLoggedIn): ?>
                         <a href="<?= site_url('account/profile') ?>">My Account</a>
                     <?php endif; ?>
-                    <a href="<?= site_url('track-order') ?>">Track Your Order</a>
+                    <a href="<?= site_url('track-order') ?>" class="qb-nav-track">Track Your Order</a>
                 </div>
             </nav>
         </div>
@@ -188,8 +188,7 @@ $avatarUrl = $isLoggedIn ? $storeAuth->profileImageUrl($storeCustomer) : '';
 </div>
 
 <?php if ($whatsapp): ?>
-<a href="https://wa.me/<?= esc(preg_replace('/\D+/', '', $whatsapp)) ?>" class="qb-whatsapp-float" target="_blank" rel="noopener" title="Chat on WhatsApp">
+<a href="https://wa.me/<?= esc(preg_replace('/\D+/', '', $whatsapp)) ?>" class="qb-whatsapp-float" target="_blank" rel="noopener" title="Chat on WhatsApp" aria-label="Chat on WhatsApp">
     <i class="fab fa-whatsapp"></i>
-    <span>Chat With Us</span>
 </a>
 <?php endif; ?>

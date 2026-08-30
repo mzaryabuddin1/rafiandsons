@@ -5,26 +5,31 @@
         <!-- Hero: category sidebar + slider -->
         <section class="qb-hero">
             <div class="qb-hero-inner">
-                <aside class="qb-cat-sidebar d-none d-lg-block">
-                    <ul>
-                        <?php foreach ($categoryTree as $cat): ?>
-                            <?php $icon = category_fa_icon($cat['slug'] ?? '', $cat['icon'] ?? $cat['description'] ?? null); ?>
-                            <li class="<?= ! empty($cat['children']) ? 'has-children' : '' ?>">
-                                <a href="<?= site_url('shop?category=' . urlencode($cat['slug'])) ?>">
-                                    <i class="fas <?= esc($icon) ?>" aria-hidden="true"></i>
-                                    <span><?= esc($cat['name']) ?></span>
-                                    <?php if (! empty($cat['children'])): ?><i class="fas fa-chevron-right qb-cat-arrow"></i><?php endif; ?>
-                                </a>
-                                <?php if (! empty($cat['children'])): ?>
-                                <ul class="qb-cat-sub">
-                                    <?php foreach ($cat['children'] as $child): ?>
-                                        <li><a href="<?= site_url('shop?category=' . urlencode($child['slug'])) ?>"><?= esc($child['name']) ?></a></li>
-                                    <?php endforeach; ?>
-                                </ul>
-                                <?php endif; ?>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
+                <aside class="qb-cat-sidebar d-none d-lg-block" id="qb-cat-sidebar">
+                    <div class="qb-cat-sidebar-scroll" id="qb-cat-sidebar-scroll">
+                        <ul>
+                            <?php foreach ($categoryTree as $cat): ?>
+                                <?php $icon = category_fa_icon($cat['slug'] ?? '', $cat['icon'] ?? $cat['description'] ?? null); ?>
+                                <li class="<?= ! empty($cat['children']) ? 'has-children' : '' ?>">
+                                    <a href="<?= site_url('shop?category=' . urlencode($cat['slug'])) ?>">
+                                        <i class="fas <?= esc($icon) ?>" aria-hidden="true"></i>
+                                        <span><?= esc($cat['name']) ?></span>
+                                        <?php if (! empty($cat['children'])): ?><i class="fas fa-chevron-right qb-cat-arrow"></i><?php endif; ?>
+                                    </a>
+                                    <?php if (! empty($cat['children'])): ?>
+                                    <ul class="qb-cat-sub">
+                                        <?php foreach ($cat['children'] as $child): ?>
+                                            <li><a href="<?= site_url('shop?category=' . urlencode($child['slug'])) ?>"><?= esc($child['name']) ?></a></li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                    <?php endif; ?>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                    <button type="button" class="qb-cat-scroll-hint" id="qb-cat-scroll-hint" aria-label="Scroll categories" hidden>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
                 </aside>
 
                 <div class="qb-hero-slider-wrap">
@@ -205,4 +210,76 @@
         <?php endif; ?>
     </div>
 </main>
+<?= $this->endSection() ?>
+
+<?= $this->section('scripts') ?>
+<script>
+(function ($) {
+    var $scroll = $('#qb-cat-sidebar-scroll');
+    var $hint = $('#qb-cat-scroll-hint');
+    if (!$scroll.length) return;
+
+    function updateHint() {
+        var el = $scroll[0];
+        var canScroll = el.scrollHeight > el.clientHeight + 4;
+        var atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 4;
+        $hint.prop('hidden', !(canScroll && !atBottom));
+    }
+
+    $scroll.on('scroll', updateHint);
+    $(window).on('resize', updateHint);
+    $hint.on('click', function () {
+        $scroll.animate({ scrollTop: $scroll.scrollTop() + 120 }, 200);
+    });
+
+    // Keep flyout menus visible while the sidebar scrolls (fixed positioning).
+    var $openItem = null;
+    var hideTimer = null;
+
+    function hideSub() {
+        if ($openItem) {
+            $openItem.removeClass('is-open');
+            $openItem.children('.qb-cat-sub').removeClass('is-fixed').removeAttr('style');
+            $openItem = null;
+        }
+    }
+
+    function showSub($item) {
+        hideSub();
+        var $sub = $item.children('.qb-cat-sub');
+        if (!$sub.length) return;
+        var rect = $item[0].getBoundingClientRect();
+        $item.addClass('is-open');
+        $sub.addClass('is-fixed').css({
+            top: Math.max(8, Math.min(rect.top, window.innerHeight - 200)) + 'px',
+            left: rect.right + 'px',
+            display: 'block'
+        });
+        $openItem = $item;
+    }
+
+    $('#qb-cat-sidebar')
+        .on('mouseenter', 'li.has-children', function () {
+            clearTimeout(hideTimer);
+            showSub($(this));
+        })
+        .on('mouseleave', 'li.has-children', function () {
+            hideTimer = setTimeout(hideSub, 120);
+        });
+
+    $(document).on('mouseenter', '.qb-cat-sub.is-fixed', function () {
+        clearTimeout(hideTimer);
+    }).on('mouseleave', '.qb-cat-sub.is-fixed', function () {
+        hideTimer = setTimeout(hideSub, 120);
+    });
+
+    $scroll.on('scroll', hideSub);
+
+    if (window.ResizeObserver) {
+        new ResizeObserver(updateHint).observe($scroll[0]);
+    }
+    // Slider aspect-ratio / owl init can change height after first paint
+    [50, 300, 800].forEach(function (ms) { setTimeout(updateHint, ms); });
+})(jQuery);
+</script>
 <?= $this->endSection() ?>
