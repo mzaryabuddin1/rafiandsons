@@ -8,7 +8,7 @@
     <meta name="csrf-name" content="<?= csrf_token() ?>">
     <title><?= esc($pageTitle ?? 'Rafi & Sons') ?> | Rafi &amp; Sons</title>
     <meta name="description" content="<?= esc($metaDescription ?? 'Shop quality products on easy installment plans at Rafi & Sons.') ?>">
-    <link rel="icon" type="image/png" href="<?= base_url('theme/images/icons/favicon.png') ?>">
+    <link rel="icon" type="image/png" href="<?= base_url('assets/images/favicon.png') ?>">
     <script>
         WebFontConfig = { google: { families: ['Poppins:400,500,600,700,800'] } };
         (function (d) {

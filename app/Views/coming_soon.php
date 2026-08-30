@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
 	<title>Rafi &amp; Sons — Coming Soon</title>
 	<meta name="description" content="Rafi & Sons is almost here. Our new storefront is on the way.">
-	<link rel="icon" type="image/png" href="<?= base_url('assets/images/logo.png') ?>">
+	<link rel="icon" type="image/png" href="<?= base_url('assets/images/favicon.png') ?>">
 	<script>
 		WebFontConfig = {
 			google: { families: ['Poppins:400,500,600,700,800'] }

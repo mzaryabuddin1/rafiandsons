@@ -8,7 +8,7 @@ $menu = $activeMenu ?? '';
         <ul class="nav metismenu" id="side-menu">
             <li class="nav-header">
                 <div class="dropdown profile-element">
-                    <img src="<?= base_url('assets/admin/rafi-and-sons-logo.png') ?>" alt="Rafi &amp; Sons" class="admin-logo rounded-circle">
+                    <img src="<?= base_url('assets/admin/rafi-and-sons-logo.png') ?>" alt="Rafi &amp; Sons" class="admin-logo">
                     <div class="sidebar-brand">
                         Rafi &amp; Sons
                         <small>Admin Panel</small>

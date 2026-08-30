@@ -7,6 +7,7 @@
     <meta name="csrf-header" content="<?= config('Security')->headerName ?>">
     <meta name="csrf-name" content="<?= csrf_token() ?>">
     <title><?= esc($pageTitle ?? 'Login') ?> | Rafi &amp; Sons</title>
+    <link rel="icon" type="image/png" href="<?= base_url('assets/images/favicon.png') ?>">
     <link href="<?= base_url('admintheme/css/bootstrap.min.css') ?>" rel="stylesheet">
     <link href="<?= base_url('admintheme/font-awesome/css/font-awesome.css') ?>" rel="stylesheet">
     <link href="<?= base_url('admintheme/css/plugins/toastr/toastr.min.css') ?>" rel="stylesheet">
