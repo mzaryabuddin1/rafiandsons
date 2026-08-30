@@ -84,7 +84,8 @@ php_errors.log
 #-------------------------
 # Composer
 #-------------------------
-vendor/
+# Only ignore Composer dependencies at repo root (NOT app/.../vendor paths)
+/vendor/
 # Theme front-end vendor assets (Riode) must be publicly served
 !public/theme/vendor/
 !public/theme/vendor/**/
