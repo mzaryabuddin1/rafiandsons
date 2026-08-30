@@ -161,10 +161,11 @@ class CartService
         session()->set(self::SESSION_KEY, $items);
 
         return [
-            'success'  => true,
-            'message'  => 'Cart updated.',
-            'count'    => $this->count(),
-            'subtotal' => $this->subtotal(),
+            'success'     => true,
+            'message'     => 'Cart updated.',
+            'count'       => $this->count(),
+            'subtotal'    => $this->subtotal(),
+            'grand_total' => $this->grandTotal(),
         ];
     }
 

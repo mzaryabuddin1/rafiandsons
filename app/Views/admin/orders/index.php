@@ -13,7 +13,7 @@
 <div class="col-md-2"><input type="date" id="date-to" class="form-control"></div>
 <div class="col-md-2"><button class="btn btn-primary" id="btn-filter">Filter</button></div>
 </div>
-<div class="table-responsive"><table class="table table-striped table-bordered" id="data-table"><thead><tr><th>Order #</th><th>Customer</th><th>Phone</th><th>Plan</th><th>Total</th><th>Status</th><th>Payment</th><th>Date</th><th width="140">Actions</th></tr></thead><tbody></tbody></table></div>
+<div class="table-responsive"><table class="table table-striped table-bordered" id="data-table"><thead><tr><th>Order #</th><th>Customer</th><th>Phone</th><th>Vendor</th><th>Plan</th><th>Total</th><th>Status</th><th>Payment</th><th>Date</th><th width="140">Actions</th></tr></thead><tbody></tbody></table></div>
 </div></div>
 
 <div class="modal inmodal" id="form-modal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content animated fadeIn">
@@ -77,9 +77,9 @@ function loadList(){
         (res.data.items||[]).forEach(function(r){
             var a='<button class="btn btn-xs btn-primary btn-view" data-id="'+r.id+'"><i class="fa fa-eye"></i></button> ';
             if(canDelete)a+='<button class="btn btn-xs btn-danger btn-delete" data-id="'+r.id+'"><i class="fa fa-trash"></i></button>';
-            h+='<tr><td>'+r.order_number+'</td><td>'+r.customer_name+'</td><td>'+r.customer_phone+'</td><td>'+(r.plan_name||'-')+'</td><td>'+r.total_payable+'</td><td><span class="badge badge-primary">'+(r.status_label||r.status)+'</span></td><td>'+paymentBadge(r)+'</td><td>'+(r.created_at||'')+'</td><td>'+a+'</td></tr>';
+            h+='<tr><td>'+r.order_number+'</td><td>'+r.customer_name+'</td><td>'+r.customer_phone+'</td><td>'+(r.vendor_label||'-')+'</td><td>'+(r.plan_name||'-')+'</td><td>'+r.total_payable+'</td><td><span class="badge badge-primary">'+(r.status_label||r.status)+'</span></td><td>'+paymentBadge(r)+'</td><td>'+(r.created_at||'')+'</td><td>'+a+'</td></tr>';
         });
-        if(!h)h='<tr><td colspan="9" class="text-center text-muted">No orders found</td></tr>';
+        if(!h)h='<tr><td colspan="10" class="text-center text-muted">No orders found</td></tr>';
         $('#data-table tbody').html(h);
     });
 }
@@ -89,9 +89,10 @@ function renderDetail(r){
     var h='<p><strong>'+r.order_number+'</strong> — '+r.status_label+'</p>';
     h+='<p>'+r.customer_name+' | '+r.customer_phone+' | '+(r.customer_email||'')+'</p>';
     h+='<p>'+(r.customer_address||'')+' '+(r.customer_city||'')+'</p>';
+    h+='<p>Vendor: <strong>'+(r.vendor_label||'Own / No vendor')+'</strong></p>';
     h+='<p>Plan: '+(r.plan_name||'-')+' | Down: '+r.down_payment+' | Monthly: '+r.monthly_installment+' x '+r.months+'</p>';
-    h+='<table class="table table-bordered"><thead><tr><th>Product</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead><tbody>';
-    (r.items||[]).forEach(function(i){h+='<tr><td>'+i.product_name+'</td><td>'+i.quantity+'</td><td>'+i.unit_price+'</td><td>'+i.line_total+'</td></tr>';});
+    h+='<table class="table table-bordered"><thead><tr><th>Product</th><th>Vendor</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead><tbody>';
+    (r.items||[]).forEach(function(i){h+='<tr><td>'+i.product_name+'</td><td>'+(i.vendor_name||'-')+'</td><td>'+i.quantity+'</td><td>'+i.unit_price+'</td><td>'+i.line_total+'</td></tr>';});
     h+='</tbody></table>';
     h+='<p>Notes: '+(r.admin_notes||'-')+'</p>';
     h+='<hr><h4>Payment Receipt</h4>';

@@ -60,11 +60,15 @@ foreach ($items ?? [] as $item) {
                                 $isInstallment = ($item['payment_type'] ?? 'cash') === 'installment';
                                 $cashPrice = (float) ($item['cash_price'] ?? $item['price']);
                                 $lineTotal = (float) $item['price'] * (int) $item['qty'];
+                                $grandUnit = $isInstallment
+                                    ? (float) ($item['total_payable'] ?? 0)
+                                    : $cashPrice;
                                 ?>
                                 <article
                                     class="qb-cart-item"
                                     data-cart-key="<?= esc($cartKey) ?>"
                                     data-unit-price="<?= (float) $item['price'] ?>"
+                                    data-grand-unit="<?= $grandUnit ?>"
                                     data-payment-type="<?= esc($item['payment_type'] ?? 'cash') ?>"
                                 >
                                     <div class="qb-cart-item-product">
@@ -168,14 +172,32 @@ foreach ($items ?? [] as $item) {
         $item.find('.line-total').text(formatMoney(price * qty));
     }
 
-    function updateSubtotal() {
+    function updateSummary(serverData) {
         var dueNow = 0;
+        var grandTotal = 0;
+
         $('.qb-cart-item').each(function () {
             var qty = parseInt($(this).find('.cart-qty').val(), 10) || 0;
             var price = parseFloat($(this).data('unit-price')) || 0;
+            var grandUnit = parseFloat($(this).data('grand-unit'));
+            if (isNaN(grandUnit)) {
+                grandUnit = price;
+            }
             dueNow += qty * price;
+            grandTotal += qty * grandUnit;
         });
+
+        if (serverData) {
+            if (typeof serverData.subtotal !== 'undefined') {
+                dueNow = Number(serverData.subtotal);
+            }
+            if (typeof serverData.grand_total !== 'undefined') {
+                grandTotal = Number(serverData.grand_total);
+            }
+        }
+
         $('#cart-subtotal-label').text(formatMoney(dueNow));
+        $('#cart-grand-label').text(formatMoney(grandTotal));
     }
 
     $(document).on('click', '.qb-qty-minus', function () {
@@ -201,7 +223,7 @@ foreach ($items ?? [] as $item) {
         }).done(function (res) {
             StoreApp.toast(res.message);
             updateLineTotal($item);
-            updateSubtotal();
+            updateSummary(res.data);
             if (res.data) StoreApp.updateCartBadge(res.data.count, res.data.subtotal);
         });
     });
@@ -212,8 +234,11 @@ foreach ($items ?? [] as $item) {
             cart_key: cartKey($item)
         }).done(function (res) {
             $item.remove();
-            updateSubtotal();
-            if (!$('.qb-cart-item').length) location.reload();
+            if (!$('.qb-cart-item').length) {
+                location.reload();
+                return;
+            }
+            updateSummary(res.data);
             if (res.data) StoreApp.updateCartBadge(res.data.count, res.data.subtotal);
         });
     });

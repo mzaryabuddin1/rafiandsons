@@ -50,6 +50,9 @@ $openQuickForCart = $bothModes;
         <?php endif; ?>
 
         <h3 class="qb-product-name"><a href="<?= $url ?>"><?= esc($product['name']) ?></a></h3>
+        <?php if (! empty($product['vendor_name'])): ?>
+            <div class="qb-vendor-tag">Vendor: <?= esc($product['vendor_name']) ?></div>
+        <?php endif; ?>
 
         <div class="qb-product-price-wrap">
             <?php if ($bothModes): ?>

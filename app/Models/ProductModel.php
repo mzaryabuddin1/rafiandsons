@@ -13,7 +13,7 @@ class ProductModel extends Model
     protected $useSoftDeletes   = true;
     protected $useTimestamps    = true;
     protected $allowedFields    = [
-        'category_id', 'name', 'slug', 'sku', 'price', 'compare_price', 'images', 'description',
+        'category_id', 'vendor_id', 'name', 'slug', 'sku', 'price', 'compare_price', 'images', 'description',
         'stock_status', 'cash_available', 'installment_available', 'status', 'meta_title', 'meta_description',
     ];
 

@@ -63,6 +63,17 @@ class OrdersController extends BaseAdminController
             $row['status_label'] = OrderModel::STATUSES[$row['status']] ?? $row['status'];
             $row['payment_verified'] = (int) ($row['payment_verified'] ?? 0);
             $row['receipt_url'] = ! empty($row['receipt_image']) ? base_url($row['receipt_image']) : null;
+
+            $vendorNames = db_connect()->table('order_items')
+                ->select('vendor_name')
+                ->where('order_id', $row['id'])
+                ->where('vendor_id IS NOT NULL', null, false)
+                ->where('vendor_name IS NOT NULL', null, false)
+                ->groupBy('vendor_name')
+                ->get()
+                ->getResultArray();
+            $row['vendor_names'] = array_values(array_filter(array_column($vendorNames, 'vendor_name')));
+            $row['vendor_label'] = $row['vendor_names'] ? implode(', ', $row['vendor_names']) : null;
         }
 
         return $this->jsonSuccess('Orders loaded.', ['items' => $rows]);
@@ -83,6 +94,8 @@ class OrdersController extends BaseAdminController
         $row['payment_verified'] = (int) ($row['payment_verified'] ?? 0);
         $row['receipt_url'] = ! empty($row['receipt_image']) ? base_url($row['receipt_image']) : null;
         $row['items'] = model(OrderItemModel::class)->where('order_id', $id)->findAll();
+        $row['vendor_names'] = array_values(array_unique(array_filter(array_column($row['items'], 'vendor_name'))));
+        $row['vendor_label'] = $row['vendor_names'] ? implode(', ', $row['vendor_names']) : null;
 
         return $this->jsonSuccess('Order loaded.', $row);
     }

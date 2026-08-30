@@ -38,6 +38,8 @@ class Filters extends BaseFilters
         'guestadmin'    => \App\Filters\GuestAdminFilter::class,
         'storeauth'     => \App\Filters\StoreAuthFilter::class,
         'gueststore'    => \App\Filters\GuestStoreFilter::class,
+        'vendorauth'    => \App\Filters\VendorAuthFilter::class,
+        'guestvendor'   => \App\Filters\GuestVendorFilter::class,
         'permission'    => \App\Filters\PermissionFilter::class,
     ];
 

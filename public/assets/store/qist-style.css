@@ -4018,3 +4018,52 @@ body.qb-shop-filters-open {
   margin: 6px 0 0;
 }
 
+.qb-nav-vendor {
+  color: var(--qb-brand, #c8102e) !important;
+  font-weight: 700;
+}
+
+.qb-vendor-tag {
+  color: #7c2d12;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+
+.qb-vendor-portal-head {
+  align-items: flex-start;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.qb-vendor-order-card {
+  background: #fff;
+  border: 1px solid var(--qb-border, #e5e7eb);
+  border-radius: 8px;
+  margin-bottom: 12px;
+  padding: 14px;
+}
+
+.qb-vendor-apply-actions {
+  margin: 0 0 20px;
+}
+
+.qb-btn-vendor-login {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.qb-btn-outline {
+  background: #fff;
+  border: 1px solid var(--qb-border, #e5e7eb);
+  border-radius: 6px;
+  color: #333;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 10px 16px;
+}
+

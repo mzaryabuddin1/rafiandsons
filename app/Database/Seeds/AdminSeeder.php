@@ -27,6 +27,7 @@ class AdminSeeder extends Seeder
             'contents'          => ['view', 'create', 'update', 'delete'],
             'banners'           => ['view', 'create', 'update', 'delete'],
             'bank_accounts'     => ['view', 'create', 'update', 'delete'],
+            'vendors'           => ['view', 'create', 'update', 'delete'],
             'settings'          => ['view', 'update'],
             'users'             => ['view', 'create', 'update', 'delete'],
             'roles'             => ['view', 'create', 'update', 'delete'],

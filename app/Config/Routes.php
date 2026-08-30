@@ -55,6 +55,28 @@ $routes->get('delivery-policy', 'Pages::deliveryPolicy');
 $routes->get('payment-policy', 'Pages::paymentPolicy');
 $routes->get('furniture-policy', 'Pages::furniturePolicy');
 
+$routes->group('vendor', static function ($routes) {
+    $routes->get('apply', 'VendorPortalController::apply');
+    $routes->post('apply', 'VendorPortalController::submitApplication', ['filter' => 'csrf']);
+
+    $routes->group('', ['namespace' => 'App\Controllers\Vendor'], static function ($routes) {
+        $routes->group('', ['filter' => 'guestvendor'], static function ($routes) {
+            $routes->get('login', 'AuthController::login');
+            $routes->post('login', 'AuthController::attemptLogin', ['filter' => 'csrf']);
+        });
+
+        $routes->post('logout', 'AuthController::logout', ['filter' => 'csrf']);
+
+        $routes->group('', ['filter' => 'vendorauth'], static function ($routes) {
+            $routes->get('/', 'DashboardController::index');
+            $routes->get('dashboard', 'DashboardController::index');
+            $routes->get('orders', 'OrdersController::index');
+            $routes->get('api/orders', 'OrdersController::list');
+            $routes->get('api/orders/(:num)', 'OrdersController::show/$1');
+        });
+    });
+});
+
 $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], static function ($routes) {
     $routes->group('', ['filter' => 'guestadmin'], static function ($routes) {
         $routes->get('login', 'AuthController::login');
@@ -109,6 +131,14 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], static functio
         $routes->post('api/bank-accounts', 'BankAccountsController::store', ['filter' => ['csrf', 'permission:bank_accounts.create']]);
         $routes->post('api/bank-accounts/(:num)', 'BankAccountsController::update/$1', ['filter' => ['csrf', 'permission:bank_accounts.update']]);
         $routes->post('api/bank-accounts/(:num)/delete', 'BankAccountsController::delete/$1', ['filter' => ['csrf', 'permission:bank_accounts.delete']]);
+
+        // Vendors
+        $routes->get('vendors', 'VendorsController::index', ['filter' => 'permission:vendors.view']);
+        $routes->get('api/vendors', 'VendorsController::list', ['filter' => 'permission:vendors.view']);
+        $routes->get('api/vendors/(:num)', 'VendorsController::show/$1', ['filter' => 'permission:vendors.view']);
+        $routes->post('api/vendors/(:num)/approve', 'VendorsController::approve/$1', ['filter' => ['csrf', 'permission:vendors.update']]);
+        $routes->post('api/vendors/(:num)/reject', 'VendorsController::reject/$1', ['filter' => ['csrf', 'permission:vendors.update']]);
+        $routes->post('api/vendors/(:num)/delete', 'VendorsController::delete/$1', ['filter' => ['csrf', 'permission:vendors.delete']]);
 
         // Contents
         $routes->get('contents', 'ContentsController::index', ['filter' => 'permission:contents.view']);

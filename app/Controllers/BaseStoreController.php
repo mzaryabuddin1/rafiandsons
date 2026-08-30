@@ -90,6 +90,22 @@ abstract class BaseStoreController extends BaseController
             }
         }
 
+        $vendorIds = array_values(array_unique(array_filter(array_map(
+            static fn ($p) => (int) ($p['vendor_id'] ?? 0),
+            $products
+        ))));
+        $vendorMap = [];
+        if ($vendorIds) {
+            foreach ($db->table('vendors')
+                ->whereIn('id', $vendorIds)
+                ->where('status', 'approved')
+                ->where('deleted_at', null)
+                ->get()
+                ->getResultArray() as $vendor) {
+                $vendorMap[(int) $vendor['id']] = $vendor['business_name'] ?: $vendor['contact_name'];
+            }
+        }
+
         $advanceMap = [];
         $installmentIds = array_values(array_filter($ids, static function ($id) use ($products) {
             foreach ($products as $product) {
@@ -118,6 +134,7 @@ abstract class BaseStoreController extends BaseController
             $cat = $catMap[(int) ($product['category_id'] ?? 0)] ?? null;
             $product['category_name'] = $cat['name'] ?? 'Product';
             $product['category_slug'] = $cat['slug'] ?? '';
+            $product['vendor_name'] = $vendorMap[(int) ($product['vendor_id'] ?? 0)] ?? null;
             $product['cash_available'] = (int) ($product['cash_available'] ?? 1);
             $product['installment_available'] = (int) ($product['installment_available'] ?? 0);
             $product['compare_price'] = isset($product['compare_price']) && $product['compare_price'] !== ''

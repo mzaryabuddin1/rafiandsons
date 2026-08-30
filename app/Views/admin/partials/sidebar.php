@@ -58,6 +58,12 @@ $menu = $activeMenu ?? '';
             </li>
             <?php endif; ?>
 
+            <?php if ($auth->can('vendors.view')): ?>
+            <li class="<?= $menu === 'vendors' ? 'active' : '' ?>">
+                <a href="<?= site_url('admin/vendors') ?>"><i class="fa fa-briefcase"></i> <span class="nav-label">Vendors</span></a>
+            </li>
+            <?php endif; ?>
+
             <?php if ($auth->canAny(['contents.view', 'banners.view', 'bank_accounts.view', 'settings.view'])): ?>
             <li class="<?= in_array($menu, ['contents', 'banners', 'bank_accounts', 'settings'], true) ? 'active' : '' ?>">
                 <a href="#"><i class="fa fa-desktop"></i> <span class="nav-label">Website</span><span class="fa arrow"></span></a>

@@ -9,6 +9,7 @@ use App\Models\CustomerModel;
 use App\Models\OrderItemModel;
 use App\Models\OrderModel;
 use App\Models\ProductModel;
+use App\Models\VendorModel;
 
 class CartController extends BaseStoreController
 {
@@ -157,8 +158,9 @@ class CartController extends BaseStoreController
         $result = $this->cart->remove($this->cartKeyFromRequest());
 
         return $this->jsonSuccess($result['message'], [
-            'count'    => $this->cart->count(),
-            'subtotal' => $this->cart->subtotal(),
+            'count'       => $result['count'] ?? $this->cart->count(),
+            'subtotal'    => $result['subtotal'] ?? $this->cart->subtotal(),
+            'grand_total' => $result['grand_total'] ?? $this->cart->grandTotal(),
         ]);
     }
 
@@ -282,11 +284,27 @@ class CartController extends BaseStoreController
         ]);
 
         $orderItems = [];
+        $vendorModel = model(VendorModel::class);
+        $productModel = model(ProductModel::class);
         foreach ($items as $item) {
             $isInstallment = ($item['payment_type'] ?? '') === 'installment';
+            $product = $productModel->find((int) $item['product_id']);
+            $vendorId = ! empty($product['vendor_id']) ? (int) $product['vendor_id'] : null;
+            $vendorName = null;
+            if ($vendorId) {
+                $vendor = $vendorModel->find($vendorId);
+                if ($vendor && ($vendor['status'] ?? '') === 'approved') {
+                    $vendorName = $vendorModel->displayName($vendor);
+                } else {
+                    $vendorId = null;
+                }
+            }
+
             $row = [
                 'order_id'     => $orderId,
                 'product_id'   => $item['product_id'],
+                'vendor_id'    => $vendorId,
+                'vendor_name'  => $vendorName,
                 'product_name' => $item['name'],
                 'sku'          => $item['sku'],
                 'payment_type' => $isInstallment ? 'installment' : 'cash',

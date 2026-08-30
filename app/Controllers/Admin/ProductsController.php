@@ -4,6 +4,7 @@ namespace App\Controllers\Admin;
 
 use App\Models\CategoryModel;
 use App\Models\ProductModel;
+use App\Models\VendorModel;
 
 class ProductsController extends BaseAdminController
 {
@@ -16,6 +17,7 @@ class ProductsController extends BaseAdminController
             'canUpdate'  => $this->auth->can('products.update'),
             'canDelete'  => $this->auth->can('products.delete'),
             'categories' => model(CategoryModel::class)->flatOptions(),
+            'vendors'    => model(VendorModel::class)->approvedOptions(),
         ]);
     }
 
@@ -27,8 +29,9 @@ class ProductsController extends BaseAdminController
 
         $search = trim((string) $this->request->getGet('search'));
         $builder = db_connect()->table('products p')
-            ->select('p.*, c.name as category_name')
+            ->select('p.*, c.name as category_name, v.business_name as vendor_name')
             ->join('categories c', 'c.id = p.category_id', 'left')
+            ->join('vendors v', 'v.id = p.vendor_id AND v.deleted_at IS NULL', 'left')
             ->where('p.deleted_at', null);
 
         if ($search !== '') {
@@ -36,6 +39,7 @@ class ProductsController extends BaseAdminController
                 ->like('p.name', $search)
                 ->orLike('p.sku', $search)
                 ->orLike('p.slug', $search)
+                ->orLike('v.business_name', $search)
                 ->groupEnd();
         }
 
@@ -58,6 +62,10 @@ class ProductsController extends BaseAdminController
 
         $row['plans'] = $model->plansForProduct((int) $id);
         $row['images_list'] = $row['images'] ? json_decode($row['images'], true) : [];
+        if (! empty($row['vendor_id'])) {
+            $vendor = model(VendorModel::class)->find($row['vendor_id']);
+            $row['vendor_name'] = $vendor ? model(VendorModel::class)->displayName($vendor) : null;
+        }
 
         return $this->jsonSuccess('Product loaded.', $row);
     }
@@ -191,9 +199,21 @@ class ProductsController extends BaseAdminController
             $plans = [];
         }
 
+        $vendorIdRaw = trim((string) $this->request->getPost('vendor_id'));
+        $vendorId = $vendorIdRaw !== '' ? (int) $vendorIdRaw : null;
+        if ($vendorId) {
+            $vendor = model(VendorModel::class)->where('status', 'approved')->find($vendorId);
+            if (! $vendor) {
+                return ['error' => 'Selected vendor is not available.'];
+            }
+        } else {
+            $vendorId = null;
+        }
+
         return [
             'data' => [
                 'category_id'           => $this->request->getPost('category_id') ?: null,
+                'vendor_id'             => $vendorId,
                 'name'                  => $name,
                 'slug'                  => $this->makeSlug($name, 'products', $id),
                 'sku'                   => $this->request->getPost('sku'),

@@ -5,7 +5,7 @@
     <div class="col-lg-4 text-right"><?php if (!empty($canCreate)): ?><button class="btn btn-primary" id="btn-add"><i class="fa fa-plus"></i> Add Product</button><?php endif; ?></div>
 </div>
 <div class="ibox"><div class="ibox-title"><h5>Product List</h5><div class="ibox-tools"><input type="text" id="search" class="form-control form-control-sm" placeholder="Search..." style="width:220px;display:inline-block;"></div></div>
-<div class="ibox-content"><div class="table-responsive"><table class="table table-striped table-bordered" id="data-table"><thead><tr><th>ID</th><th>Name</th><th>SKU</th><th>Category</th><th>Price</th><th>Payment</th><th>Stock</th><th>Status</th><th width="140">Actions</th></tr></thead><tbody></tbody></table></div></div></div>
+<div class="ibox-content"><div class="table-responsive"><table class="table table-striped table-bordered" id="data-table"><thead><tr><th>ID</th><th>Name</th><th>SKU</th><th>Category</th><th>Vendor</th><th>Price</th><th>Payment</th><th>Stock</th><th>Status</th><th width="140">Actions</th></tr></thead><tbody></tbody></table></div></div></div>
 
 <div class="modal inmodal" id="form-modal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content animated fadeIn">
 <form id="main-form" enctype="multipart/form-data">
@@ -20,7 +20,10 @@
 </div>
 <div class="row">
 <div class="col-md-4"><div class="form-group"><label>Category</label><select class="form-control" name="category_id" id="f-category"><option value="">Select</option><?php foreach ($categories as $c): ?><option value="<?= $c['id'] ?>"><?= esc($c['label']) ?></option><?php endforeach; ?></select></div></div>
+<div class="col-md-4"><div class="form-group"><label>Vendor</label><select class="form-control" name="vendor_id" id="f-vendor"><option value="">Own / No vendor</option><?php foreach (($vendors ?? []) as $v): ?><option value="<?= (int) $v['id'] ?>"><?= esc($v['business_name']) ?></option><?php endforeach; ?></select></div></div>
 <div class="col-md-4"><div class="form-group"><label>Stock</label><select class="form-control" name="stock_status" id="f-stock"><option value="in_stock">In Stock</option><option value="out_of_stock">Out of Stock</option></select></div></div>
+</div>
+<div class="row">
 <div class="col-md-4"><div class="form-group"><label>Status</label><select class="form-control" name="status" id="f-status"><option value="1">Active</option><option value="0">Inactive</option></select></div></div>
 </div>
 <div class="form-group"><label>Description</label><textarea class="form-control" name="description" id="f-description" rows="3"></textarea></div>
@@ -98,11 +101,12 @@ function togglePlansSection(){
     $('#plans-section').toggle(show);
 }
 
-function loadList(){AdminApp.request(ADMIN_BASE+'/api/products','GET',{search:$('#search').val()}).done(function(res){var h='';(res.data.items||[]).forEach(function(r){var a='';if(canUpdate)a+='<button class="btn btn-xs btn-primary btn-edit" data-id="'+r.id+'"><i class="fa fa-pencil"></i></button> ';if(canDelete)a+='<button class="btn btn-xs btn-danger btn-delete" data-id="'+r.id+'"><i class="fa fa-trash"></i></button>';var price=r.price;if(r.compare_price && parseFloat(r.compare_price)>parseFloat(r.price)){price='<s class="text-muted">'+r.compare_price+'</s> '+r.price;}h+='<tr><td>'+r.id+'</td><td>'+r.name+'</td><td>'+(r.sku||'')+'</td><td>'+(r.category_name||'-')+'</td><td>'+price+'</td><td>'+paymentLabel(r)+'</td><td>'+r.stock_status+'</td><td>'+(r.status==1?'Active':'Inactive')+'</td><td>'+a+'</td></tr>';});if(!h)h='<tr><td colspan="9" class="text-center text-muted">No products found</td></tr>';$('#data-table tbody').html(h);});}
+function loadList(){AdminApp.request(ADMIN_BASE+'/api/products','GET',{search:$('#search').val()}).done(function(res){var h='';(res.data.items||[]).forEach(function(r){var a='';if(canUpdate)a+='<button class="btn btn-xs btn-primary btn-edit" data-id="'+r.id+'"><i class="fa fa-pencil"></i></button> ';if(canDelete)a+='<button class="btn btn-xs btn-danger btn-delete" data-id="'+r.id+'"><i class="fa fa-trash"></i></button>';var price=r.price;if(r.compare_price && parseFloat(r.compare_price)>parseFloat(r.price)){price='<s class="text-muted">'+r.compare_price+'</s> '+r.price;}h+='<tr><td>'+r.id+'</td><td>'+r.name+'</td><td>'+(r.sku||'')+'</td><td>'+(r.category_name||'-')+'</td><td>'+(r.vendor_name||'-')+'</td><td>'+price+'</td><td>'+paymentLabel(r)+'</td><td>'+r.stock_status+'</td><td>'+(r.status==1?'Active':'Inactive')+'</td><td>'+a+'</td></tr>';});if(!h)h='<tr><td colspan="10" class="text-center text-muted">No products found</td></tr>';$('#data-table tbody').html(h);});}
 
 $('#btn-add').on('click',function(){
     $('#main-form')[0].reset();
     $('#record-id').val('');
+    $('#f-vendor').val('');
     resetPlans([{name:'12 Month Plan', down_payment:'', monthly_installment:'', months:12}]);
     $('#f-cash').val('1');
     $('#f-installment').val('1');
@@ -128,7 +132,7 @@ $('#main-form').on('submit',function(e){
         loadList();
     }).always(function(){AdminApp.setButtonLoading($btn,false);});
 });
-$(document).on('click','.btn-edit',function(){AdminApp.request(ADMIN_BASE+'/api/products/'+$(this).data('id'),'GET').done(function(res){var r=res.data;$('#record-id').val(r.id);$('#f-name').val(r.name);$('#f-sku').val(r.sku);$('#f-price').val(r.price);$('#f-compare-price').val(r.compare_price||'');$('#f-category').val(r.category_id||'');$('#f-stock').val(r.stock_status);$('#f-status').val(r.status);$('#f-description').val(r.description||'');$('#f-cash').val(r.cash_available!=null?r.cash_available:1);$('#f-installment').val(r.installment_available);$('#f-meta-title').val(r.meta_title||'');$('#f-meta-description').val(r.meta_description||'');resetPlans(r.plans||[]);togglePlansSection();$('#modal-title').text('Edit Product');$('#form-modal').modal('show');});});
+$(document).on('click','.btn-edit',function(){AdminApp.request(ADMIN_BASE+'/api/products/'+$(this).data('id'),'GET').done(function(res){var r=res.data;$('#record-id').val(r.id);$('#f-name').val(r.name);$('#f-sku').val(r.sku);$('#f-price').val(r.price);$('#f-compare-price').val(r.compare_price||'');$('#f-category').val(r.category_id||'');$('#f-vendor').val(r.vendor_id||'');$('#f-stock').val(r.stock_status);$('#f-status').val(r.status);$('#f-description').val(r.description||'');$('#f-cash').val(r.cash_available!=null?r.cash_available:1);$('#f-installment').val(r.installment_available);$('#f-meta-title').val(r.meta_title||'');$('#f-meta-description').val(r.meta_description||'');resetPlans(r.plans||[]);togglePlansSection();$('#modal-title').text('Edit Product');$('#form-modal').modal('show');});});
 $(document).on('click','.btn-delete',function(){var id=$(this).data('id');AdminApp.confirmDelete(function(){AdminApp.request(ADMIN_BASE+'/api/products/'+id+'/delete','POST').done(function(res){AdminApp.toast('success',res.message);loadList();});});});
 $(loadList);
 </script>
