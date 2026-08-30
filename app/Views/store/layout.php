@@ -24,8 +24,8 @@
     <link rel="stylesheet" type="text/css" href="<?= base_url('assets/riode-vendor/owl-carousel/owl.carousel.min.css') ?>">
     <link rel="stylesheet" type="text/css" href="<?= base_url('assets/riode-vendor/sticky-icon/stickyicon.css') ?>">
     <link rel="stylesheet" type="text/css" href="<?= base_url('theme/css/' . ($cssFile ?? 'demo22.min.css')) ?>">
-    <link rel="stylesheet" type="text/css" href="<?= base_url('assets/store/store.css') ?>">
-    <link rel="stylesheet" type="text/css" href="<?= base_url('assets/store/qist-style.css') ?>">
+    <link rel="stylesheet" type="text/css" href="<?= base_url('assets/store/store.css') ?>?v=<?= @filemtime(FCPATH . 'assets/store/store.css') ?: time() ?>">
+    <link rel="stylesheet" type="text/css" href="<?= base_url('assets/store/qist-style.css') ?>?v=<?= @filemtime(FCPATH . 'assets/store/qist-style.css') ?: time() ?>">
 </head>
 <body class="<?= esc($bodyClass ?? 'store-qist') ?>">
 <div class="page-wrapper">

@@ -654,7 +654,17 @@
   min-width: 0;
   overflow: hidden;
   border-right: 1px solid var(--qb-border);
-  background: #fff;
+  background: #fff !important;
+}
+
+.qb-cat-sidebar ul {
+  list-style: none !important;
+  margin: 0;
+  padding: 0;
+}
+
+.qb-cat-sidebar li {
+  list-style: none !important;
 }
 
 .qb-cat-sidebar-scroll {
@@ -676,22 +686,26 @@
   border-radius: 4px;
 }
 
-.qb-cat-sidebar > .qb-cat-sidebar-scroll > ul {
-  list-style: none;
+.qb-cat-sidebar > .qb-cat-sidebar-scroll > ul,
+.qb-cat-sidebar > ul {
+  list-style: none !important;
   margin: 0;
   padding: 4px 0 28px;
 }
 
-.qb-cat-sidebar-scroll > ul > li {
+.qb-cat-sidebar-scroll > ul > li,
+.qb-cat-sidebar > ul > li {
   position: relative;
   border-bottom: 1px solid #f0f0f0;
 }
 
-.qb-cat-sidebar-scroll > ul > li:last-child {
+.qb-cat-sidebar-scroll > ul > li:last-child,
+.qb-cat-sidebar > ul > li:last-child {
   border-bottom: 0;
 }
 
-.qb-cat-sidebar-scroll > ul > li > a {
+.qb-cat-sidebar-scroll > ul > li > a,
+.qb-cat-sidebar > ul > li > a {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -706,12 +720,15 @@
 
 .qb-cat-sidebar-scroll > ul > li > a:hover,
 .qb-cat-sidebar-scroll > ul > li.has-children:hover > a,
-.qb-cat-sidebar-scroll > ul > li.has-children.is-open > a {
+.qb-cat-sidebar-scroll > ul > li.has-children.is-open > a,
+.qb-cat-sidebar > ul > li > a:hover,
+.qb-cat-sidebar > ul > li.has-children:hover > a {
   background: #fff5f5;
   color: var(--qb-brand);
 }
 
-.qb-cat-sidebar-scroll > ul > li > a i:first-child {
+.qb-cat-sidebar-scroll > ul > li > a i:first-child,
+.qb-cat-sidebar > ul > li > a i:first-child {
   width: 18px;
   color: var(--qb-brand);
   text-align: center;
