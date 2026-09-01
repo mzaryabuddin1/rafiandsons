@@ -109,7 +109,7 @@ class AdminSeeder extends Seeder
 
         $settings = [
             'site_name'       => 'Rafi & Sons',
-            'contact_email'   => 'info@rafiandsonsnr.com',
+            'contact_email'   => 'support@rafiandsonsnr.pk',
             'contact_phone'   => '',
             'contact_address' => '',
             'facebook_url'    => '',
@@ -120,9 +120,9 @@ class AdminSeeder extends Seeder
             'smtp_user'       => '',
             'smtp_pass'       => '',
             'smtp_port'       => '587',
-            'smtp_from_email' => '',
+            'smtp_from_email' => 'support@rafiandsonsnr.pk',
             'smtp_from_name'  => 'Rafi & Sons',
-            'order_notify_email' => 'admin@rafiandsons.test',
+            'order_notify_email' => 'support@rafiandsonsnr.pk',
         ];
         $settingRows = [];
         foreach ($settings as $key => $value) {

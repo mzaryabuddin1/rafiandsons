@@ -284,7 +284,7 @@ class DemoStoreSeeder extends Seeder
         $this->db->table('settings')->where('key', 'site_name')->update(['value' => 'Rafi & Sons']);
         $this->db->table('settings')->where('key', 'contact_phone')->update(['value' => '0800-123-456']);
         $this->db->table('settings')->where('key', 'contact_address')->update(['value' => 'Main Boulevard, City, Pakistan']);
-        $this->db->table('settings')->where('key', 'contact_email')->update(['value' => 'info@rafiandsonsnr.com']);
+        $this->db->table('settings')->where('key', 'contact_email')->update(['value' => 'support@rafiandsonsnr.pk']);
 
         $this->db->table('contents')->where('slug', 'about-us')->update([
             'body' => '<p>Rafi & Sons is a trusted retail brand offering quality products on flexible installment plans. Making Life Easier, Every Day.</p><p>Browse our catalog, choose a plan that fits your budget, and submit a booking request. Our team will contact you for verification.</p>',
