@@ -83,10 +83,10 @@
 
                         <div class="qb-price-block qb-price-block--cash" <?= ($installmentAvailable && ! $cashAvailable) ? 'hidden' : '' ?>>
                             <div class="qb-product-price-lg qb-product-price-wrap">
+                                <span class="qb-cash-price-label">Cash Price</span>
                                 <?php if ($showCompare): ?>
                                     <span class="qb-price-compare">PKR <?= number_format($comparePrice, 0) ?></span>
                                 <?php endif; ?>
-                                <span class="qb-cash-price-label">Cash Price</span>
                                 <span>PKR <?= number_format($cashPrice, 0) ?></span>
                             </div>
                         </div>
