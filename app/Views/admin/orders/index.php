@@ -4,7 +4,9 @@
 <div class="col-lg-8"><h2>Orders</h2></div>
 <div class="col-lg-4 text-right"><?php if (!empty($canCreate)): ?><button class="btn btn-primary" id="btn-add"><i class="fa fa-plus"></i> Create Order</button><?php endif; ?></div>
 </div>
-<div class="ibox"><div class="ibox-title"><h5>Order Bookings</h5></div>
+<div class="ibox"><div class="ibox-title"><h5>Order Bookings</h5><div class="ibox-tools">
+<button type="button" class="btn btn-sm btn-white" id="btn-export-csv"><i class="fa fa-download"></i> Export CSV</button>
+</div></div>
 <div class="ibox-content">
 <div class="row m-b-sm">
 <div class="col-md-3"><input type="text" id="search" class="form-control" placeholder="Order # / name / phone"></div>
@@ -14,6 +16,10 @@
 <div class="col-md-2"><button class="btn btn-primary" id="btn-filter">Filter</button></div>
 </div>
 <div class="table-responsive"><table class="table table-striped table-bordered" id="data-table"><thead><tr><th>Order #</th><th>Customer</th><th>Phone</th><th>Vendor</th><th>Plan</th><th>Total</th><th>Status</th><th>Payment</th><th>Date</th><th width="140">Actions</th></tr></thead><tbody></tbody></table></div>
+<div class="row admin-table-footer">
+  <div class="col-sm-6"><div class="admin-table-info text-muted" id="table-info"></div></div>
+  <div class="col-sm-6 text-right"><div class="admin-table-pager" id="table-pager"></div></div>
+</div>
 </div></div>
 
 <div class="modal inmodal" id="form-modal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content animated fadeIn">
@@ -71,18 +77,28 @@ function paymentBadge(r){
     return '<span class="badge">No Receipt</span>';
 }
 
-function loadList(){
-    AdminApp.request(ADMIN_BASE+'/api/orders','GET',{search:$('#search').val(),status:$('#filter-status').val(),date_from:$('#date-from').val(),date_to:$('#date-to').val()}).done(function(res){
-        var h='';
-        (res.data.items||[]).forEach(function(r){
-            var a='<button class="btn btn-xs btn-primary btn-view" data-id="'+r.id+'"><i class="fa fa-eye"></i></button> ';
-            if(canDelete)a+='<button class="btn btn-xs btn-danger btn-delete" data-id="'+r.id+'"><i class="fa fa-trash"></i></button>';
-            h+='<tr><td>'+r.order_number+'</td><td>'+r.customer_name+'</td><td>'+r.customer_phone+'</td><td>'+(r.vendor_label||'-')+'</td><td>'+(r.plan_name||'-')+'</td><td>'+r.total_payable+'</td><td><span class="badge badge-primary">'+(r.status_label||r.status)+'</span></td><td>'+paymentBadge(r)+'</td><td>'+(r.created_at||'')+'</td><td>'+a+'</td></tr>';
-        });
-        if(!h)h='<tr><td colspan="10" class="text-center text-muted">No orders found</td></tr>';
-        $('#data-table tbody').html(h);
-    });
-}
+var table = AdminApp.createDataTable({
+    url: ADMIN_BASE + '/api/orders',
+    $tbody: $('#data-table tbody'),
+    $pager: $('#table-pager'),
+    $info: $('#table-info'),
+    $search: $('#search'),
+    emptyCols: 10,
+    emptyText: 'No orders found',
+    filters: function () {
+        return {
+            status: $('#filter-status').val(),
+            date_from: $('#date-from').val(),
+            date_to: $('#date-to').val()
+        };
+    },
+    renderRow: function (r) {
+        var a = '<button class="btn btn-xs btn-primary btn-view" data-id="' + r.id + '"><i class="fa fa-eye"></i></button> ';
+        if (canDelete) a += '<button class="btn btn-xs btn-danger btn-delete" data-id="' + r.id + '"><i class="fa fa-trash"></i></button>';
+        return '<tr><td>' + r.order_number + '</td><td>' + r.customer_name + '</td><td>' + r.customer_phone + '</td><td>' + (r.vendor_label || '-') + '</td><td>' + (r.plan_name || '-') + '</td><td>' + r.total_payable + '</td><td><span class="badge badge-primary">' + (r.status_label || r.status) + '</span></td><td>' + paymentBadge(r) + '</td><td>' + (r.created_at || '') + '</td><td>' + a + '</td></tr>';
+    }
+});
+$('#btn-export-csv').on('click', function () { table.exportCsv(); });
 
 function renderDetail(r){
     currentOrder=r;
@@ -115,20 +131,20 @@ function renderDetail(r){
     $('#detail-modal').modal('show');
 }
 
-$('#btn-filter,#search').on('click keyup',function(e){if(e.type==='keyup'&&e.keyCode!==13&&e.target.id==='search')return;loadList();});
+$('#btn-filter').on('click', function () { table.load(true); });
 $('#btn-add').on('click',function(){$('#main-form')[0].reset();$('#form-modal').modal('show');});
 $('#f-customer').on('change',function(){var o=$(this).find(':selected');if(o.val()){$('#f-name').val(o.data('name'));$('#f-phone').val(o.data('phone'));$('#f-email').val(o.data('email'));}});
-$('#main-form').on('submit',function(e){e.preventDefault();var $btn=$('#save-btn');AdminApp.setButtonLoading($btn,true);AdminApp.request(ADMIN_BASE+'/api/orders','POST',$(this).serialize()).done(function(res){AdminApp.toast('success',res.message+' ('+res.data.order_number+')');$('#form-modal').modal('hide');loadList();}).always(function(){AdminApp.setButtonLoading($btn,false);});});
+$('#main-form').on('submit',function(e){e.preventDefault();var $btn=$('#save-btn');AdminApp.setButtonLoading($btn,true);AdminApp.request(ADMIN_BASE+'/api/orders','POST',$(this).serialize()).done(function(res){AdminApp.toast('success',res.message+' ('+res.data.order_number+')');$('#form-modal').modal('hide');table.load(true);}).always(function(){AdminApp.setButtonLoading($btn,false);});});
 $(document).on('click','.btn-view',function(){AdminApp.request(ADMIN_BASE+'/api/orders/'+$(this).data('id'),'GET').done(function(res){renderDetail(res.data);});});
-$('#status-form').on('submit',function(e){e.preventDefault();var id=$('#status-id').val();AdminApp.request(ADMIN_BASE+'/api/orders/'+id+'/status','POST',$(this).serialize()).done(function(res){AdminApp.toast('success',res.message);$('#detail-modal').modal('hide');loadList();});});
+$('#status-form').on('submit',function(e){e.preventDefault();var id=$('#status-id').val();AdminApp.request(ADMIN_BASE+'/api/orders/'+id+'/status','POST',$(this).serialize()).done(function(res){AdminApp.toast('success',res.message);$('#detail-modal').modal('hide');table.load(true);});});
 $('#btn-verify-payment').on('click',function(){
     if(!currentOrder)return;
     AdminApp.request(ADMIN_BASE+'/api/orders/'+currentOrder.id+'/verify-payment','POST').done(function(res){
         AdminApp.toast('success',res.message);
-        AdminApp.request(ADMIN_BASE+'/api/orders/'+currentOrder.id,'GET').done(function(r){renderDetail(r.data);loadList();});
+        AdminApp.request(ADMIN_BASE+'/api/orders/'+currentOrder.id,'GET').done(function(r){renderDetail(r.data);table.reload();});
     });
 });
-$(document).on('click','.btn-delete',function(){var id=$(this).data('id');AdminApp.confirmDelete(function(){AdminApp.request(ADMIN_BASE+'/api/orders/'+id+'/delete','POST').done(function(res){AdminApp.toast('success',res.message);loadList();});},'Archive this order?');});
-$(loadList);
+$(document).on('click','.btn-delete',function(){var id=$(this).data('id');AdminApp.confirmDelete(function(){AdminApp.request(ADMIN_BASE+'/api/orders/'+id+'/delete','POST').done(function(res){AdminApp.toast('success',res.message);table.load(true);});},'Archive this order?');});
+table.load(true);
 </script>
 <?= $this->endSection() ?>

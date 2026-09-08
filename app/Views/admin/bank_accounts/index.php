@@ -13,7 +13,10 @@
 </div>
 
 <div class="ibox">
-    <div class="ibox-title"><h5>Payment Accounts</h5></div>
+    <div class="ibox-title"><h5>Payment Accounts</h5><div class="ibox-tools">
+        <input type="text" id="search" class="form-control form-control-sm" placeholder="Search..." style="width:220px;display:inline-block;margin-right:8px;">
+        <button type="button" class="btn btn-sm btn-white" id="btn-export-csv"><i class="fa fa-download"></i> Export CSV</button>
+    </div></div>
     <div class="ibox-content">
         <div class="table-responsive">
             <table class="table table-striped table-bordered" id="data-table">
@@ -32,6 +35,10 @@
                 </thead>
                 <tbody></tbody>
             </table>
+        </div>
+        <div class="row admin-table-footer">
+          <div class="col-sm-6"><div class="admin-table-info text-muted" id="table-info"></div></div>
+          <div class="col-sm-6 text-right"><div class="admin-table-pager" id="table-pager"></div></div>
         </div>
     </div>
 </div>
@@ -117,32 +124,36 @@ function setLogoPreview(url) {
     }
 }
 
-function loadList() {
-    AdminApp.request(ADMIN_BASE + '/api/bank-accounts', 'GET').done(function (res) {
-        var h = '';
-        (res.data.items || []).forEach(function (r) {
-            var a = '';
-            if (canUpdate) a += '<button class="btn btn-xs btn-primary btn-edit" data-id="' + r.id + '"><i class="fa fa-pencil"></i></button> ';
-            if (canDelete) a += '<button class="btn btn-xs btn-danger btn-delete" data-id="' + r.id + '"><i class="fa fa-trash"></i></button>';
-            var logo = r.logo_url
-                ? '<img src="' + r.logo_url + '" alt="" style="height:32px;max-width:70px;object-fit:contain;">'
-                : '<span class="text-muted">-</span>';
-            h += '<tr>'
-                + '<td>' + logo + '</td>'
-                + '<td>' + (r.bank_name || '') + '</td>'
-                + '<td>' + (r.account_title || '') + '</td>'
-                + '<td>' + (r.account_number || '') + '</td>'
-                + '<td>' + (r.iban || '-') + '</td>'
-                + '<td>' + (r.branch || '-') + '</td>'
-                + '<td>' + r.sort_order + '</td>'
-                + '<td>' + (parseInt(r.status, 10) === 1 ? '<span class="badge badge-primary">Active</span>' : '<span class="badge">Inactive</span>') + '</td>'
-                + '<td>' + a + '</td>'
-                + '</tr>';
-        });
-        if (!h) h = '<tr><td colspan="9" class="text-center text-muted">No bank accounts yet</td></tr>';
-        $('#data-table tbody').html(h);
-    });
-}
+var table = AdminApp.createDataTable({
+    url: ADMIN_BASE + '/api/bank-accounts',
+    $tbody: $('#data-table tbody'),
+    $pager: $('#table-pager'),
+    $info: $('#table-info'),
+    $search: $('#search'),
+    emptyCols: 9,
+    emptyText: 'No bank accounts yet',
+    filters: function () { return {}; },
+    renderRow: function (r) {
+        var a = '';
+        if (canUpdate) a += '<button class="btn btn-xs btn-primary btn-edit" data-id="' + r.id + '"><i class="fa fa-pencil"></i></button> ';
+        if (canDelete) a += '<button class="btn btn-xs btn-danger btn-delete" data-id="' + r.id + '"><i class="fa fa-trash"></i></button>';
+        var logo = r.logo_url
+            ? '<img src="' + r.logo_url + '" alt="" style="height:32px;max-width:70px;object-fit:contain;">'
+            : '<span class="text-muted">-</span>';
+        return '<tr>'
+            + '<td>' + logo + '</td>'
+            + '<td>' + (r.bank_name || '') + '</td>'
+            + '<td>' + (r.account_title || '') + '</td>'
+            + '<td>' + (r.account_number || '') + '</td>'
+            + '<td>' + (r.iban || '-') + '</td>'
+            + '<td>' + (r.branch || '-') + '</td>'
+            + '<td>' + r.sort_order + '</td>'
+            + '<td>' + (parseInt(r.status, 10) === 1 ? '<span class="badge badge-primary">Active</span>' : '<span class="badge">Inactive</span>') + '</td>'
+            + '<td>' + a + '</td>'
+            + '</tr>';
+    }
+});
+$('#btn-export-csv').on('click', function () { table.exportCsv(); });
 
 $('#btn-add').on('click', function () {
     $('#main-form')[0].reset();
@@ -187,7 +198,7 @@ $('#main-form').on('submit', function (e) {
     AdminApp.request(url, 'POST', formData).done(function (res) {
         AdminApp.toast('success', res.message);
         $('#form-modal').modal('hide');
-        loadList();
+        table.load(true);
     }).always(function () {
         AdminApp.setButtonLoading($btn, false);
     });
@@ -198,11 +209,11 @@ $(document).on('click', '.btn-delete', function () {
     AdminApp.confirmDelete(function () {
         AdminApp.request(ADMIN_BASE + '/api/bank-accounts/' + id + '/delete', 'POST').done(function (res) {
             AdminApp.toast('success', res.message);
-            loadList();
+            table.load(true);
         });
     }, 'Delete this bank account?');
 });
 
-$(loadList);
+table.load(true);
 </script>
 <?= $this->endSection() ?>

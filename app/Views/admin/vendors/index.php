@@ -5,7 +5,9 @@
 </div>
 
 <div class="ibox">
-    <div class="ibox-title"><h5>Vendor Applications</h5></div>
+    <div class="ibox-title"><h5>Vendor Applications</h5><div class="ibox-tools">
+        <button type="button" class="btn btn-sm btn-white" id="btn-export-csv"><i class="fa fa-download"></i> Export CSV</button>
+    </div></div>
     <div class="ibox-content">
         <div class="row m-b-sm">
             <div class="col-md-4"><input type="text" id="search" class="form-control" placeholder="Business / name / email / phone"></div>
@@ -34,6 +36,10 @@
                 </thead>
                 <tbody></tbody>
             </table>
+        </div>
+        <div class="row admin-table-footer">
+          <div class="col-sm-6"><div class="admin-table-info text-muted" id="table-info"></div></div>
+          <div class="col-sm-6 text-right"><div class="admin-table-pager" id="table-pager"></div></div>
         </div>
     </div>
 </div>
@@ -67,34 +73,34 @@
 var canUpdate = <?= ! empty($canUpdate) ? 'true' : 'false' ?>;
 var canDelete = <?= ! empty($canDelete) ? 'true' : 'false' ?>;
 
-function loadList() {
-    AdminApp.request(ADMIN_BASE + '/api/vendors', 'GET', {
-        search: $('#search').val(),
-        status: $('#filter-status').val()
-    }).done(function (res) {
-        var h = '';
-        (res.data.items || []).forEach(function (r) {
-            var a = '<button class="btn btn-xs btn-primary btn-view" data-id="' + r.id + '"><i class="fa fa-eye"></i></button> ';
-            if (canDelete) a += '<button class="btn btn-xs btn-danger btn-delete" data-id="' + r.id + '"><i class="fa fa-trash"></i></button>';
-            h += '<tr>'
-                + '<td>' + (r.business_name || '') + '</td>'
-                + '<td>' + (r.contact_name || '') + '</td>'
-                + '<td>' + (r.email || '') + '</td>'
-                + '<td>' + (r.phone || '') + '</td>'
-                + '<td><span class="badge badge-primary">' + (r.status_label || r.status) + '</span></td>'
-                + '<td>' + (r.created_at || '') + '</td>'
-                + '<td>' + a + '</td>'
-                + '</tr>';
-        });
-        if (!h) h = '<tr><td colspan="7" class="text-center text-muted">No vendors found</td></tr>';
-        $('#data-table tbody').html(h);
-    });
-}
-
-$('#btn-filter,#search').on('click keyup', function (e) {
-    if (e.type === 'keyup' && e.keyCode !== 13 && e.target.id === 'search') return;
-    loadList();
+var table = AdminApp.createDataTable({
+    url: ADMIN_BASE + '/api/vendors',
+    $tbody: $('#data-table tbody'),
+    $pager: $('#table-pager'),
+    $info: $('#table-info'),
+    $search: $('#search'),
+    emptyCols: 7,
+    emptyText: 'No vendors found',
+    filters: function () {
+        return { status: $('#filter-status').val() };
+    },
+    renderRow: function (r) {
+        var a = '<button class="btn btn-xs btn-primary btn-view" data-id="' + r.id + '"><i class="fa fa-eye"></i></button> ';
+        if (canDelete) a += '<button class="btn btn-xs btn-danger btn-delete" data-id="' + r.id + '"><i class="fa fa-trash"></i></button>';
+        return '<tr>'
+            + '<td>' + (r.business_name || '') + '</td>'
+            + '<td>' + (r.contact_name || '') + '</td>'
+            + '<td>' + (r.email || '') + '</td>'
+            + '<td>' + (r.phone || '') + '</td>'
+            + '<td><span class="badge badge-primary">' + (r.status_label || r.status) + '</span></td>'
+            + '<td>' + (r.created_at || '') + '</td>'
+            + '<td>' + a + '</td>'
+            + '</tr>';
+    }
 });
+$('#btn-export-csv').on('click', function () { table.exportCsv(); });
+
+$('#btn-filter').on('click', function () { table.load(true); });
 
 $(document).on('click', '.btn-view', function () {
     AdminApp.request(ADMIN_BASE + '/api/vendors/' + $(this).data('id'), 'GET').done(function (res) {
@@ -131,7 +137,7 @@ $('#btn-approve').on('click', function () {
     }).done(function (res) {
         AdminApp.toast('success', res.message);
         $('#detail-modal').modal('hide');
-        loadList();
+        table.load(true);
     });
 });
 
@@ -142,7 +148,7 @@ $('#btn-reject').on('click', function () {
     }).done(function (res) {
         AdminApp.toast('success', res.message);
         $('#detail-modal').modal('hide');
-        loadList();
+        table.load(true);
     });
 });
 
@@ -151,11 +157,11 @@ $(document).on('click', '.btn-delete', function () {
     AdminApp.confirmDelete(function () {
         AdminApp.request(ADMIN_BASE + '/api/vendors/' + id + '/delete', 'POST').done(function (res) {
             AdminApp.toast('success', res.message);
-            loadList();
+            table.load(true);
         });
     }, 'Archive this vendor?');
 });
 
-$(loadList);
+table.load(true);
 </script>
 <?= $this->endSection() ?>

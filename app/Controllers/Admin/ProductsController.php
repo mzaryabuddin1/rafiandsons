@@ -27,25 +27,61 @@ class ProductsController extends BaseAdminController
             return $denied;
         }
 
-        $search = trim((string) $this->request->getGet('search'));
+        $query = $this->listQuery();
         $builder = db_connect()->table('products p')
             ->select('p.*, c.name as category_name, v.business_name as vendor_name')
             ->join('categories c', 'c.id = p.category_id', 'left')
             ->join('vendors v', 'v.id = p.vendor_id AND v.deleted_at IS NULL', 'left')
             ->where('p.deleted_at', null);
 
-        if ($search !== '') {
+        if ($query['search'] !== '') {
             $builder->groupStart()
-                ->like('p.name', $search)
-                ->orLike('p.sku', $search)
-                ->orLike('p.slug', $search)
-                ->orLike('v.business_name', $search)
+                ->like('p.name', $query['search'])
+                ->orLike('p.sku', $query['search'])
+                ->orLike('p.slug', $query['search'])
+                ->orLike('v.business_name', $query['search'])
                 ->groupEnd();
         }
 
-        $rows = $builder->orderBy('p.id', 'DESC')->get()->getResultArray();
+        [$rows, $total] = $this->paginateBuilder($builder, $query, static function ($b) {
+            $b->orderBy('p.id', 'DESC');
+        });
 
-        return $this->jsonSuccess('Products loaded.', ['items' => $rows]);
+        if ($query['export']) {
+            $csvRows = [];
+            foreach ($rows as $row) {
+                $cash = (int) ($row['cash_available'] ?? 0) === 1;
+                $inst = (int) ($row['installment_available'] ?? 0) === 1;
+                $payment = $cash && $inst ? 'Cash + Installment' : ($cash ? 'Cash only' : ($inst ? 'Installment only' : '-'));
+                $csvRows[] = [
+                    'id'            => $row['id'],
+                    'name'          => $row['name'],
+                    'sku'           => $row['sku'] ?? '',
+                    'category_name' => $row['category_name'] ?? '',
+                    'vendor_name'   => $row['vendor_name'] ?? '',
+                    'price'         => $row['price'],
+                    'compare_price' => $row['compare_price'] ?? '',
+                    'payment'       => $payment,
+                    'stock_status'  => $row['stock_status'],
+                    'status'        => (int) $row['status'] === 1 ? 'Active' : 'Inactive',
+                ];
+            }
+
+            return $this->csvDownload('products.csv', [
+                'id'            => 'ID',
+                'name'          => 'Name',
+                'sku'           => 'SKU',
+                'category_name' => 'Category',
+                'vendor_name'   => 'Vendor',
+                'price'         => 'Price',
+                'compare_price' => 'Compare Price',
+                'payment'       => 'Payment',
+                'stock_status'  => 'Stock',
+                'status'        => 'Status',
+            ], $csvRows);
+        }
+
+        return $this->jsonSuccess('Products loaded.', $this->paginatedData($rows, $total, $query));
     }
 
     public function show($id)
@@ -165,8 +201,20 @@ class ProductsController extends BaseAdminController
             return ['error' => 'Enable at least cash purchase or installment for this product.'];
         }
 
+        $priceRaw = trim((string) $this->request->getPost('price'));
+        if ($priceRaw === '' || ! is_numeric($priceRaw)) {
+            return ['error' => 'Price is required.'];
+        }
+        $price = (float) $priceRaw;
+        if ($price < 0) {
+            return ['error' => 'Price cannot be negative.'];
+        }
+
         $comparePriceRaw = trim((string) $this->request->getPost('compare_price'));
         $comparePrice = $comparePriceRaw !== '' ? (float) $comparePriceRaw : null;
+        if ($comparePrice !== null && $comparePrice < 0) {
+            return ['error' => 'Compare price cannot be negative.'];
+        }
         if ($comparePrice !== null && $comparePrice <= 0) {
             $comparePrice = null;
         }
@@ -178,25 +226,33 @@ class ProductsController extends BaseAdminController
                 if (! is_array($row)) {
                     continue;
                 }
-                $name = trim((string) ($row['name'] ?? ''));
+                $planName = trim((string) ($row['name'] ?? ''));
                 $months = (int) ($row['months'] ?? 0);
                 $down = (float) ($row['down_payment'] ?? 0);
                 $monthly = (float) ($row['monthly_installment'] ?? 0);
-                if ($name === '' && $months <= 0 && $down <= 0 && $monthly <= 0) {
+                if ($planName === '' && $months <= 0 && $down <= 0 && $monthly <= 0) {
                     continue;
+                }
+                if ($down < 0 || $monthly < 0) {
+                    return ['error' => 'Plan amounts cannot be negative.'];
+                }
+                if ($months < 1) {
+                    return ['error' => 'Plan months must be at least 1.'];
                 }
                 $plans[] = [
                     'id'                  => ! empty($row['id']) ? (int) $row['id'] : null,
-                    'name'                => $name !== '' ? $name : ($months . ' Month Plan'),
+                    'name'                => $planName !== '' ? $planName : ($months . ' Month Plan'),
                     'down_payment'        => $down,
                     'monthly_installment' => $monthly,
-                    'months'              => max(1, $months ?: 12),
+                    'months'              => $months,
                 ];
             }
         }
 
         if (! $installmentAvailable) {
             $plans = [];
+        } elseif ($plans === []) {
+            return ['error' => 'Add at least one installment plan, or set Installment to Not Available.'];
         }
 
         $vendorIdRaw = trim((string) $this->request->getPost('vendor_id'));
@@ -217,7 +273,7 @@ class ProductsController extends BaseAdminController
                 'name'                  => $name,
                 'slug'                  => $this->makeSlug($name, 'products', $id),
                 'sku'                   => $this->request->getPost('sku'),
-                'price'                 => (float) $this->request->getPost('price'),
+                'price'                 => $price,
                 'compare_price'         => $comparePrice,
                 'images'                => json_encode(array_values($images)),
                 'description'           => $this->request->getPost('description'),

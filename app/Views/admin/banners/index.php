@@ -13,13 +13,14 @@
     <div class="ibox-title">
         <h5>Banners</h5>
         <div class="ibox-tools">
-            <select id="filter-position" class="form-control form-control-sm" style="width:180px;display:inline-block;">
+            <select id="filter-position" class="form-control form-control-sm" style="width:180px;display:inline-block;margin-right:8px;">
                 <option value="">All positions</option>
                 <?php foreach ($positions as $key => $label): ?>
                     <option value="<?= esc($key) ?>"><?= esc($label) ?></option>
                 <?php endforeach; ?>
             </select>
-            <input type="text" id="search" class="form-control form-control-sm" placeholder="Search..." style="width:200px;display:inline-block;">
+            <input type="text" id="search" class="form-control form-control-sm" placeholder="Search..." style="width:200px;display:inline-block;margin-right:8px;">
+            <button type="button" class="btn btn-sm btn-white" id="btn-export-csv"><i class="fa fa-download"></i> Export CSV</button>
         </div>
     </div>
     <div class="ibox-content">
@@ -40,6 +41,10 @@
                 </thead>
                 <tbody></tbody>
             </table>
+        </div>
+        <div class="row admin-table-footer">
+          <div class="col-sm-6"><div class="admin-table-info text-muted" id="table-info"></div></div>
+          <div class="col-sm-6 text-right"><div class="admin-table-pager" id="table-pager"></div></div>
         </div>
     </div>
 </div>
@@ -169,35 +174,38 @@ function updateSizeHints() {
     $('#position-size-hint').html('<i class="fa fa-info-circle"></i> Image size for this position: <strong>' + label + '</strong>');
 }
 
-function loadList() {
-    AdminApp.request(ADMIN_BASE + '/api/banners', 'GET', {
-        search: $('#search').val(),
-        position: $('#filter-position').val()
-    }).done(function (res) {
-        var h = '';
-        (res.data.items || []).forEach(function (r) {
-            var img = r.image
-                ? '<img src="' + BASE_URL + r.image + '" style="height:40px;border-radius:4px;">'
-                : '-';
-            var a = '';
-            if (canUpdate) a += '<button class="btn btn-xs btn-primary btn-edit" data-id="' + r.id + '"><i class="fa fa-pencil"></i></button> ';
-            if (canDelete) a += '<button class="btn btn-xs btn-danger btn-delete" data-id="' + r.id + '"><i class="fa fa-trash"></i></button>';
-            h += '<tr>'
-                + '<td>' + r.id + '</td>'
-                + '<td>' + img + '</td>'
-                + '<td><span class="label label-primary">' + (r.position_label || r.position) + '</span></td>'
-                + '<td>' + (r.subtitle ? '<small class="text-muted">' + r.subtitle + '</small><br>' : '') + r.title + '</td>'
-                + '<td>' + (r.button_text || '-') + '</td>'
-                + '<td style="max-width:180px;word-break:break-all;"><small>' + (r.link || '-') + '</small></td>'
-                + '<td>' + r.sort_order + '</td>'
-                + '<td>' + (r.status == 1 ? 'Active' : 'Inactive') + '</td>'
-                + '<td>' + a + '</td>'
-                + '</tr>';
-        });
-        if (!h) h = '<tr><td colspan="9" class="text-center text-muted">No banners found</td></tr>';
-        $('#data-table tbody').html(h);
-    });
-}
+var table = AdminApp.createDataTable({
+    url: ADMIN_BASE + '/api/banners',
+    $tbody: $('#data-table tbody'),
+    $pager: $('#table-pager'),
+    $info: $('#table-info'),
+    $search: $('#search'),
+    emptyCols: 9,
+    emptyText: 'No banners found',
+    filters: function () {
+        return { position: $('#filter-position').val() };
+    },
+    renderRow: function (r) {
+        var img = r.image
+            ? '<img src="' + BASE_URL + r.image + '" style="height:40px;border-radius:4px;">'
+            : '-';
+        var a = '';
+        if (canUpdate) a += '<button class="btn btn-xs btn-primary btn-edit" data-id="' + r.id + '"><i class="fa fa-pencil"></i></button> ';
+        if (canDelete) a += '<button class="btn btn-xs btn-danger btn-delete" data-id="' + r.id + '"><i class="fa fa-trash"></i></button>';
+        return '<tr>'
+            + '<td>' + r.id + '</td>'
+            + '<td>' + img + '</td>'
+            + '<td><span class="label label-primary">' + (r.position_label || r.position) + '</span></td>'
+            + '<td>' + (r.subtitle ? '<small class="text-muted">' + r.subtitle + '</small><br>' : '') + r.title + '</td>'
+            + '<td>' + (r.button_text || '-') + '</td>'
+            + '<td style="max-width:180px;word-break:break-all;"><small>' + (r.link || '-') + '</small></td>'
+            + '<td>' + r.sort_order + '</td>'
+            + '<td>' + (r.status == 1 ? 'Active' : 'Inactive') + '</td>'
+            + '<td>' + a + '</td>'
+            + '</tr>';
+    }
+});
+$('#btn-export-csv').on('click', function () { table.exportCsv(); });
 
 function resetForm() {
     $('#main-form')[0].reset();
@@ -218,7 +226,7 @@ $('#btn-add').on('click', function () {
 
 $('#f-position').on('change', updateSizeHints);
 
-$('#search, #filter-position').on('change keyup', loadList);
+$('#filter-position').on('change', function () { table.load(true); });
 
 $('#main-form').on('submit', function (e) {
     e.preventDefault();
@@ -229,7 +237,7 @@ $('#main-form').on('submit', function (e) {
     AdminApp.request(url, 'POST', new FormData(this)).done(function (res) {
         AdminApp.toast('success', res.message);
         $('#form-modal').modal('hide');
-        loadList();
+        table.load(true);
     }).always(function () {
         AdminApp.setButtonLoading($btn, false);
     });
@@ -264,11 +272,11 @@ $(document).on('click', '.btn-delete', function () {
     AdminApp.confirmDelete(function () {
         AdminApp.request(ADMIN_BASE + '/api/banners/' + id + '/delete', 'POST').done(function (res) {
             AdminApp.toast('success', res.message);
-            loadList();
+            table.load(true);
         });
     });
 });
 
-$(loadList);
+table.load(true);
 </script>
 <?= $this->endSection() ?>

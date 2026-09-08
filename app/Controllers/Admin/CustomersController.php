@@ -24,14 +24,14 @@ class CustomersController extends BaseAdminController
             return $denied;
         }
 
-        $search = trim((string) $this->request->getGet('search'));
+        $query = $this->listQuery();
         $registered = $this->request->getGet('registered');
         $model = model(CustomerModel::class);
-        if ($search !== '') {
+        if ($query['search'] !== '') {
             $model->groupStart()
-                ->like('name', $search)
-                ->orLike('email', $search)
-                ->orLike('phone', $search)
+                ->like('name', $query['search'])
+                ->orLike('email', $query['search'])
+                ->orLike('phone', $query['search'])
                 ->groupEnd();
         }
 
@@ -45,16 +45,40 @@ class CustomersController extends BaseAdminController
             ->groupEnd();
         }
 
-        $items = $model->orderBy('id', 'DESC')->findAll();
+        $model->orderBy('id', 'DESC');
+        [$items, $total] = $this->paginateModel($model, $query);
         foreach ($items as &$item) {
             $item['is_registered'] = $this->isRegisteredCustomer($item);
             unset($item['password']);
         }
         unset($item);
 
-        return $this->jsonSuccess('Customers loaded.', [
-            'items' => $items,
-        ]);
+        if ($query['export']) {
+            $csvRows = [];
+            foreach ($items as $item) {
+                $csvRows[] = [
+                    'id'      => $item['id'],
+                    'name'    => $item['name'],
+                    'phone'   => $item['phone'] ?? '',
+                    'email'   => $item['email'] ?? '',
+                    'city'    => $item['city'] ?? '',
+                    'account' => ! empty($item['is_registered']) ? 'Registered' : 'Guest',
+                    'status'  => (int) ($item['status'] ?? 0) === 1 ? 'Active' : 'Inactive',
+                ];
+            }
+
+            return $this->csvDownload('customers.csv', [
+                'id'      => 'ID',
+                'name'    => 'Name',
+                'phone'   => 'Phone',
+                'email'   => 'Email',
+                'city'    => 'City',
+                'account' => 'Account',
+                'status'  => 'Status',
+            ], $csvRows);
+        }
+
+        return $this->jsonSuccess('Customers loaded.', $this->paginatedData($items, $total, $query));
     }
 
     private function isRegisteredCustomer(array $customer): bool

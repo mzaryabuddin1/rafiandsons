@@ -35,17 +35,17 @@ class OrdersController extends BaseAdminController
             return $denied;
         }
 
-        $search = trim((string) $this->request->getGet('search'));
+        $query = $this->listQuery();
         $status = trim((string) $this->request->getGet('status'));
         $dateFrom = trim((string) $this->request->getGet('date_from'));
         $dateTo = trim((string) $this->request->getGet('date_to'));
 
         $model = model(OrderModel::class);
-        if ($search !== '') {
+        if ($query['search'] !== '') {
             $model->groupStart()
-                ->like('order_number', $search)
-                ->orLike('customer_name', $search)
-                ->orLike('customer_phone', $search)
+                ->like('order_number', $query['search'])
+                ->orLike('customer_name', $query['search'])
+                ->orLike('customer_phone', $query['search'])
                 ->groupEnd();
         }
         if ($status !== '') {
@@ -58,25 +58,66 @@ class OrdersController extends BaseAdminController
             $model->where('created_at <=', $dateTo . ' 23:59:59');
         }
 
-        $rows = $model->orderBy('id', 'DESC')->findAll();
+        $model->orderBy('id', 'DESC');
+        [$rows, $total] = $this->paginateModel($model, $query);
+
+        $orderIds = array_map(static fn ($r) => (int) $r['id'], $rows);
+        $vendorMap = [];
+        if ($orderIds) {
+            $vendorRows = db_connect()->table('order_items')
+                ->select('order_id, vendor_name')
+                ->whereIn('order_id', $orderIds)
+                ->where('vendor_id IS NOT NULL', null, false)
+                ->where('vendor_name IS NOT NULL', null, false)
+                ->groupBy('order_id, vendor_name')
+                ->get()
+                ->getResultArray();
+            foreach ($vendorRows as $vr) {
+                $oid = (int) $vr['order_id'];
+                $vendorMap[$oid][] = $vr['vendor_name'];
+            }
+        }
+
         foreach ($rows as &$row) {
             $row['status_label'] = OrderModel::STATUSES[$row['status']] ?? $row['status'];
             $row['payment_verified'] = (int) ($row['payment_verified'] ?? 0);
             $row['receipt_url'] = ! empty($row['receipt_image']) ? base_url($row['receipt_image']) : null;
+            $names = array_values(array_unique(array_filter($vendorMap[(int) $row['id']] ?? [])));
+            $row['vendor_names'] = $names;
+            $row['vendor_label'] = $names ? implode(', ', $names) : null;
+        }
+        unset($row);
 
-            $vendorNames = db_connect()->table('order_items')
-                ->select('vendor_name')
-                ->where('order_id', $row['id'])
-                ->where('vendor_id IS NOT NULL', null, false)
-                ->where('vendor_name IS NOT NULL', null, false)
-                ->groupBy('vendor_name')
-                ->get()
-                ->getResultArray();
-            $row['vendor_names'] = array_values(array_filter(array_column($vendorNames, 'vendor_name')));
-            $row['vendor_label'] = $row['vendor_names'] ? implode(', ', $row['vendor_names']) : null;
+        if ($query['export']) {
+            $csvRows = [];
+            foreach ($rows as $row) {
+                $csvRows[] = [
+                    'order_number'   => $row['order_number'],
+                    'customer_name'  => $row['customer_name'],
+                    'customer_phone' => $row['customer_phone'],
+                    'vendor_label'   => $row['vendor_label'] ?? '',
+                    'plan_name'      => $row['plan_name'] ?? '',
+                    'total_payable'  => $row['total_payable'],
+                    'status'         => $row['status_label'],
+                    'payment'        => $row['payment_verified'] ? 'Verified' : 'Pending',
+                    'created_at'     => $row['created_at'],
+                ];
+            }
+
+            return $this->csvDownload('orders.csv', [
+                'order_number'   => 'Order #',
+                'customer_name'  => 'Customer',
+                'customer_phone' => 'Phone',
+                'vendor_label'   => 'Vendor',
+                'plan_name'      => 'Plan',
+                'total_payable'  => 'Total',
+                'status'         => 'Status',
+                'payment'        => 'Payment',
+                'created_at'     => 'Date',
+            ], $csvRows);
         }
 
-        return $this->jsonSuccess('Orders loaded.', ['items' => $rows]);
+        return $this->jsonSuccess('Orders loaded.', $this->paginatedData($rows, $total, $query));
     }
 
     public function show($id)

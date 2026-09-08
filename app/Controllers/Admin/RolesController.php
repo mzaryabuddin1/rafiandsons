@@ -24,9 +24,39 @@ class RolesController extends BaseAdminController
             return $denied;
         }
 
-        return $this->jsonSuccess('Roles loaded.', [
-            'items' => model(RoleModel::class)->orderBy('id', 'ASC')->findAll(),
-        ]);
+        $query = $this->listQuery();
+        $model = model(RoleModel::class);
+        if ($query['search'] !== '') {
+            $model->groupStart()
+                ->like('name', $query['search'])
+                ->orLike('slug', $query['search'])
+                ->groupEnd();
+        }
+        $model->orderBy('id', 'ASC');
+        [$items, $total] = $this->paginateModel($model, $query);
+
+        if ($query['export']) {
+            $csvRows = [];
+            foreach ($items as $item) {
+                $csvRows[] = [
+                    'id'       => $item['id'],
+                    'name'     => $item['name'],
+                    'slug'     => $item['slug'],
+                    'is_super' => (int) ($item['is_super'] ?? 0) === 1 ? 'Yes' : 'No',
+                    'status'   => (int) ($item['status'] ?? 0) === 1 ? 'Active' : 'Inactive',
+                ];
+            }
+
+            return $this->csvDownload('roles.csv', [
+                'id'       => 'ID',
+                'name'     => 'Name',
+                'slug'     => 'Slug',
+                'is_super' => 'Super',
+                'status'   => 'Status',
+            ], $csvRows);
+        }
+
+        return $this->jsonSuccess('Roles loaded.', $this->paginatedData($items, $total, $query));
     }
 
     public function permissions()

@@ -126,3 +126,42 @@ body.mini-navbar .logo-element .admin-logo-mini {
 .modal-header.navy-bg .modal-title {
   color: #fff;
 }
+
+/* Server-side datatable footer */
+.admin-table-footer {
+  margin-top: 15px;
+  align-items: center;
+}
+
+.admin-table-info {
+  font-size: 13px;
+  padding-top: 8px;
+}
+
+.admin-table-pager .pagination {
+  margin: 0;
+  display: inline-flex;
+  flex-wrap: wrap;
+}
+
+.admin-table-pager .pagination > li > a {
+  color: #333;
+  border-color: #e7eaec;
+}
+
+.admin-table-pager .pagination > .active > a,
+.admin-table-pager .pagination > .active > a:hover,
+.admin-table-pager .pagination > .active > a:focus {
+  background-color: var(--brand-primary);
+  border-color: var(--brand-primary);
+  color: #fff;
+}
+
+.admin-table-pager .pagination > .disabled > a {
+  color: #ccc;
+  cursor: not-allowed;
+}
+
+.ibox-tools .btn-white {
+  vertical-align: top;
+}

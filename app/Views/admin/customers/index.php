@@ -10,8 +10,15 @@
 <option value="1">Registered accounts</option>
 <option value="0">Guest checkout only</option>
 </select>
-<input type="text" id="search" class="form-control form-control-sm" placeholder="Search name/phone/email" style="width:240px;display:inline-block;"></div></div>
-<div class="ibox-content"><div class="table-responsive"><table class="table table-striped table-bordered" id="data-table"><thead><tr><th>ID</th><th>Name</th><th>Phone</th><th>Email</th><th>City</th><th>Account</th><th>Status</th><th width="160">Actions</th></tr></thead><tbody></tbody></table></div></div></div>
+<input type="text" id="search" class="form-control form-control-sm" placeholder="Search name/phone/email" style="width:240px;display:inline-block;margin-right:8px;">
+<button type="button" class="btn btn-sm btn-white" id="btn-export-csv"><i class="fa fa-download"></i> Export CSV</button>
+</div></div>
+<div class="ibox-content"><div class="table-responsive"><table class="table table-striped table-bordered" id="data-table"><thead><tr><th>ID</th><th>Name</th><th>Phone</th><th>Email</th><th>City</th><th>Account</th><th>Status</th><th width="160">Actions</th></tr></thead><tbody></tbody></table></div>
+<div class="row admin-table-footer">
+  <div class="col-sm-6"><div class="admin-table-info text-muted" id="table-info"></div></div>
+  <div class="col-sm-6 text-right"><div class="admin-table-pager" id="table-pager"></div></div>
+</div>
+</div></div>
 <div class="modal inmodal" id="form-modal" tabindex="-1"><div class="modal-dialog"><div class="modal-content animated fadeIn">
 <form id="main-form"><div class="modal-header navy-bg"><button type="button" class="close" data-dismiss="modal"><span>&times;</span></button><h4 class="modal-title" id="modal-title">Add Customer</h4></div>
 <div class="modal-body">
@@ -32,13 +39,31 @@
 <?= $this->section('scripts') ?>
 <script>
 var canUpdate=<?= !empty($canUpdate)?'true':'false' ?>, canDelete=<?= !empty($canDelete)?'true':'false' ?>;
-function loadList(){AdminApp.request(ADMIN_BASE+'/api/customers','GET',{search:$('#search').val(),registered:$('#filter-registered').val()}).done(function(res){var h='';(res.data.items||[]).forEach(function(r){var a='';if(canUpdate)a+='<button class="btn btn-xs btn-primary btn-edit" data-id="'+r.id+'"><i class="fa fa-pencil"></i></button> ';if(canDelete)a+='<button class="btn btn-xs btn-danger btn-delete" data-id="'+r.id+'"><i class="fa fa-trash"></i></button>';var acct=r.is_registered?'<span class="badge badge-success">Registered</span>':'<span class="badge badge-default">Guest</span>';h+='<tr><td>'+r.id+'</td><td>'+r.name+'</td><td>'+r.phone+'</td><td>'+(r.email||'')+'</td><td>'+(r.city||'')+'</td><td>'+acct+'</td><td>'+(r.status==1?'Active':'Inactive')+'</td><td>'+a+'</td></tr>';});if(!h)h='<tr><td colspan="8" class="text-center text-muted">No customers found</td></tr>';$('#data-table tbody').html(h);});}
+var table = AdminApp.createDataTable({
+    url: ADMIN_BASE + '/api/customers',
+    $tbody: $('#data-table tbody'),
+    $pager: $('#table-pager'),
+    $info: $('#table-info'),
+    $search: $('#search'),
+    emptyCols: 8,
+    emptyText: 'No customers found',
+    filters: function () {
+        return { registered: $('#filter-registered').val() };
+    },
+    renderRow: function (r) {
+        var a = '';
+        if (canUpdate) a += '<button class="btn btn-xs btn-primary btn-edit" data-id="' + r.id + '"><i class="fa fa-pencil"></i></button> ';
+        if (canDelete) a += '<button class="btn btn-xs btn-danger btn-delete" data-id="' + r.id + '"><i class="fa fa-trash"></i></button>';
+        var acct = r.is_registered ? '<span class="badge badge-success">Registered</span>' : '<span class="badge badge-default">Guest</span>';
+        return '<tr><td>' + r.id + '</td><td>' + r.name + '</td><td>' + r.phone + '</td><td>' + (r.email || '') + '</td><td>' + (r.city || '') + '</td><td>' + acct + '</td><td>' + (r.status == 1 ? 'Active' : 'Inactive') + '</td><td>' + a + '</td></tr>';
+    }
+});
+$('#btn-export-csv').on('click', function () { table.exportCsv(); });
 $('#btn-add').on('click',function(){$('#main-form')[0].reset();$('#record-id').val('');$('#order-history').html('');$('#modal-title').text('Add Customer');$('#form-modal').modal('show');});
-$('#search').on('keyup',loadList);
-$('#filter-registered').on('change',loadList);
-$('#main-form').on('submit',function(e){e.preventDefault();var id=$('#record-id').val(),url=id?ADMIN_BASE+'/api/customers/'+id:ADMIN_BASE+'/api/customers',$btn=$('#save-btn');AdminApp.setButtonLoading($btn,true);AdminApp.request(url,'POST',$(this).serialize()).done(function(res){AdminApp.toast('success',res.message);$('#form-modal').modal('hide');loadList();}).always(function(){AdminApp.setButtonLoading($btn,false);});});
+$('#filter-registered').on('change', function () { table.load(true); });
+$('#main-form').on('submit',function(e){e.preventDefault();var id=$('#record-id').val(),url=id?ADMIN_BASE+'/api/customers/'+id:ADMIN_BASE+'/api/customers',$btn=$('#save-btn');AdminApp.setButtonLoading($btn,true);AdminApp.request(url,'POST',$(this).serialize()).done(function(res){AdminApp.toast('success',res.message);$('#form-modal').modal('hide');table.load(true);}).always(function(){AdminApp.setButtonLoading($btn,false);});});
 $(document).on('click','.btn-edit',function(){AdminApp.request(ADMIN_BASE+'/api/customers/'+$(this).data('id'),'GET').done(function(res){var r=res.data;$('#record-id').val(r.id);$('#f-name').val(r.name);$('#f-phone').val(r.phone);$('#f-email').val(r.email||'');$('#f-cnic').val(r.cnic||'');$('#f-city').val(r.city||'');$('#f-address').val(r.address||'');$('#f-notes').val(r.notes||'');$('#f-status').val(r.status);var oh='<p><strong>Account:</strong> '+(r.is_registered?'<span class="badge badge-success">Registered</span>':'<span class="badge badge-default">Guest checkout</span>');if(r.last_login_at)oh+=' &nbsp; <strong>Last login:</strong> '+r.last_login_at;oh+='</p><strong>Order History</strong><ul class="m-t-xs">';(r.orders||[]).forEach(function(o){oh+='<li>'+o.order_number+' — '+o.status+' — '+o.total_payable+'</li>';});if(!(r.orders||[]).length)oh+='<li class="text-muted">No orders</li>';oh+='</ul>';$('#order-history').html(oh);$('#modal-title').text('Edit Customer');$('#form-modal').modal('show');});});
-$(document).on('click','.btn-delete',function(){var id=$(this).data('id');AdminApp.confirmDelete(function(){AdminApp.request(ADMIN_BASE+'/api/customers/'+id+'/delete','POST').done(function(res){AdminApp.toast('success',res.message);loadList();});});});
-$(loadList);
+$(document).on('click','.btn-delete',function(){var id=$(this).data('id');AdminApp.confirmDelete(function(){AdminApp.request(ADMIN_BASE+'/api/customers/'+id+'/delete','POST').done(function(res){AdminApp.toast('success',res.message);table.load(true);});});});
+table.load(true);
 </script>
 <?= $this->endSection() ?>

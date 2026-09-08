@@ -23,13 +23,34 @@ class ContentsController extends BaseAdminController
             return $denied;
         }
 
-        $search = trim((string) $this->request->getGet('search'));
+        $query = $this->listQuery();
         $model = model(ContentModel::class);
-        if ($search !== '') {
-            $model->groupStart()->like('title', $search)->orLike('slug', $search)->groupEnd();
+        if ($query['search'] !== '') {
+            $model->groupStart()->like('title', $query['search'])->orLike('slug', $query['search'])->groupEnd();
+        }
+        $model->orderBy('id', 'ASC');
+        [$items, $total] = $this->paginateModel($model, $query);
+
+        if ($query['export']) {
+            $csvRows = [];
+            foreach ($items as $item) {
+                $csvRows[] = [
+                    'id'     => $item['id'],
+                    'title'  => $item['title'],
+                    'slug'   => $item['slug'],
+                    'status' => (int) ($item['status'] ?? 0) === 1 ? 'Active' : 'Inactive',
+                ];
+            }
+
+            return $this->csvDownload('contents.csv', [
+                'id'     => 'ID',
+                'title'  => 'Title',
+                'slug'   => 'Slug',
+                'status' => 'Status',
+            ], $csvRows);
         }
 
-        return $this->jsonSuccess('Contents loaded.', ['items' => $model->orderBy('id', 'ASC')->findAll()]);
+        return $this->jsonSuccess('Contents loaded.', $this->paginatedData($items, $total, $query));
     }
 
     public function show($id)

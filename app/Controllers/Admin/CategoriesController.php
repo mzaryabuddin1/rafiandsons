@@ -23,18 +23,18 @@ class CategoriesController extends BaseAdminController
             return $denied;
         }
 
-        $search = trim((string) $this->request->getGet('search'));
+        $query = $this->listQuery();
         $db = db_connect();
         $builder = $db->table('categories c')
             ->select('c.*, p.name as parent_name')
             ->join('categories p', 'p.id = c.parent_id', 'left')
             ->where('c.deleted_at', null);
 
-        if ($search !== '') {
+        if ($query['search'] !== '') {
             $builder->groupStart()
-                ->like('c.name', $search)
-                ->orLike('c.slug', $search)
-                ->orLike('p.name', $search)
+                ->like('c.name', $query['search'])
+                ->orLike('c.slug', $query['search'])
+                ->orLike('p.name', $query['search'])
                 ->groupEnd();
         }
 
@@ -78,12 +78,39 @@ class CategoriesController extends BaseAdminController
                 ? $row['name']
                 : '— ' . $row['name'];
         }
+        unset($row);
 
-        return $this->jsonSuccess('Categories loaded.', [
-            'items'   => $ordered,
+        [$pageItems, $total] = $this->paginateArray($ordered, $query);
+
+        if ($query['export']) {
+            $csvRows = [];
+            foreach ($pageItems as $row) {
+                $csvRows[] = [
+                    'id'          => $row['id'],
+                    'name'        => $row['name'],
+                    'parent_name' => $row['parent_name'] ?? '',
+                    'type'        => $row['type'],
+                    'slug'        => $row['slug'],
+                    'sort_order'  => $row['sort_order'] ?? 0,
+                    'status'      => (int) ($row['status'] ?? 0) === 1 ? 'Active' : 'Inactive',
+                ];
+            }
+
+            return $this->csvDownload('categories.csv', [
+                'id'          => 'ID',
+                'name'        => 'Name',
+                'parent_name' => 'Parent',
+                'type'        => 'Type',
+                'slug'        => 'Slug',
+                'sort_order'  => 'Sort',
+                'status'      => 'Status',
+            ], $csvRows);
+        }
+
+        return $this->jsonSuccess('Categories loaded.', $this->paginatedData($pageItems, $total, $query, [
             'parents' => model(CategoryModel::class)->parentsOnly(),
             'tree'    => model(CategoryModel::class)->tree(false),
-        ]);
+        ]));
     }
 
     public function show($id)

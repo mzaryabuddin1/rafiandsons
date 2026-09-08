@@ -36,48 +36,55 @@ $openQuickForCart = $bothModes;
         </div>
     </div>
     <div class="qb-product-body">
-        <?php if ($bothModes): ?>
-            <div class="qb-card-pay-tags">
+        <div class="qb-card-pay-tags">
+            <?php if ($cashAvailable): ?>
                 <span class="qb-card-pay-tag qb-card-pay-tag--cash">Cash</span>
+            <?php endif; ?>
+            <?php if ($installmentAvailable): ?>
                 <span class="qb-card-pay-tag qb-card-pay-tag--inst">Installment</span>
-            </div>
-        <?php elseif ($installmentAvailable && $advance): ?>
-            <div class="qb-advance-badge">Rs. <?= number_format((float) $advance, 0) ?> Advance</div>
-        <?php elseif ($installmentAvailable): ?>
-            <div class="qb-advance-badge">Installments Available</div>
-        <?php elseif ($cashAvailable): ?>
-            <div class="qb-advance-badge qb-advance-badge--cash">Cash Price</div>
-        <?php endif; ?>
+            <?php endif; ?>
+            <?php if (! $cashAvailable && ! $installmentAvailable): ?>
+                <span class="qb-card-pay-tag qb-card-pay-tag--cash">Available</span>
+            <?php endif; ?>
+        </div>
 
         <h3 class="qb-product-name"><a href="<?= $url ?>"><?= esc($product['name']) ?></a></h3>
-        <?php if (! empty($product['vendor_name'])): ?>
-            <div class="qb-vendor-tag">Vendor: <?= esc($product['vendor_name']) ?></div>
-        <?php endif; ?>
 
-        <div class="qb-product-price-wrap">
-            <?php if ($bothModes): ?>
-                <div class="qb-card-dual-price">
-                    <div class="qb-card-price-row">
-                        <span class="qb-card-price-label">Cash</span>
+        <div class="qb-vendor-tag<?= empty($product['vendor_name']) ? ' is-empty' : '' ?>">
+            <?php if (! empty($product['vendor_name'])): ?>
+                Vendor: <?= esc($product['vendor_name']) ?>
+            <?php else: ?>
+                &nbsp;
+            <?php endif; ?>
+        </div>
+
+        <div class="qb-card-price-box">
+            <?php if ($cashAvailable): ?>
+                <div class="qb-card-price-row">
+                    <span class="qb-card-price-label">Cash</span>
+                    <div class="qb-card-price-values">
                         <?php if ($showCompare): ?>
                             <span class="qb-price-compare">PKR <?= number_format($comparePrice, 0) ?></span>
                         <?php endif; ?>
                         <span class="qb-product-price">PKR <?= number_format($cashPrice, 0) ?></span>
                     </div>
-                    <div class="qb-card-price-row qb-card-price-row--inst">
-                        <span class="qb-card-price-label">Installment</span>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($installmentAvailable && $advance !== null): ?>
+                <div class="qb-card-price-row qb-card-price-row--inst">
+                    <span class="qb-card-price-label">Advance</span>
+                    <div class="qb-card-price-values">
                         <span class="qb-product-price qb-product-price--advance">From Rs. <?= number_format((float) $advance, 0) ?></span>
                     </div>
                 </div>
-            <?php else: ?>
-                <?php if ($showCompare): ?>
-                    <span class="qb-price-compare">PKR <?= number_format($comparePrice, 0) ?></span>
-                <?php endif; ?>
-                <?php if ($installmentAvailable && ! $cashAvailable && $advance): ?>
-                    <div class="qb-product-price qb-product-price--advance">From Rs. <?= number_format((float) $advance, 0) ?> Advance</div>
-                <?php else: ?>
-                    <div class="qb-product-price">PKR <?= number_format($cashPrice, 0) ?></div>
-                <?php endif; ?>
+            <?php elseif ($installmentAvailable && ! $cashAvailable): ?>
+                <div class="qb-card-price-row qb-card-price-row--inst">
+                    <span class="qb-card-price-label">Plan</span>
+                    <div class="qb-card-price-values">
+                        <span class="qb-product-price qb-product-price--advance">Installments</span>
+                    </div>
+                </div>
             <?php endif; ?>
         </div>
     </div>

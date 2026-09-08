@@ -25,19 +25,44 @@ class UsersController extends BaseAdminController
             return $denied;
         }
 
-        $search = trim((string) $this->request->getGet('search'));
+        $query = $this->listQuery();
         $builder = db_connect()->table('users u')
             ->select('u.id, u.name, u.email, u.status, u.role_id, u.last_login_at, u.created_at, r.name as role_name')
             ->join('roles r', 'r.id = u.role_id', 'left')
             ->where('u.deleted_at', null);
 
-        if ($search !== '') {
-            $builder->groupStart()->like('u.name', $search)->orLike('u.email', $search)->groupEnd();
+        if ($query['search'] !== '') {
+            $builder->groupStart()->like('u.name', $query['search'])->orLike('u.email', $query['search'])->groupEnd();
         }
 
-        return $this->jsonSuccess('Users loaded.', [
-            'items' => $builder->orderBy('u.id', 'DESC')->get()->getResultArray(),
-        ]);
+        [$items, $total] = $this->paginateBuilder($builder, $query, static function ($b) {
+            $b->orderBy('u.id', 'DESC');
+        });
+
+        if ($query['export']) {
+            $csvRows = [];
+            foreach ($items as $item) {
+                $csvRows[] = [
+                    'id'            => $item['id'],
+                    'name'          => $item['name'],
+                    'email'         => $item['email'],
+                    'role_name'     => $item['role_name'] ?? '',
+                    'status'        => (int) ($item['status'] ?? 0) === 1 ? 'Active' : 'Inactive',
+                    'last_login_at' => $item['last_login_at'] ?? '',
+                ];
+            }
+
+            return $this->csvDownload('users.csv', [
+                'id'            => 'ID',
+                'name'          => 'Name',
+                'email'         => 'Email',
+                'role_name'     => 'Role',
+                'status'        => 'Status',
+                'last_login_at' => 'Last Login',
+            ], $csvRows);
+        }
+
+        return $this->jsonSuccess('Users loaded.', $this->paginatedData($items, $total, $query));
     }
 
     public function show($id)

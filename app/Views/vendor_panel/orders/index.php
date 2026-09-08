@@ -5,7 +5,12 @@
 </div>
 
 <div class="ibox">
-    <div class="ibox-title"><h5>My Orders</h5></div>
+    <div class="ibox-title">
+        <h5>My Orders</h5>
+        <div class="ibox-tools">
+            <button type="button" class="btn btn-sm btn-white" id="btn-export-csv"><i class="fa fa-download"></i> Export CSV</button>
+        </div>
+    </div>
     <div class="ibox-content">
         <div class="row m-b-sm">
             <div class="col-md-4"><input type="text" id="search" class="form-control" placeholder="Order # / name / phone"></div>
@@ -36,6 +41,10 @@
                 <tbody></tbody>
             </table>
         </div>
+        <div class="row admin-table-footer">
+            <div class="col-sm-6"><div class="admin-table-info text-muted" id="table-info"></div></div>
+            <div class="col-sm-6 text-right"><div class="admin-table-pager" id="table-pager"></div></div>
+        </div>
     </div>
 </div>
 
@@ -57,33 +66,33 @@
 
 <?= $this->section('scripts') ?>
 <script>
-function loadList() {
-    AdminApp.request(VENDOR_BASE + '/api/orders', 'GET', {
-        search: $('#search').val(),
-        status: $('#filter-status').val()
-    }).done(function (res) {
-        var h = '';
-        (res.data.items || []).forEach(function (r) {
-            h += '<tr>'
-                + '<td>' + r.order_number + '</td>'
-                + '<td>' + r.customer_name + '</td>'
-                + '<td>' + r.customer_phone + '</td>'
-                + '<td>' + r.item_count + '</td>'
-                + '<td>PKR ' + Number(r.vendor_total || 0).toLocaleString() + '</td>'
-                + '<td><span class="badge badge-primary">' + (r.status_label || r.status) + '</span></td>'
-                + '<td>' + (r.created_at || '') + '</td>'
-                + '<td><button class="btn btn-xs btn-primary btn-view" data-id="' + r.id + '"><i class="fa fa-eye"></i></button></td>'
-                + '</tr>';
-        });
-        if (!h) h = '<tr><td colspan="8" class="text-center text-muted">No orders found</td></tr>';
-        $('#data-table tbody').html(h);
-    });
-}
-
-$('#btn-filter,#search').on('click keyup', function (e) {
-    if (e.type === 'keyup' && e.keyCode !== 13 && e.target.id === 'search') return;
-    loadList();
+var table = AdminApp.createDataTable({
+    url: VENDOR_BASE + '/api/orders',
+    $tbody: $('#data-table tbody'),
+    $pager: $('#table-pager'),
+    $info: $('#table-info'),
+    $search: $('#search'),
+    emptyCols: 8,
+    emptyText: 'No orders found',
+    filters: function () {
+        return { status: $('#filter-status').val() || '' };
+    },
+    renderRow: function (r) {
+        return '<tr>'
+            + '<td>' + r.order_number + '</td>'
+            + '<td>' + r.customer_name + '</td>'
+            + '<td>' + r.customer_phone + '</td>'
+            + '<td>' + r.item_count + '</td>'
+            + '<td>PKR ' + Number(r.vendor_total || 0).toLocaleString() + '</td>'
+            + '<td><span class="badge badge-primary">' + (r.status_label || r.status) + '</span></td>'
+            + '<td>' + (r.created_at || '') + '</td>'
+            + '<td><button class="btn btn-xs btn-primary btn-view" data-id="' + r.id + '"><i class="fa fa-eye"></i></button></td>'
+            + '</tr>';
+    }
 });
+$('#btn-export-csv').on('click', function () { table.exportCsv(); });
+$('#btn-filter').on('click', function () { table.load(true); });
+$('#filter-status').on('change', function () { table.load(true); });
 
 $(document).on('click', '.btn-view', function () {
     AdminApp.request(VENDOR_BASE + '/api/orders/' + $(this).data('id'), 'GET').done(function (res) {
@@ -102,6 +111,6 @@ $(document).on('click', '.btn-view', function () {
     });
 });
 
-$(loadList);
+table.load(true);
 </script>
 <?= $this->endSection() ?>

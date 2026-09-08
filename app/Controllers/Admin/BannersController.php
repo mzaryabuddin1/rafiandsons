@@ -25,32 +25,60 @@ class BannersController extends BaseAdminController
             return $denied;
         }
 
-        $search   = trim((string) $this->request->getGet('search'));
+        $query = $this->listQuery();
         $position = trim((string) $this->request->getGet('position'));
         $model    = model(BannerModel::class);
 
-        if ($search !== '') {
+        if ($query['search'] !== '') {
             $model->groupStart()
-                ->like('title', $search)
-                ->orLike('subtitle', $search)
-                ->orLike('link', $search)
+                ->like('title', $query['search'])
+                ->orLike('subtitle', $query['search'])
+                ->orLike('link', $query['search'])
                 ->groupEnd();
         }
         if ($position !== '' && array_key_exists($position, BannerModel::positions())) {
             $model->where('position', $position);
         }
 
-        $items = $model->orderBy('position', 'ASC')
+        $model->orderBy('position', 'ASC')
             ->orderBy('sort_order', 'ASC')
-            ->orderBy('id', 'DESC')
-            ->findAll();
+            ->orderBy('id', 'DESC');
+        [$items, $total] = $this->paginateModel($model, $query);
 
         $labels = BannerModel::positions();
         foreach ($items as &$item) {
             $item['position_label'] = $labels[$item['position']] ?? $item['position'];
         }
+        unset($item);
 
-        return $this->jsonSuccess('Banners loaded.', ['items' => $items]);
+        if ($query['export']) {
+            $csvRows = [];
+            foreach ($items as $item) {
+                $csvRows[] = [
+                    'id'             => $item['id'],
+                    'position_label' => $item['position_label'],
+                    'title'          => $item['title'] ?? '',
+                    'subtitle'       => $item['subtitle'] ?? '',
+                    'button_text'    => $item['button_text'] ?? '',
+                    'link'           => $item['link'] ?? '',
+                    'sort_order'     => $item['sort_order'] ?? 0,
+                    'status'         => (int) ($item['status'] ?? 0) === 1 ? 'Active' : 'Inactive',
+                ];
+            }
+
+            return $this->csvDownload('banners.csv', [
+                'id'             => 'ID',
+                'position_label' => 'Position',
+                'title'          => 'Title',
+                'subtitle'       => 'Subtitle',
+                'button_text'    => 'Button',
+                'link'           => 'Link',
+                'sort_order'     => 'Sort',
+                'status'         => 'Status',
+            ], $csvRows);
+        }
+
+        return $this->jsonSuccess('Banners loaded.', $this->paginatedData($items, $total, $query));
     }
 
     public function show($id)

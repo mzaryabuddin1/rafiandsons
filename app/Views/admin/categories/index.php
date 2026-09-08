@@ -103,7 +103,8 @@
     <div class="ibox-title">
         <h5>Category List</h5>
         <div class="ibox-tools">
-            <input type="text" id="category-search" class="form-control form-control-sm" placeholder="Search..." style="width:220px;display:inline-block;">
+            <input type="text" id="category-search" class="form-control form-control-sm" placeholder="Search..." style="width:220px;display:inline-block;margin-right:8px;">
+            <button type="button" class="btn btn-sm btn-white" id="btn-export-csv"><i class="fa fa-download"></i> Export CSV</button>
         </div>
     </div>
     <div class="ibox-content">
@@ -125,6 +126,10 @@
                 </thead>
                 <tbody></tbody>
             </table>
+        </div>
+        <div class="row admin-table-footer">
+          <div class="col-sm-6"><div class="admin-table-info text-muted" id="table-info"></div></div>
+          <div class="col-sm-6 text-right"><div class="admin-table-pager" id="table-pager"></div></div>
         </div>
     </div>
 </div>
@@ -254,37 +259,43 @@ function setSelectedIcon(icon) {
     $('#category-icon-preview').html('<i class="fas ' + icon + '"></i><span>Selected: ' + icon + '</span>');
 }
 
-function loadCategories() {
-    AdminApp.request(ADMIN_BASE + '/api/categories', 'GET', { search: $('#category-search').val() }).done(function (res) {
-        parentOptions = res.data.parents || [];
-        var html = '';
-        (res.data.items || []).forEach(function (row) {
-            var iconClass = normalizeIconClass(row.icon || row.description) || 'fa-box';
-            var icon = '<i class="fas ' + iconClass + '" style="font-size:18px;color:#ed5565;"></i>';
-            var img = row.image ? '<img src="' + BASE_URL + row.image + '" style="height:40px;width:40px;object-fit:cover;border-radius:4px;">' : '-';
-            var actions = '';
-            if (canUpdate) actions += '<button class="btn btn-xs btn-primary btn-edit" data-id="' + row.id + '"><i class="fa fa-pencil"></i></button> ';
-            if (canDelete) actions += '<button class="btn btn-xs btn-danger btn-delete" data-id="' + row.id + '"><i class="fa fa-trash"></i></button>';
-            var typeBadge = row.parent_id
-                ? '<span class="badge badge-warning">Subcategory</span>'
-                : '<span class="badge badge-primary">Category</span>';
-            html += '<tr>' +
-                '<td>' + row.id + '</td>' +
-                '<td>' + icon + '</td>' +
-                '<td>' + img + '</td>' +
-                '<td>' + (row.display_name || row.name) + '</td>' +
-                '<td>' + (row.parent_name || '—') + '</td>' +
-                '<td>' + typeBadge + '</td>' +
-                '<td>' + row.slug + '</td>' +
-                '<td>' + row.sort_order + '</td>' +
-                '<td>' + (row.status == 1 ? '<span class="badge badge-primary">Active</span>' : '<span class="badge badge-danger">Inactive</span>') + '</td>' +
-                '<td>' + actions + '</td></tr>';
-        });
-        if (!html) html = '<tr><td colspan="10" class="text-center text-muted">No categories found</td></tr>';
-        $('#categories-table tbody').html(html);
+var table = AdminApp.createDataTable({
+    url: ADMIN_BASE + '/api/categories',
+    $tbody: $('#categories-table tbody'),
+    $pager: $('#table-pager'),
+    $info: $('#table-info'),
+    $search: $('#category-search'),
+    emptyCols: 10,
+    emptyText: 'No categories found',
+    filters: function () { return {}; },
+    renderRow: function (row) {
+        var iconClass = normalizeIconClass(row.icon || row.description) || 'fa-box';
+        var icon = '<i class="fas ' + iconClass + '" style="font-size:18px;color:#ed5565;"></i>';
+        var img = row.image ? '<img src="' + BASE_URL + row.image + '" style="height:40px;width:40px;object-fit:cover;border-radius:4px;">' : '-';
+        var actions = '';
+        if (canUpdate) actions += '<button class="btn btn-xs btn-primary btn-edit" data-id="' + row.id + '" title="Edit"><i class="fas fa-pencil-alt"></i></button> ';
+        if (canDelete) actions += '<button class="btn btn-xs btn-danger btn-delete" data-id="' + row.id + '" title="Delete"><i class="fas fa-trash"></i></button>';
+        var typeBadge = row.parent_id
+            ? '<span class="badge badge-warning">Subcategory</span>'
+            : '<span class="badge badge-primary">Category</span>';
+        return '<tr>' +
+            '<td>' + row.id + '</td>' +
+            '<td>' + icon + '</td>' +
+            '<td>' + img + '</td>' +
+            '<td>' + (row.display_name || row.name) + '</td>' +
+            '<td>' + (row.parent_name || '—') + '</td>' +
+            '<td>' + typeBadge + '</td>' +
+            '<td>' + row.slug + '</td>' +
+            '<td>' + row.sort_order + '</td>' +
+            '<td>' + (row.status == 1 ? '<span class="badge badge-primary">Active</span>' : '<span class="badge badge-danger">Inactive</span>') + '</td>' +
+            '<td>' + actions + '</td></tr>';
+    },
+    onLoaded: function (data) {
+        parentOptions = data.parents || [];
         fillParentSelect();
-    });
-}
+    }
+});
+$('#btn-export-csv').on('click', function () { table.exportCsv(); });
 
 function resetCategoryForm() {
     $('#category-form')[0].reset();
@@ -298,8 +309,6 @@ $('#btn-add-category').on('click', function () {
     resetCategoryForm();
     $('#category-modal').modal('show');
 });
-
-$('#category-search').on('keyup', function () { loadCategories(); });
 
 $(document).on('click', '.cat-icon-option', function () {
     setSelectedIcon($(this).data('icon'));
@@ -315,7 +324,7 @@ $('#category-form').on('submit', function (e) {
     AdminApp.request(url, 'POST', fd).done(function (res) {
         AdminApp.toast('success', res.message);
         $('#category-modal').modal('hide');
-        loadCategories();
+        table.load(true);
     }).always(function () { AdminApp.setButtonLoading($btn, false); });
 });
 
@@ -342,11 +351,11 @@ $(document).on('click', '.btn-delete', function () {
     AdminApp.confirmDelete(function () {
         AdminApp.request(ADMIN_BASE + '/api/categories/' + id + '/delete', 'POST').done(function (res) {
             AdminApp.toast('success', res.message);
-            loadCategories();
+            table.load(true);
         });
     }, 'Delete this category? Subcategories under a parent will also be deleted.');
 });
 
-$(loadCategories);
+table.load(true);
 </script>
 <?= $this->endSection() ?>

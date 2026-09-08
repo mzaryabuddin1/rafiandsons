@@ -46,7 +46,7 @@
 <script src="<?= base_url('admintheme/js/plugins/dataTables/datatables.min.js') ?>"></script>
 <script src="<?= base_url('admintheme/js/plugins/dataTables/dataTables.bootstrap4.min.js') ?>"></script>
 <script src="<?= base_url('admintheme/js/plugins/sweetalert/sweetalert.min.js') ?>"></script>
-<script src="<?= base_url('assets/admin/admin-app.js') ?>"></script>
+<script src="<?= base_url('assets/admin/admin-app.js') ?>?v=<?= @filemtime(FCPATH . 'assets/admin/admin-app.js') ?: time() ?>"></script>
 <script>
     $(document).on('click', '.admin-logout-btn', function (e) {
         e.preventDefault();

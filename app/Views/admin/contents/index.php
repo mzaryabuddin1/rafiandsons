@@ -53,7 +53,8 @@
     <div class="ibox-title">
         <h5>Pages / Sections</h5>
         <div class="ibox-tools">
-            <input type="text" id="search" class="form-control form-control-sm" placeholder="Search..." style="width:220px;display:inline-block;">
+            <input type="text" id="search" class="form-control form-control-sm" placeholder="Search..." style="width:220px;display:inline-block;margin-right:8px;">
+            <button type="button" class="btn btn-sm btn-white" id="btn-export-csv"><i class="fa fa-download"></i> Export CSV</button>
         </div>
     </div>
     <div class="ibox-content">
@@ -70,6 +71,10 @@
                 </thead>
                 <tbody></tbody>
             </table>
+        </div>
+        <div class="row admin-table-footer">
+          <div class="col-sm-6"><div class="admin-table-info text-muted" id="table-info"></div></div>
+          <div class="col-sm-6 text-right"><div class="admin-table-pager" id="table-pager"></div></div>
         </div>
     </div>
 </div>
@@ -156,19 +161,23 @@ function destroyBodyEditor() {
     }
 }
 
-function loadList() {
-    AdminApp.request(ADMIN_BASE + '/api/contents', 'GET', { search: $('#search').val() }).done(function (res) {
-        var h = '';
-        (res.data.items || []).forEach(function (r) {
-            var a = '';
-            if (canUpdate) a += '<button class="btn btn-xs btn-primary btn-edit" data-id="' + r.id + '"><i class="fa fa-pencil"></i></button> ';
-            if (canDelete) a += '<button class="btn btn-xs btn-danger btn-delete" data-id="' + r.id + '"><i class="fa fa-trash"></i></button>';
-            h += '<tr><td>' + r.id + '</td><td>' + r.title + '</td><td>' + r.slug + '</td><td>' + (r.status == 1 ? 'Active' : 'Inactive') + '</td><td>' + a + '</td></tr>';
-        });
-        if (!h) h = '<tr><td colspan="5" class="text-center text-muted">No content found</td></tr>';
-        $('#data-table tbody').html(h);
-    });
-}
+var table = AdminApp.createDataTable({
+    url: ADMIN_BASE + '/api/contents',
+    $tbody: $('#data-table tbody'),
+    $pager: $('#table-pager'),
+    $info: $('#table-info'),
+    $search: $('#search'),
+    emptyCols: 5,
+    emptyText: 'No content found',
+    filters: function () { return {}; },
+    renderRow: function (r) {
+        var a = '';
+        if (canUpdate) a += '<button class="btn btn-xs btn-primary btn-edit" data-id="' + r.id + '"><i class="fa fa-pencil"></i></button> ';
+        if (canDelete) a += '<button class="btn btn-xs btn-danger btn-delete" data-id="' + r.id + '"><i class="fa fa-trash"></i></button>';
+        return '<tr><td>' + r.id + '</td><td>' + r.title + '</td><td>' + r.slug + '</td><td>' + (r.status == 1 ? 'Active' : 'Inactive') + '</td><td>' + a + '</td></tr>';
+    }
+});
+$('#btn-export-csv').on('click', function () { table.exportCsv(); });
 
 $('#btn-add').on('click', function () {
     $('#main-form')[0].reset();
@@ -177,8 +186,6 @@ $('#btn-add').on('click', function () {
     $('#form-modal').modal('show');
     initBodyEditor('');
 });
-
-$('#search').on('keyup', loadList);
 
 $('#main-form').on('submit', function (e) {
     e.preventDefault();
@@ -192,7 +199,7 @@ $('#main-form').on('submit', function (e) {
     AdminApp.request(url, 'POST', $(this).serialize()).done(function (res) {
         AdminApp.toast('success', res.message);
         $('#form-modal').modal('hide');
-        loadList();
+        table.load(true);
     }).always(function () {
         AdminApp.setButtonLoading($btn, false);
     });
@@ -216,7 +223,7 @@ $(document).on('click', '.btn-delete', function () {
     AdminApp.confirmDelete(function () {
         AdminApp.request(ADMIN_BASE + '/api/contents/' + id + '/delete', 'POST').done(function (res) {
             AdminApp.toast('success', res.message);
-            loadList();
+            table.load(true);
         });
     });
 });
@@ -225,6 +232,6 @@ $('#form-modal').on('hidden.bs.modal', function () {
     destroyBodyEditor();
 });
 
-$(loadList);
+table.load(true);
 </script>
 <?= $this->endSection() ?>

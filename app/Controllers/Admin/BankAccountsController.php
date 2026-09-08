@@ -23,16 +23,52 @@ class BankAccountsController extends BaseAdminController
             return $denied;
         }
 
-        $items = model(BankAccountModel::class)
-            ->orderBy('sort_order', 'ASC')
-            ->orderBy('id', 'ASC')
-            ->findAll();
+        $query = $this->listQuery();
+        $model = model(BankAccountModel::class);
+        if ($query['search'] !== '') {
+            $model->groupStart()
+                ->like('bank_name', $query['search'])
+                ->orLike('account_title', $query['search'])
+                ->orLike('account_number', $query['search'])
+                ->orLike('iban', $query['search'])
+                ->orLike('branch', $query['search'])
+                ->groupEnd();
+        }
+
+        $model->orderBy('sort_order', 'ASC')->orderBy('id', 'ASC');
+        [$items, $total] = $this->paginateModel($model, $query);
 
         foreach ($items as &$item) {
             $item['logo_url'] = ! empty($item['logo']) ? base_url($item['logo']) : null;
         }
+        unset($item);
 
-        return $this->jsonSuccess('Bank accounts loaded.', ['items' => $items]);
+        if ($query['export']) {
+            $csvRows = [];
+            foreach ($items as $item) {
+                $csvRows[] = [
+                    'bank_name'      => $item['bank_name'],
+                    'account_title'  => $item['account_title'],
+                    'account_number' => $item['account_number'],
+                    'iban'           => $item['iban'] ?? '',
+                    'branch'         => $item['branch'] ?? '',
+                    'sort_order'     => $item['sort_order'] ?? 0,
+                    'status'         => (int) ($item['status'] ?? 0) === 1 ? 'Active' : 'Inactive',
+                ];
+            }
+
+            return $this->csvDownload('bank-accounts.csv', [
+                'bank_name'      => 'Bank',
+                'account_title'  => 'Account Title',
+                'account_number' => 'Account Number',
+                'iban'           => 'IBAN',
+                'branch'         => 'Branch',
+                'sort_order'     => 'Sort',
+                'status'         => 'Status',
+            ], $csvRows);
+        }
+
+        return $this->jsonSuccess('Bank accounts loaded.', $this->paginatedData($items, $total, $query));
     }
 
     public function show($id)

@@ -24,28 +24,53 @@ class VendorsController extends BaseAdminController
             return $denied;
         }
 
-        $search = trim((string) $this->request->getGet('search'));
+        $query = $this->listQuery();
         $status = trim((string) $this->request->getGet('status'));
         $model = model(VendorModel::class);
 
-        if ($search !== '') {
+        if ($query['search'] !== '') {
             $model->groupStart()
-                ->like('business_name', $search)
-                ->orLike('contact_name', $search)
-                ->orLike('email', $search)
-                ->orLike('phone', $search)
+                ->like('business_name', $query['search'])
+                ->orLike('contact_name', $query['search'])
+                ->orLike('email', $query['search'])
+                ->orLike('phone', $query['search'])
                 ->groupEnd();
         }
         if ($status !== '' && array_key_exists($status, VendorModel::STATUSES)) {
             $model->where('status', $status);
         }
 
-        $items = $model->orderBy('id', 'DESC')->findAll();
+        $model->orderBy('id', 'DESC');
+        [$items, $total] = $this->paginateModel($model, $query);
         foreach ($items as &$item) {
             $item['status_label'] = VendorModel::STATUSES[$item['status']] ?? $item['status'];
         }
+        unset($item);
 
-        return $this->jsonSuccess('Vendors loaded.', ['items' => $items]);
+        if ($query['export']) {
+            $csvRows = [];
+            foreach ($items as $item) {
+                $csvRows[] = [
+                    'business_name' => $item['business_name'],
+                    'contact_name'  => $item['contact_name'],
+                    'email'         => $item['email'],
+                    'phone'         => $item['phone'],
+                    'status'        => $item['status_label'],
+                    'created_at'    => $item['created_at'] ?? '',
+                ];
+            }
+
+            return $this->csvDownload('vendors.csv', [
+                'business_name' => 'Business',
+                'contact_name'  => 'Contact',
+                'email'         => 'Email',
+                'phone'         => 'Phone',
+                'status'        => 'Status',
+                'created_at'    => 'Applied',
+            ], $csvRows);
+        }
+
+        return $this->jsonSuccess('Vendors loaded.', $this->paginatedData($items, $total, $query));
     }
 
     public function show($id)

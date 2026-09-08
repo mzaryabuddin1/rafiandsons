@@ -19,7 +19,7 @@ class OrdersController extends BaseVendorController
     public function list()
     {
         $vendorId = (int) $this->auth->id();
-        $search = trim((string) $this->request->getGet('search'));
+        $query = $this->listQuery();
         $status = trim((string) $this->request->getGet('status'));
 
         $itemRows = model(OrderItemModel::class)
@@ -29,15 +29,27 @@ class OrdersController extends BaseVendorController
 
         $orderIds = array_values(array_unique(array_map('intval', array_column($itemRows, 'order_id'))));
         if (! $orderIds) {
-            return $this->jsonSuccess('Orders loaded.', ['items' => []]);
+            if ($query['export']) {
+                return $this->csvDownload('vendor-orders.csv', [
+                    'order_number'   => 'Order #',
+                    'customer_name'  => 'Customer',
+                    'customer_phone' => 'Phone',
+                    'item_count'     => 'Items',
+                    'vendor_total'   => 'Your Total',
+                    'status'         => 'Status',
+                    'created_at'     => 'Date',
+                ], []);
+            }
+
+            return $this->jsonSuccess('Orders loaded.', $this->paginatedData([], 0, $query));
         }
 
         $model = model(OrderModel::class)->whereIn('id', $orderIds);
-        if ($search !== '') {
+        if ($query['search'] !== '') {
             $model->groupStart()
-                ->like('order_number', $search)
-                ->orLike('customer_name', $search)
-                ->orLike('customer_phone', $search)
+                ->like('order_number', $query['search'])
+                ->orLike('customer_name', $query['search'])
+                ->orLike('customer_phone', $query['search'])
                 ->groupEnd();
         }
         if ($status !== '' && array_key_exists($status, OrderModel::STATUSES)) {
@@ -70,7 +82,34 @@ class OrdersController extends BaseVendorController
             ];
         }
 
-        return $this->jsonSuccess('Orders loaded.', ['items' => $rows]);
+        [$pageItems, $total] = $this->paginateArray($rows, $query);
+
+        if ($query['export']) {
+            $csvRows = [];
+            foreach ($pageItems as $row) {
+                $csvRows[] = [
+                    'order_number'   => $row['order_number'],
+                    'customer_name'  => $row['customer_name'],
+                    'customer_phone' => $row['customer_phone'],
+                    'item_count'     => $row['item_count'],
+                    'vendor_total'   => $row['vendor_total'],
+                    'status'         => $row['status_label'],
+                    'created_at'     => $row['created_at'],
+                ];
+            }
+
+            return $this->csvDownload('vendor-orders.csv', [
+                'order_number'   => 'Order #',
+                'customer_name'  => 'Customer',
+                'customer_phone' => 'Phone',
+                'item_count'     => 'Items',
+                'vendor_total'   => 'Your Total',
+                'status'         => 'Status',
+                'created_at'     => 'Date',
+            ], $csvRows);
+        }
+
+        return $this->jsonSuccess('Orders loaded.', $this->paginatedData($pageItems, $total, $query));
     }
 
     public function show($id)

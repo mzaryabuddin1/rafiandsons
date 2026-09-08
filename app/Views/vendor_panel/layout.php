@@ -42,7 +42,7 @@
 <script src="<?= base_url('admintheme/js/inspinia.js') ?>"></script>
 <script src="<?= base_url('admintheme/js/plugins/pace/pace.min.js') ?>"></script>
 <script src="<?= base_url('admintheme/js/plugins/toastr/toastr.min.js') ?>"></script>
-<script src="<?= base_url('assets/admin/admin-app.js') ?>"></script>
+<script src="<?= base_url('assets/admin/admin-app.js') ?>?v=<?= @filemtime(FCPATH . 'assets/admin/admin-app.js') ?: time() ?>"></script>
 <script>
     $(document).on('click', '.vendor-logout-btn', function (e) {
         e.preventDefault();
