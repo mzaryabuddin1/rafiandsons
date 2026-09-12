@@ -9,6 +9,17 @@
     <title><?= esc($pageTitle ?? 'Rafi & Sons') ?> | Rafi &amp; Sons</title>
     <meta name="description" content="<?= esc($metaDescription ?? 'Shop quality products on easy installment plans at Rafi & Sons.') ?>">
     <link rel="icon" type="image/png" href="<?= base_url('assets/images/favicon.png') ?>">
+    <?php $gaId = trim((string) (env('google.analyticsId') ?: 'G-3RB8GTCBJN')); ?>
+    <?php if ($gaId !== ''): ?>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<?= esc($gaId, 'attr') ?>"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '<?= esc($gaId, 'js') ?>');
+    </script>
+    <?php endif; ?>
     <script>
         WebFontConfig = { google: { families: ['Poppins:400,500,600,700,800'] } };
         (function (d) {

@@ -1877,8 +1877,8 @@
 
 .qb-card-price-row {
   display: grid;
-  grid-template-columns: 64px minmax(0, 1fr);
-  align-items: center;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
   gap: 8px;
 }
 
@@ -1889,6 +1889,8 @@
   letter-spacing: 0.02em;
   color: #6b7280;
   line-height: 1.2;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .qb-card-price-values {
@@ -1896,16 +1898,17 @@
   flex-wrap: wrap;
   align-items: baseline;
   justify-content: flex-end;
-  gap: 6px;
+  gap: 4px 6px;
   text-align: right;
   min-width: 0;
+  overflow: hidden;
 }
 
 .qb-product-card .qb-product-price {
   font-size: 15px;
   font-weight: 800;
   color: var(--qb-brand);
-  line-height: 1.2;
+  line-height: 1.25;
   margin: 0;
   white-space: nowrap;
 }
@@ -1914,11 +1917,46 @@
   font-size: 14px;
   font-weight: 800;
   color: var(--qb-navy, #1e3a8a);
+  line-height: 1.25;
   white-space: nowrap;
 }
 
 .qb-card-price-row--inst .qb-card-price-label {
   color: #9a3412;
+}
+
+@media (max-width: 767px) {
+  .qb-card-price-box {
+    gap: 10px;
+    min-height: 0;
+  }
+
+  .qb-card-price-row {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+  }
+
+  .qb-card-price-label {
+    font-size: 10px;
+  }
+
+  .qb-card-price-values {
+    justify-content: flex-start;
+    text-align: left;
+    width: 100%;
+  }
+
+  .qb-product-card .qb-product-price,
+  .qb-product-price--advance {
+    font-size: 13px;
+    white-space: normal;
+  }
+
+  .qb-product-card .qb-price-compare {
+    font-size: 11px;
+  }
 }
 
 .qb-qv-payment-wrap {
