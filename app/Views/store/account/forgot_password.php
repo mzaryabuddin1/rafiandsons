@@ -70,14 +70,19 @@
     function sendOtp($btn, login) {
         var text = $btn.text();
         $btn.prop('disabled', true).text('Sending...');
-        return StoreApp.request(STORE_BASE + '/account/forgot-password/send-otp', 'POST', {
-            login: login
-        }).done(function (res) {
-            StoreApp.toast(res.message);
-            showResetStep(res.message, res.data.email);
-        }).always(function () {
-            $btn.prop('disabled', false).text(text);
-        });
+        return StoreApp.withRecaptcha('forgot_password', { login: login })
+            .then(function (payload) {
+                return StoreApp.request(STORE_BASE + '/account/forgot-password/send-otp', 'POST', payload)
+                    .done(function (res) {
+                        StoreApp.toast(res.message);
+                        showResetStep(res.message, res.data.email);
+                    });
+            }, function (err) {
+                StoreApp.toast((err && err.message) || 'Security check failed. Please try again.');
+            })
+            .always(function () {
+                $btn.prop('disabled', false).text(text);
+            });
     }
 
     $('#forgot-password-form').on('submit', function (e) {
@@ -85,14 +90,19 @@
         var $btn = $('#forgot-reset-btn');
         var text = $btn.text();
         $btn.prop('disabled', true).text('Updating...');
-        StoreApp.request(STORE_BASE + '/account/forgot-password/reset', 'POST', {
+        StoreApp.withRecaptcha('reset_password', {
             email: $('#forgot-email').val(),
             otp: $('#forgot-otp').val(),
             password: $('input[name="password"]').val(),
             password_confirm: $('input[name="password_confirm"]').val()
-        }).done(function (res) {
-            StoreApp.toast(res.message);
-            window.location.href = res.data.redirect;
+        }).then(function (payload) {
+            return StoreApp.request(STORE_BASE + '/account/forgot-password/reset', 'POST', payload)
+                .done(function (res) {
+                    StoreApp.toast(res.message);
+                    window.location.href = res.data.redirect;
+                });
+        }, function (err) {
+            StoreApp.toast((err && err.message) || 'Security check failed. Please try again.');
         }).always(function () {
             $btn.prop('disabled', false).text(text);
         });

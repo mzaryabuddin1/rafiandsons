@@ -41,13 +41,19 @@
 <script>
 $('#account-login-form').on('submit', function (e) {
     e.preventDefault();
+    var $form = $(this);
     var $btn = $('#login-btn');
     var text = $btn.text();
     $btn.prop('disabled', true).text('Signing in...');
-    StoreApp.request(STORE_BASE + '/account/login', 'POST', $(this).serialize())
-        .done(function (res) {
-            StoreApp.toast(res.message);
-            window.location.href = res.data.redirect;
+    StoreApp.withRecaptcha('login', $form.serialize())
+        .then(function (payload) {
+            return StoreApp.request(STORE_BASE + '/account/login', 'POST', payload)
+                .done(function (res) {
+                    StoreApp.toast(res.message);
+                    window.location.href = res.data.redirect;
+                });
+        }, function (err) {
+            StoreApp.toast((err && err.message) || 'Security check failed. Please try again.');
         })
         .always(function () {
             $btn.prop('disabled', false).text(text);

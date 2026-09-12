@@ -338,6 +338,13 @@ a:hover,
   opacity: 1;
 }
 
+/* Hide Google reCAPTCHA v3 badge (branding retained in footer) */
+.grecaptcha-badge {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 @media (max-width: 575px) {
   .toast-store-wrap {
     top: 12px;

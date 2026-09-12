@@ -79,7 +79,11 @@
 <script>
     window.STORE_BASE = '<?= rtrim(site_url(), '/') ?>';
     window.BASE_URL = '<?= rtrim(base_url(), '/') ?>/';
+    window.RECAPTCHA_SITE_KEY = <?= json_encode(! empty($recaptchaEnabled) ? ($recaptchaSiteKey ?? '') : '') ?>;
 </script>
+<?php if (! empty($recaptchaEnabled) && ! empty($recaptchaSiteKey)): ?>
+<script src="https://www.google.com/recaptcha/api.js?render=<?= esc($recaptchaSiteKey, 'attr') ?>"></script>
+<?php endif; ?>
 <script src="<?= base_url('assets/riode-vendor/jquery/jquery.min.js') ?>"></script>
 <script src="<?= base_url('assets/riode-vendor/magnific-popup/jquery.magnific-popup.min.js') ?>"></script>
 <script src="<?= base_url('assets/riode-vendor/owl-carousel/owl.carousel.min.js') ?>"></script>

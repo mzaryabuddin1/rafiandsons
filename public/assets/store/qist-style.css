@@ -626,6 +626,18 @@
   line-height: 1;
 }
 
+.qb-recaptcha-note {
+  margin: 6px 0 0;
+  font-size: 11px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.qb-recaptcha-note a {
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: underline;
+}
+
 @media (max-width: 575px) {
   .qb-whatsapp-float {
     right: 20px;

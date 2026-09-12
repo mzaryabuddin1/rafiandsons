@@ -166,6 +166,10 @@ class CartController extends BaseStoreController
 
     public function placeOrder()
     {
+        if ($denied = $this->requireRecaptcha('checkout')) {
+            return $denied;
+        }
+
         $items = $this->cart->items();
         if (! $items) {
             return $this->jsonError('Your cart is empty.');

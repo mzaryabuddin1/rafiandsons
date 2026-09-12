@@ -77,10 +77,15 @@
     function sendOtp($btn) {
         var text = $btn.text();
         $btn.prop('disabled', true).text('Sending...');
-        return StoreApp.request(STORE_BASE + '/account/register/send-otp', 'POST', $('#account-register-form').serialize())
-            .done(function (res) {
-                StoreApp.toast(res.message);
-                showOtpStep(res.message, res.data.email);
+        return StoreApp.withRecaptcha('register', $('#account-register-form').serialize())
+            .then(function (payload) {
+                return StoreApp.request(STORE_BASE + '/account/register/send-otp', 'POST', payload)
+                    .done(function (res) {
+                        StoreApp.toast(res.message);
+                        showOtpStep(res.message, res.data.email);
+                    });
+            }, function (err) {
+                StoreApp.toast((err && err.message) || 'Security check failed. Please try again.');
             })
             .always(function () {
                 $btn.prop('disabled', false).text(text);

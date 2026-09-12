@@ -24,6 +24,52 @@ window.StoreApp = (function ($) {
     return data;
   }
 
+  function getRecaptchaToken(action) {
+    var siteKey = window.RECAPTCHA_SITE_KEY || '';
+    var deferred = $.Deferred();
+
+    if (!siteKey) {
+      deferred.resolve('');
+      return deferred.promise();
+    }
+
+    if (typeof grecaptcha === 'undefined' || !grecaptcha.execute) {
+      deferred.reject(new Error('Security check unavailable. Please refresh the page.'));
+      return deferred.promise();
+    }
+
+    grecaptcha.ready(function () {
+      grecaptcha.execute(siteKey, { action: action || 'submit' })
+        .then(function (token) {
+          deferred.resolve(token || '');
+        })
+        .catch(function () {
+          deferred.reject(new Error('Security check failed. Please try again.'));
+        });
+    });
+
+    return deferred.promise();
+  }
+
+  function attachRecaptchaToken(data, token) {
+    if (typeof FormData !== 'undefined' && data instanceof FormData) {
+      data.append('g-recaptcha-response', token);
+      return data;
+    }
+    if (typeof data === 'string') {
+      return data + (data.length ? '&' : '') + 'g-recaptcha-response=' + encodeURIComponent(token);
+    }
+    data = data || {};
+    data['g-recaptcha-response'] = token;
+    return data;
+  }
+
+  function withRecaptcha(action, data) {
+    return getRecaptchaToken(action).then(function (token) {
+      return attachRecaptchaToken(data, token);
+    });
+  }
+
   function toast(message, type) {
     type = type || 'info';
     var text = String(message || '').trim();
@@ -589,6 +635,8 @@ window.StoreApp = (function ($) {
   return {
     request: request,
     toast: toast,
+    withRecaptcha: withRecaptcha,
+    getRecaptchaToken: getRecaptchaToken,
     updateCartBadge: updateCartBadge,
     openQuickView: openQuickView,
     closeQuickView: closeQuickView

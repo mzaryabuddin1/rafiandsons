@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Libraries\CartService;
+use App\Libraries\RecaptchaService;
 use App\Libraries\StoreAuth;
 use App\Models\CategoryModel;
 use App\Models\ContentModel;
@@ -35,8 +36,36 @@ abstract class BaseStoreController extends BaseController
         $data['showFixedCats'] = $data['showFixedCats'] ?? false;
         $data['cssFile'] = $data['cssFile'] ?? 'demo22.min.css';
         $data['bodyClass'] = $data['bodyClass'] ?? 'store-qist';
+        $recaptcha = new RecaptchaService();
+        $data['recaptchaEnabled'] = $recaptcha->isEnabled();
+        $data['recaptchaSiteKey'] = $recaptcha->siteKey();
 
         return view('store/' . $view, $data);
+    }
+
+    /**
+     * Verify Google reCAPTCHA v3 token from the current request.
+     * Returns a JSON error response when verification fails, otherwise null.
+     */
+    protected function requireRecaptcha(string $action): ?ResponseInterface
+    {
+        $recaptcha = new RecaptchaService();
+        if (! $recaptcha->isEnabled()) {
+            return null;
+        }
+
+        $token = (string) (
+            $this->request->getPost('g-recaptcha-response')
+            ?: $this->request->getPost('recaptcha_token')
+            ?: $this->request->getHeaderLine('X-Recaptcha-Token')
+        );
+
+        $result = $recaptcha->verify($token, $action, $this->request->getIPAddress());
+        if (! ($result['ok'] ?? false)) {
+            return $this->jsonError($result['message'] ?? 'Security check failed. Please try again.', null, 400);
+        }
+
+        return null;
     }
 
     protected function jsonSuccess(string $message = 'OK', $data = null, int $code = 200): ResponseInterface

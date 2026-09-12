@@ -19,6 +19,10 @@ class VendorPortalController extends BaseStoreController
 
     public function submitApplication()
     {
+        if ($denied = $this->requireRecaptcha('vendor_apply')) {
+            return $denied;
+        }
+
         $businessName = trim((string) $this->request->getPost('business_name'));
         $contactName = trim((string) $this->request->getPost('contact_name'));
         $email = trim((string) $this->request->getPost('email'));

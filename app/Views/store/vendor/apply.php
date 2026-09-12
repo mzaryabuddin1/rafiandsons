@@ -72,13 +72,19 @@
 <script>
 $('#vendor-apply-form').on('submit', function (e) {
     e.preventDefault();
+    var $form = $(this);
     var $btn = $('#vendor-apply-btn');
     var text = $btn.text();
     $btn.prop('disabled', true).text('Submitting...');
-    StoreApp.request(STORE_BASE + '/vendor/apply', 'POST', $(this).serialize())
-        .done(function (res) {
-            StoreApp.toast(res.message);
-            $('#vendor-apply-form')[0].reset();
+    StoreApp.withRecaptcha('vendor_apply', $form.serialize())
+        .then(function (payload) {
+            return StoreApp.request(STORE_BASE + '/vendor/apply', 'POST', payload)
+                .done(function (res) {
+                    StoreApp.toast(res.message);
+                    $form[0].reset();
+                });
+        }, function (err) {
+            StoreApp.toast((err && err.message) || 'Security check failed. Please try again.');
         })
         .always(function () {
             $btn.prop('disabled', false).text(text);

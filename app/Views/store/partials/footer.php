@@ -81,6 +81,12 @@ $address = $settings['contact_address'] ?? '';
         <div class="footer-bottom">
             <div class="footer-left">
                 <p class="copyright">Rafi &amp; Sons &copy; <?= date('Y') ?>. All Rights Reserved.</p>
+                <?php if (! empty($recaptchaEnabled)): ?>
+                    <p class="qb-recaptcha-note">This site is protected by reCAPTCHA and the Google
+                        <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Privacy Policy</a> and
+                        <a href="https://policies.google.com/terms" target="_blank" rel="noopener">Terms of Service</a> apply.
+                    </p>
+                <?php endif; ?>
             </div>
             <div class="footer-right">
                 <figure class="payment">

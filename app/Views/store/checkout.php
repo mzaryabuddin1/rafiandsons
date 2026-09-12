@@ -185,14 +185,20 @@ $('#checkout-form').on('submit', function (e) {
             return;
         }
     }
+    var $form = $(this);
     var $btn = $('#checkout-btn');
     var btnText = $btn.text();
     $btn.prop('disabled', true).text('Submitting...');
-    var formData = new FormData(this);
-    StoreApp.request(STORE_BASE + '/checkout/place-order', 'POST', formData, true)
-        .done(function (res) {
-            StoreApp.toast(res.message);
-            window.location.href = res.data.redirect;
+    var formData = new FormData($form[0]);
+    StoreApp.withRecaptcha('checkout', formData)
+        .then(function (payload) {
+            return StoreApp.request(STORE_BASE + '/checkout/place-order', 'POST', payload, true)
+                .done(function (res) {
+                    StoreApp.toast(res.message);
+                    window.location.href = res.data.redirect;
+                });
+        }, function (err) {
+            StoreApp.toast((err && err.message) || 'Security check failed. Please try again.');
         })
         .always(function () {
             $btn.prop('disabled', false).text(btnText);

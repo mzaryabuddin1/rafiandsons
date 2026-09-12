@@ -30,6 +30,10 @@ class AccountController extends BaseStoreController
 
     public function attemptLogin()
     {
+        if ($denied = $this->requireRecaptcha('login')) {
+            return $denied;
+        }
+
         $login = trim((string) $this->request->getPost('login'));
         $password = (string) $this->request->getPost('password');
         $redirect = $this->safeRedirect($this->request->getPost('redirect'));
@@ -62,6 +66,10 @@ class AccountController extends BaseStoreController
 
     public function sendRegisterOtp()
     {
+        if ($denied = $this->requireRecaptcha('register')) {
+            return $denied;
+        }
+
         $result = (new CustomerOtpService())->sendRegisterOtp([
             'name'              => $this->request->getPost('name'),
             'phone'             => $this->request->getPost('phone'),
@@ -101,6 +109,10 @@ class AccountController extends BaseStoreController
 
     public function sendForgotOtp()
     {
+        if ($denied = $this->requireRecaptcha('forgot_password')) {
+            return $denied;
+        }
+
         $result = (new CustomerOtpService())->sendResetOtp((string) $this->request->getPost('login'));
 
         return $result['success']
@@ -110,6 +122,10 @@ class AccountController extends BaseStoreController
 
     public function resetPasswordWithOtp()
     {
+        if ($denied = $this->requireRecaptcha('reset_password')) {
+            return $denied;
+        }
+
         $result = (new CustomerOtpService())->resetPasswordWithOtp(
             (string) $this->request->getPost('email'),
             (string) $this->request->getPost('otp'),
