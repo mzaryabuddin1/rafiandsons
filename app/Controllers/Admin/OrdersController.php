@@ -23,7 +23,7 @@ class OrdersController extends BaseAdminController
 
     public function create()
     {
-        if ($denied = $this->requirePagePermission('orders.create', 'admin/orders')) {
+        if ($denied = $this->requirePagePermission('orders.create', 'orders')) {
             return $denied;
         }
 
@@ -43,7 +43,7 @@ class OrdersController extends BaseAdminController
 
     public function detail($id)
     {
-        if ($denied = $this->requirePagePermission('orders.view', 'admin/orders')) {
+        if ($denied = $this->requirePagePermission('orders.view', 'orders')) {
             return $denied;
         }
 
@@ -67,7 +67,7 @@ class OrdersController extends BaseAdminController
         $dateFrom = trim((string) $this->request->getGet('date_from'));
         $dateTo = trim((string) $this->request->getGet('date_to'));
 
-        $model = model(OrderModel::class);
+        $model = $this->scopeArchivedModel(model(OrderModel::class));
         if ($query['search'] !== '') {
             $model->groupStart()
                 ->like('order_number', $query['search'])
@@ -290,6 +290,20 @@ class OrdersController extends BaseAdminController
         $model->delete($id);
 
         return $this->jsonSuccess('Order archived.');
+    }
+
+    public function restore($id)
+    {
+        if ($denied = $this->requirePermission('orders.delete')) {
+            return $denied;
+        }
+
+        $result = $this->restoreSoftDeleted(model(OrderModel::class), $id, 'Order not found.');
+        if ($result !== true) {
+            return $result;
+        }
+
+        return $this->jsonSuccess('Order restored.');
     }
 
     private function payload(): array

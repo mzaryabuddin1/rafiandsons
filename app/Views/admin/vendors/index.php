@@ -6,6 +6,10 @@
 
 <div class="ibox">
     <div class="ibox-title"><h5>Vendor Applications</h5><div class="ibox-tools">
+        <div class="btn-group m-r-sm">
+          <button type="button" class="btn btn-sm btn-primary" id="btn-view-active">Active</button>
+          <button type="button" class="btn btn-sm btn-white" id="btn-view-archived">Archived</button>
+        </div>
         <button type="button" class="btn btn-sm btn-white" id="btn-export-csv"><i class="fa fa-download"></i> Export CSV</button>
     </div></div>
     <div class="ibox-content">
@@ -48,6 +52,14 @@
 <?= $this->section('scripts') ?>
 <script>
 var canDelete = <?= ! empty($canDelete) ? 'true' : 'false' ?>;
+var showArchived = false;
+
+function setArchivedView(archived) {
+    showArchived = !!archived;
+    $('#btn-view-active').toggleClass('btn-primary', !showArchived).toggleClass('btn-white', showArchived);
+    $('#btn-view-archived').toggleClass('btn-primary', showArchived).toggleClass('btn-white', !showArchived);
+    table.load(true);
+}
 
 var table = AdminApp.createDataTable({
     url: ADMIN_BASE + '/api/vendors',
@@ -56,13 +68,17 @@ var table = AdminApp.createDataTable({
     $info: $('#table-info'),
     $search: $('#search'),
     emptyCols: 7,
-    emptyText: 'No vendors found',
+    emptyText: function () { return showArchived ? 'No archived vendors' : 'No vendors found'; },
     filters: function () {
-        return { status: $('#filter-status').val() };
+        return { status: $('#filter-status').val(), archived: showArchived ? 1 : 0 };
     },
     renderRow: function (r) {
-        var a = '<a class="btn btn-xs btn-primary" href="' + ADMIN_BASE + '/vendors/' + r.id + '"><i class="fa fa-eye"></i></a> ';
-        if (canDelete) a += '<button class="btn btn-xs btn-danger btn-delete" data-id="' + r.id + '"><i class="fa fa-trash"></i></button>';
+        var a = '';
+        if (!showArchived) a += '<a class="btn btn-xs btn-primary" href="' + ADMIN_BASE + '/vendors/' + r.id + '" title="View"><i class="fa fa-eye"></i></a> ';
+        if (canDelete) {
+            if (showArchived) a += '<button class="btn btn-xs btn-success btn-restore" data-id="' + r.id + '" title="Restore"><i class="fa fa-undo"></i></button>';
+            else a += '<button class="btn btn-xs btn-warning btn-archive" data-id="' + r.id + '" title="Archive"><i class="fa fa-archive"></i></button>';
+        }
         return '<tr>'
             + '<td>' + (r.business_name || '') + '</td>'
             + '<td>' + (r.contact_name || '') + '</td>'
@@ -75,17 +91,28 @@ var table = AdminApp.createDataTable({
     }
 });
 $('#btn-export-csv').on('click', function () { table.exportCsv(); });
-
 $('#btn-filter').on('click', function () { table.load(true); });
+$('#btn-view-active').on('click', function () { setArchivedView(false); });
+$('#btn-view-archived').on('click', function () { setArchivedView(true); });
 
-$(document).on('click', '.btn-delete', function () {
+$(document).on('click', '.btn-archive', function () {
     var id = $(this).data('id');
-    AdminApp.confirmDelete(function () {
+    AdminApp.confirmArchive(function () {
         AdminApp.request(ADMIN_BASE + '/api/vendors/' + id + '/delete', 'POST').done(function (res) {
             AdminApp.toast('success', res.message);
             table.load(true);
         });
     }, 'Archive this vendor?');
+});
+
+$(document).on('click', '.btn-restore', function () {
+    var id = $(this).data('id');
+    AdminApp.confirmRestore(function () {
+        AdminApp.request(ADMIN_BASE + '/api/vendors/' + id + '/restore', 'POST').done(function (res) {
+            AdminApp.toast('success', res.message);
+            table.load(true);
+        });
+    });
 });
 
 table.load(true);

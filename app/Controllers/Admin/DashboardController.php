@@ -12,7 +12,7 @@ class DashboardController extends BaseAdminController
     public function index()
     {
         if (! $this->auth->can('dashboard.view')) {
-            return redirect()->to(site_url('admin/login'));
+            return redirect()->to(admin_url('login'));
         }
 
         return $this->adminView('dashboard/index', [

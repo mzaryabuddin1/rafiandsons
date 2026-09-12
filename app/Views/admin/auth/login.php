@@ -25,10 +25,10 @@
         <p>Sign in to manage products, installments, and orders.</p>
         <form class="m-t" role="form" id="admin-login-form">
             <div class="form-group">
-                <input type="email" name="email" class="form-control" placeholder="Email" required value="admin@rafiandsons.test">
+                <input type="email" name="email" class="form-control" placeholder="Email" required autocomplete="username">
             </div>
             <div class="form-group">
-                <input type="password" name="password" class="form-control" placeholder="Password" required>
+                <input type="password" name="password" class="form-control" placeholder="Password" required autocomplete="current-password">
             </div>
             <button type="submit" class="btn btn-primary block full-width m-b" id="login-btn">Login</button>
         </form>
@@ -37,7 +37,7 @@
 </div>
 
 <script>
-    window.ADMIN_BASE = '<?= rtrim(site_url('admin'), '/') ?>';
+    window.ADMIN_BASE = '<?= rtrim(admin_url(), '/') ?>';
 </script>
 <script src="<?= base_url('admintheme/js/jquery-3.1.1.min.js') ?>"></script>
 <script src="<?= base_url('admintheme/js/popper.min.js') ?>"></script>

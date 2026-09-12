@@ -20,7 +20,7 @@ class BannersController extends BaseAdminController
 
     public function create()
     {
-        if ($denied = $this->requirePagePermission('banners.create', 'admin/banners')) {
+        if ($denied = $this->requirePagePermission('banners.create', 'banners')) {
             return $denied;
         }
 
@@ -37,7 +37,7 @@ class BannersController extends BaseAdminController
 
     public function edit($id)
     {
-        if ($denied = $this->requirePagePermission('banners.update', 'admin/banners')) {
+        if ($denied = $this->requirePagePermission('banners.update', 'banners')) {
             return $denied;
         }
 
@@ -60,7 +60,7 @@ class BannersController extends BaseAdminController
 
         $query = $this->listQuery();
         $position = trim((string) $this->request->getGet('position'));
-        $model    = model(BannerModel::class);
+        $model    = $this->scopeArchivedModel(model(BannerModel::class));
 
         if ($query['search'] !== '') {
             $model->groupStart()
@@ -179,7 +179,21 @@ class BannersController extends BaseAdminController
 
         $model->delete($id);
 
-        return $this->jsonSuccess('Banner deleted.');
+        return $this->jsonSuccess('Banner archived.');
+    }
+
+    public function restore($id)
+    {
+        if ($denied = $this->requirePermission('banners.delete')) {
+            return $denied;
+        }
+
+        $result = $this->restoreSoftDeleted(model(BannerModel::class), $id, 'Banner not found.');
+        if ($result !== true) {
+            return $result;
+        }
+
+        return $this->jsonSuccess('Banner restored.');
     }
 
     private function payload(?array $existing = null): array

@@ -22,8 +22,8 @@
 <?= $this->endSection() ?>
 <?= $this->section('content') ?>
 <div class="row wrapper border-bottom white-bg page-heading" style="margin:-15px -15px 20px;padding:15px;">
-<div class="col-lg-8"><h2>Order Details</h2><ol class="breadcrumb"><li><a href="<?= site_url('admin/orders') ?>">Orders</a></li><li class="active">Detail</li></ol></div>
-<div class="col-lg-4 text-right"><a href="<?= site_url('admin/orders') ?>" class="btn btn-white"><i class="fa fa-arrow-left"></i> Back to Orders</a></div>
+<div class="col-lg-8"><h2>Order Details</h2><ol class="breadcrumb"><li><a href="<?= admin_url('orders') ?>">Orders</a></li><li class="active">Detail</li></ol></div>
+<div class="col-lg-4 text-right"><a href="<?= admin_url('orders') ?>" class="btn btn-white"><i class="fa fa-arrow-left"></i> Back to Orders</a></div>
 </div>
 <div class="ibox"><div class="ibox-title"><h5>Order</h5></div>
 <div class="ibox-content">

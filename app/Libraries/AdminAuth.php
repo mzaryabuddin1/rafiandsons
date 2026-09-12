@@ -39,7 +39,9 @@ class AdminAuth
             'permissions' => $permissions,
         ]);
 
-        return ['success' => true, 'message' => 'Login successful.', 'redirect' => site_url('admin/dashboard')];
+        helper('admin');
+
+        return ['success' => true, 'message' => 'Login successful.', 'redirect' => admin_url('dashboard')];
     }
 
     public function logout(): void

@@ -1,6 +1,7 @@
 <?= $this->extend('admin/layout') ?>
 <?= $this->section('styles') ?>
 <link href="<?= base_url('admintheme/css/plugins/dropzone/dropzone.css') ?>" rel="stylesheet">
+<link href="<?= base_url('admintheme/css/plugins/summernote/summernote-bs4.css') ?>" rel="stylesheet">
 <style>
     .product-dropzone {
         border: 2px dashed #d2d6dc;
@@ -77,6 +78,28 @@
         display: none;
         margin-bottom: 12px;
     }
+    .note-editor.note-frame {
+        border: 1px solid #e5e6e7;
+        border-radius: 2px;
+    }
+    .note-editor .note-editing-area .note-editable {
+        height: 240px !important;
+        min-height: 240px !important;
+        max-height: 240px !important;
+        overflow-y: auto !important;
+        scrollbar-width: thin;
+        scrollbar-color: #d2070d transparent;
+    }
+    .note-editor .note-editing-area .note-editable::-webkit-scrollbar {
+        width: 5px;
+    }
+    .note-editor .note-editing-area .note-editable::-webkit-scrollbar-thumb {
+        background: #d2070d;
+        border-radius: 4px;
+    }
+    .note-editor .note-editing-area .note-editable::-webkit-scrollbar-track {
+        background: transparent;
+    }
 </style>
 <?= $this->endSection() ?>
 <?= $this->section('content') ?>
@@ -86,7 +109,7 @@
         <h2><?= $isEdit ? 'Edit Product' : 'Add Product' ?></h2>
     </div>
     <div class="col-lg-4 text-right">
-        <a href="<?= site_url('admin/products') ?>" class="btn btn-white"><i class="fa fa-arrow-left"></i> Back to Products</a>
+        <a href="<?= admin_url('products') ?>" class="btn btn-white"><i class="fa fa-arrow-left"></i> Back to Products</a>
     </div>
 </div>
 
@@ -109,7 +132,10 @@
             <div class="row">
                 <div class="col-md-4"><div class="form-group"><label>Status</label><select class="form-control" name="status" id="f-status"><option value="1">Active</option><option value="0">Inactive</option></select></div></div>
             </div>
-            <div class="form-group"><label>Description</label><textarea class="form-control" name="description" id="f-description" rows="3"></textarea></div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea class="form-control" name="description" id="f-description" rows="8"></textarea>
+            </div>
 
             <div class="form-group">
                 <label>Images</label>
@@ -158,7 +184,7 @@
 
             <div class="hr-line-dashed"></div>
             <div class="form-group">
-                <a href="<?= site_url('admin/products') ?>" class="btn btn-white">Cancel</a>
+                <a href="<?= admin_url('products') ?>" class="btn btn-white">Cancel</a>
                 <button type="submit" class="btn btn-primary" id="save-btn">Save</button>
             </div>
         </form>
@@ -166,6 +192,7 @@
 </div>
 <?= $this->endSection() ?>
 <?= $this->section('scripts') ?>
+<script src="<?= base_url('admintheme/js/plugins/summernote/summernote-bs4.js') ?>"></script>
 <script src="<?= base_url('admintheme/js/plugins/dropzone/dropzone.js') ?>"></script>
 <script>
 Dropzone.autoDiscover = false;
@@ -174,6 +201,36 @@ var recordId = <?= $recordId ? (int) $recordId : 'null' ?>;
 var planRowIndex = 0;
 var existingImages = [];
 var productDropzone = null;
+
+function initDescriptionEditor(html) {
+    var $body = $('#f-description');
+    if ($body.next('.note-editor').length) {
+        $body.summernote('destroy');
+    }
+    $body.summernote({
+        height: 240,
+        dialogsInBody: true,
+        placeholder: 'Write product description…',
+        toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'italic', 'underline', 'clear']],
+            ['fontname', ['fontname']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'hr']],
+            ['view', ['fullscreen', 'codeview']]
+        ]
+    });
+    $body.summernote('code', html || '');
+}
+
+function syncDescriptionEditor() {
+    var $body = $('#f-description');
+    if ($body.next('.note-editor').length) {
+        $body.val($body.summernote('code'));
+    }
+}
 
 function planRowHtml(plan){
     plan = plan || {};
@@ -301,7 +358,7 @@ function fillProductForm(r){
     $('#f-vendor').val(r.vendor_id||'');
     $('#f-stock').val(r.stock_status);
     $('#f-status').val(r.status);
-    $('#f-description').val(r.description||'');
+    initDescriptionEditor(r.description || '');
     $('#f-cash').val(r.cash_available!=null?r.cash_available:1);
     $('#f-installment').val(r.installment_available);
     $('#f-meta-title').val(r.meta_title||'');
@@ -354,6 +411,7 @@ $(document).on('click','.btn-remove-plan',function(){ $(this).closest('tr').remo
 
 $('#main-form').on('submit',function(e){
     e.preventDefault();
+    syncDescriptionEditor();
     if(!validateProductForm()) return;
 
     var id=$('#record-id').val(),
@@ -362,6 +420,7 @@ $('#main-form').on('submit',function(e){
 
     var fd = new FormData(this);
     fd.set('name', $('#f-name').val() || '');
+    fd.set('description', $('#f-description').val() || '');
     fd.set('images_managed', '1');
 
     // Drop any accidental file inputs from Dropzone internals.
@@ -403,6 +462,7 @@ if(recordId){
     $('#f-installment').val('1');
     togglePlansSection();
     renderExistingImages([]);
+    initDescriptionEditor('');
 }
 </script>
 <?= $this->endSection() ?>

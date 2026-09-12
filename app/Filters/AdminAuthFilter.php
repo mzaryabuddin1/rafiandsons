@@ -20,7 +20,9 @@ class AdminAuthFilter implements FilterInterface
                 ]);
             }
 
-            return redirect()->to(site_url('admin/login'));
+            helper('admin');
+
+            return redirect()->to(admin_url('login'));
         }
     }
 

@@ -20,7 +20,7 @@ class UsersController extends BaseAdminController
 
     public function create()
     {
-        if ($denied = $this->requirePagePermission('users.create', 'admin/users')) {
+        if ($denied = $this->requirePagePermission('users.create', 'users')) {
             return $denied;
         }
 
@@ -35,7 +35,7 @@ class UsersController extends BaseAdminController
 
     public function edit($id)
     {
-        if ($denied = $this->requirePagePermission('users.update', 'admin/users')) {
+        if ($denied = $this->requirePagePermission('users.update', 'users')) {
             return $denied;
         }
 
@@ -57,8 +57,8 @@ class UsersController extends BaseAdminController
         $query = $this->listQuery();
         $builder = db_connect()->table('users u')
             ->select('u.id, u.name, u.email, u.status, u.role_id, u.last_login_at, u.created_at, r.name as role_name')
-            ->join('roles r', 'r.id = u.role_id', 'left')
-            ->where('u.deleted_at', null);
+            ->join('roles r', 'r.id = u.role_id', 'left');
+        $this->scopeArchivedBuilder($builder, 'u.deleted_at');
 
         if ($query['search'] !== '') {
             $builder->groupStart()->like('u.name', $query['search'])->orLike('u.email', $query['search'])->groupEnd();
@@ -152,7 +152,7 @@ class UsersController extends BaseAdminController
         }
 
         if ((int) $id === (int) $this->auth->id()) {
-            return $this->jsonError('You cannot delete your own account.');
+            return $this->jsonError('You cannot archive your own account.');
         }
 
         $model = model(UserModel::class);
@@ -162,7 +162,21 @@ class UsersController extends BaseAdminController
 
         $model->delete($id);
 
-        return $this->jsonSuccess('User deleted.');
+        return $this->jsonSuccess('User archived.');
+    }
+
+    public function restore($id)
+    {
+        if ($denied = $this->requirePermission('users.delete')) {
+            return $denied;
+        }
+
+        $result = $this->restoreSoftDeleted(model(UserModel::class), $id, 'User not found.');
+        if ($result !== true) {
+            return $result;
+        }
+
+        return $this->jsonSuccess('User restored.');
     }
 
     private function payload(?int $id = null): array

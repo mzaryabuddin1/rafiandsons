@@ -25,7 +25,9 @@ class PermissionFilter implements FilterInterface
                 ]);
             }
 
-            return redirect()->to(site_url('admin/dashboard'))->with('error', 'You do not have permission.');
+            helper('admin');
+
+            return redirect()->to(admin_url('dashboard'))->with('error', 'You do not have permission.');
         }
     }
 

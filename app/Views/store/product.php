@@ -92,7 +92,7 @@
                         </div>
 
                         <?php if (! empty($product['description'])): ?>
-                            <p class="qb-product-desc"><?= esc($product['description']) ?></p>
+                            <div class="qb-product-desc"><?= $product['description'] ?></div>
                         <?php endif; ?>
 
                         <?php if ($installmentAvailable): ?>

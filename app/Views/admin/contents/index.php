@@ -5,7 +5,7 @@
     <div class="col-lg-8"><h2>Website Contents</h2></div>
     <div class="col-lg-4 text-right">
         <?php if (! empty($canCreate)): ?>
-            <a href="<?= site_url('admin/contents/create') ?>" class="btn btn-primary"><i class="fa fa-plus"></i> Add Content</a>
+            <a href="<?= admin_url('contents/create') ?>" class="btn btn-primary"><i class="fa fa-plus"></i> Add Content</a>
         <?php endif; ?>
     </div>
 </div>
@@ -14,6 +14,10 @@
     <div class="ibox-title">
         <h5>Pages / Sections</h5>
         <div class="ibox-tools">
+            <div class="btn-group m-r-sm">
+              <button type="button" class="btn btn-sm btn-primary" id="btn-view-active">Active</button>
+              <button type="button" class="btn btn-sm btn-white" id="btn-view-archived">Archived</button>
+            </div>
             <input type="text" id="search" class="form-control form-control-sm" placeholder="Search..." style="width:220px;display:inline-block;margin-right:8px;">
             <button type="button" class="btn btn-sm btn-white" id="btn-export-csv"><i class="fa fa-download"></i> Export CSV</button>
         </div>
@@ -45,6 +49,14 @@
 <script>
 var canUpdate = <?= ! empty($canUpdate) ? 'true' : 'false' ?>;
 var canDelete = <?= ! empty($canDelete) ? 'true' : 'false' ?>;
+var showArchived = false;
+
+function setArchivedView(archived) {
+    showArchived = !!archived;
+    $('#btn-view-active').toggleClass('btn-primary', !showArchived).toggleClass('btn-white', showArchived);
+    $('#btn-view-archived').toggleClass('btn-primary', showArchived).toggleClass('btn-white', !showArchived);
+    table.load(true);
+}
 
 var table = AdminApp.createDataTable({
     url: ADMIN_BASE + '/api/contents',
@@ -53,21 +65,36 @@ var table = AdminApp.createDataTable({
     $info: $('#table-info'),
     $search: $('#search'),
     emptyCols: 5,
-    emptyText: 'No content found',
-    filters: function () { return {}; },
+    emptyText: function () { return showArchived ? 'No archived content' : 'No content found'; },
+    filters: function () { return { archived: showArchived ? 1 : 0 }; },
     renderRow: function (r) {
         var a = '';
-        if (canUpdate) a += '<a class="btn btn-xs btn-primary" href="' + ADMIN_BASE + '/contents/' + r.id + '/edit"><i class="fa fa-pencil"></i></a> ';
-        if (canDelete) a += '<button class="btn btn-xs btn-danger btn-delete" data-id="' + r.id + '"><i class="fa fa-trash"></i></button>';
+        if (!showArchived && canUpdate) a += '<a class="btn btn-xs btn-primary" href="' + ADMIN_BASE + '/contents/' + r.id + '/edit"><i class="fa fa-pencil"></i></a> ';
+        if (canDelete) {
+            if (showArchived) a += '<button class="btn btn-xs btn-success btn-restore" data-id="' + r.id + '" title="Restore"><i class="fa fa-undo"></i></button>';
+            else a += '<button class="btn btn-xs btn-warning btn-archive" data-id="' + r.id + '" title="Archive"><i class="fa fa-archive"></i></button>';
+        }
         return '<tr><td>' + r.id + '</td><td>' + r.title + '</td><td>' + r.slug + '</td><td>' + (r.status == 1 ? 'Active' : 'Inactive') + '</td><td>' + a + '</td></tr>';
     }
 });
 $('#btn-export-csv').on('click', function () { table.exportCsv(); });
+$('#btn-view-active').on('click', function () { setArchivedView(false); });
+$('#btn-view-archived').on('click', function () { setArchivedView(true); });
 
-$(document).on('click', '.btn-delete', function () {
+$(document).on('click', '.btn-archive', function () {
     var id = $(this).data('id');
-    AdminApp.confirmDelete(function () {
+    AdminApp.confirmArchive(function () {
         AdminApp.request(ADMIN_BASE + '/api/contents/' + id + '/delete', 'POST').done(function (res) {
+            AdminApp.toast('success', res.message);
+            table.load(true);
+        });
+    });
+});
+
+$(document).on('click', '.btn-restore', function () {
+    var id = $(this).data('id');
+    AdminApp.confirmRestore(function () {
+        AdminApp.request(ADMIN_BASE + '/api/contents/' + id + '/restore', 'POST').done(function (res) {
             AdminApp.toast('success', res.message);
             table.load(true);
         });

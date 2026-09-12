@@ -15,7 +15,7 @@
         <p class="text-muted m-b-none">Installment orders, catalog, and customer overview at a glance.</p>
     </div>
     <div class="col-lg-2 text-right dashboard-heading-actions">
-        <a href="<?= site_url('admin/orders') ?>" class="btn btn-primary btn-sm"><i class="fa fa-shopping-cart"></i> View Orders</a>
+        <a href="<?= admin_url('orders') ?>" class="btn btn-primary btn-sm"><i class="fa fa-shopping-cart"></i> View Orders</a>
     </div>
 </div>
 
@@ -205,7 +205,7 @@
             <div class="ibox-title">
                 <h5><i class="fa fa-list"></i> Recent Installment Orders</h5>
                 <div class="ibox-tools">
-                    <a href="<?= site_url('admin/orders') ?>" class="btn btn-xs btn-white">View all</a>
+                    <a href="<?= admin_url('orders') ?>" class="btn btn-xs btn-white">View all</a>
                 </div>
             </div>
             <div class="ibox-content">

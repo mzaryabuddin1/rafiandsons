@@ -4,7 +4,7 @@
     <div class="col-lg-8"><h2>Homepage Banners</h2><ol class="breadcrumb"><li>Manage slider, side banner &amp; mid banners</li></ol></div>
     <div class="col-lg-4 text-right" style="padding-top:20px;">
         <?php if (! empty($canCreate)): ?>
-            <a href="<?= site_url('admin/banners/create') ?>" class="btn btn-primary"><i class="fa fa-plus"></i> Add Banner</a>
+            <a href="<?= admin_url('banners/create') ?>" class="btn btn-primary"><i class="fa fa-plus"></i> Add Banner</a>
         <?php endif; ?>
     </div>
 </div>
@@ -13,6 +13,10 @@
     <div class="ibox-title">
         <h5>Banners</h5>
         <div class="ibox-tools">
+            <div class="btn-group m-r-sm">
+              <button type="button" class="btn btn-sm btn-primary" id="btn-view-active">Active</button>
+              <button type="button" class="btn btn-sm btn-white" id="btn-view-archived">Archived</button>
+            </div>
             <select id="filter-position" class="form-control form-control-sm" style="width:180px;display:inline-block;margin-right:8px;">
                 <option value="">All positions</option>
                 <?php foreach ($positions as $key => $label): ?>
@@ -54,6 +58,14 @@
 <script>
 var canUpdate = <?= ! empty($canUpdate) ? 'true' : 'false' ?>;
 var canDelete = <?= ! empty($canDelete) ? 'true' : 'false' ?>;
+var showArchived = false;
+
+function setArchivedView(archived) {
+    showArchived = !!archived;
+    $('#btn-view-active').toggleClass('btn-primary', !showArchived).toggleClass('btn-white', showArchived);
+    $('#btn-view-archived').toggleClass('btn-primary', showArchived).toggleClass('btn-white', !showArchived);
+    table.load(true);
+}
 
 var table = AdminApp.createDataTable({
     url: ADMIN_BASE + '/api/banners',
@@ -62,17 +74,20 @@ var table = AdminApp.createDataTable({
     $info: $('#table-info'),
     $search: $('#search'),
     emptyCols: 9,
-    emptyText: 'No banners found',
+    emptyText: function () { return showArchived ? 'No archived banners' : 'No banners found'; },
     filters: function () {
-        return { position: $('#filter-position').val() };
+        return { position: $('#filter-position').val(), archived: showArchived ? 1 : 0 };
     },
     renderRow: function (r) {
         var img = r.image
             ? '<img src="' + BASE_URL + r.image + '" style="height:40px;border-radius:4px;">'
             : '-';
         var a = '';
-        if (canUpdate) a += '<a class="btn btn-xs btn-primary" href="' + ADMIN_BASE + '/banners/' + r.id + '/edit"><i class="fa fa-pencil"></i></a> ';
-        if (canDelete) a += '<button class="btn btn-xs btn-danger btn-delete" data-id="' + r.id + '"><i class="fa fa-trash"></i></button>';
+        if (!showArchived && canUpdate) a += '<a class="btn btn-xs btn-primary" href="' + ADMIN_BASE + '/banners/' + r.id + '/edit"><i class="fa fa-pencil"></i></a> ';
+        if (canDelete) {
+            if (showArchived) a += '<button class="btn btn-xs btn-success btn-restore" data-id="' + r.id + '" title="Restore"><i class="fa fa-undo"></i></button>';
+            else a += '<button class="btn btn-xs btn-warning btn-archive" data-id="' + r.id + '" title="Archive"><i class="fa fa-archive"></i></button>';
+        }
         return '<tr>'
             + '<td>' + r.id + '</td>'
             + '<td>' + img + '</td>'
@@ -88,11 +103,23 @@ var table = AdminApp.createDataTable({
 });
 $('#btn-export-csv').on('click', function () { table.exportCsv(); });
 $('#filter-position').on('change', function () { table.load(true); });
+$('#btn-view-active').on('click', function () { setArchivedView(false); });
+$('#btn-view-archived').on('click', function () { setArchivedView(true); });
 
-$(document).on('click', '.btn-delete', function () {
+$(document).on('click', '.btn-archive', function () {
     var id = $(this).data('id');
-    AdminApp.confirmDelete(function () {
+    AdminApp.confirmArchive(function () {
         AdminApp.request(ADMIN_BASE + '/api/banners/' + id + '/delete', 'POST').done(function (res) {
+            AdminApp.toast('success', res.message);
+            table.load(true);
+        });
+    });
+});
+
+$(document).on('click', '.btn-restore', function () {
+    var id = $(this).data('id');
+    AdminApp.confirmRestore(function () {
+        AdminApp.request(ADMIN_BASE + '/api/banners/' + id + '/restore', 'POST').done(function (res) {
             AdminApp.toast('success', res.message);
             table.load(true);
         });

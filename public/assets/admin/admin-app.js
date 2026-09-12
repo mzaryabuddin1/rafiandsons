@@ -82,7 +82,9 @@ window.AdminApp = (function ($) {
         msg = xhr.responseJSON.message;
       } else if (xhr.status === 401) {
         msg = 'Session expired. Please login again.';
-        window.location.href = (window.ADMIN_BASE || '/admin') + '/login';
+        if (window.ADMIN_BASE) {
+          window.location.href = window.ADMIN_BASE + '/login';
+        }
       } else if (xhr.status === 403) {
         msg = 'You do not have permission for this action.';
       } else if (xhr.status === 419 || xhr.status === 403) {
@@ -94,16 +96,16 @@ window.AdminApp = (function ($) {
     });
   }
 
-  function confirmDelete(callback, message) {
-    message = message || 'Are you sure you want to delete this record?';
+  function confirmArchive(callback, message) {
+    message = message || 'Archive this record?';
     if (window.swal) {
       swal({
         title: 'Are you sure?',
         text: message,
         type: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#ED5565',
-        confirmButtonText: 'Yes, delete it',
+        confirmButtonColor: '#f8ac59',
+        confirmButtonText: 'Yes, archive it',
         closeOnConfirm: true
       }, function (isConfirm) {
         if (isConfirm) {
@@ -115,6 +117,33 @@ window.AdminApp = (function ($) {
     if (window.confirm(message)) {
       callback();
     }
+  }
+
+  function confirmRestore(callback, message) {
+    message = message || 'Restore this record?';
+    if (window.swal) {
+      swal({
+        title: 'Restore record?',
+        text: message,
+        type: 'info',
+        showCancelButton: true,
+        confirmButtonColor: '#1ab394',
+        confirmButtonText: 'Yes, restore it',
+        closeOnConfirm: true
+      }, function (isConfirm) {
+        if (isConfirm) {
+          callback();
+        }
+      });
+      return;
+    }
+    if (window.confirm(message)) {
+      callback();
+    }
+  }
+
+  function confirmDelete(callback, message) {
+    return confirmArchive(callback, message || 'Archive this record?');
   }
 
   function setButtonLoading($btn, loading) {
@@ -204,7 +233,10 @@ window.AdminApp = (function ($) {
         });
         if (!html) {
           var cols = options.emptyCols || 8;
-          html = '<tr><td colspan="' + cols + '" class="text-center text-muted">' + (options.emptyText || 'No records found') + '</td></tr>';
+          var emptyText = typeof options.emptyText === 'function'
+            ? options.emptyText()
+            : (options.emptyText || 'No records found');
+          html = '<tr><td colspan="' + cols + '" class="text-center text-muted">' + emptyText + '</td></tr>';
         }
         options.$tbody.html(html);
         renderPager();
@@ -260,6 +292,8 @@ window.AdminApp = (function ($) {
     request: request,
     toast: toast,
     confirmDelete: confirmDelete,
+    confirmArchive: confirmArchive,
+    confirmRestore: confirmRestore,
     setButtonLoading: setButtonLoading,
     csrfToken: csrfToken,
     createDataTable: createDataTable

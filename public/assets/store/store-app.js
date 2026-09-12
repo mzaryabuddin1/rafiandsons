@@ -255,7 +255,7 @@ window.StoreApp = (function ($) {
         $('#qb-qv-title').text(p.name || '');
         $('#qb-qv-meta').text((p.sku ? 'SKU: ' + p.sku + ' · ' : '') + (p.stock || ''));
         $('#qb-qv-price').html('<span class="qb-cash-price-label">Cash Price</span> ' + compare + money(p.price));
-        $('#qb-qv-desc').text(p.description || '');
+        $('#qb-qv-desc').html(p.description || '');
         $('#qb-qv-image').attr('src', p.image || '').attr('alt', p.name || '');
         $('#qb-qv-details').attr('href', p.url || '#');
         $('#qb-qv-add').data('product-id', p.id);

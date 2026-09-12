@@ -7,7 +7,7 @@
         <h2><?= $isEdit ? 'Edit Role' : 'Add Role' ?></h2>
     </div>
     <div class="col-lg-4 text-right">
-        <a href="<?= site_url('admin/roles') ?>" class="btn btn-white"><i class="fa fa-arrow-left"></i> Back</a>
+        <a href="<?= admin_url('roles') ?>" class="btn btn-white"><i class="fa fa-arrow-left"></i> Back</a>
     </div>
 </div>
 
@@ -41,7 +41,7 @@
             </div>
             <div class="hr-line-dashed"></div>
             <div class="text-right">
-                <a href="<?= site_url('admin/roles') ?>" class="btn btn-white">Cancel</a>
+                <a href="<?= admin_url('roles') ?>" class="btn btn-white">Cancel</a>
                 <button type="submit" class="btn btn-primary" id="save-btn">Save</button>
             </div>
         </form>

@@ -33,9 +33,9 @@ class AuthController extends BaseAdminController
         $this->auth->logout();
 
         if ($this->request->isAJAX()) {
-            return $this->jsonSuccess('Logged out.', ['redirect' => site_url('admin/login')]);
+            return $this->jsonSuccess('Logged out.', ['redirect' => admin_url('login')]);
         }
 
-        return redirect()->to(site_url('admin/login'));
+        return redirect()->to(admin_url('login'));
     }
 }

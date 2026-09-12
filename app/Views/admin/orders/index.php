@@ -23,9 +23,13 @@
 <?= $this->section('content') ?>
 <div class="row wrapper border-bottom white-bg page-heading" style="margin:-15px -15px 20px;padding:15px;">
 <div class="col-lg-8"><h2>Orders</h2></div>
-<div class="col-lg-4 text-right"><?php if (!empty($canCreate)): ?><a class="btn btn-primary" href="<?= site_url('admin/orders/create') ?>"><i class="fa fa-plus"></i> Create Order</a><?php endif; ?></div>
+<div class="col-lg-4 text-right"><?php if (!empty($canCreate)): ?><a class="btn btn-primary" href="<?= admin_url('orders/create') ?>"><i class="fa fa-plus"></i> Create Order</a><?php endif; ?></div>
 </div>
 <div class="ibox"><div class="ibox-title"><h5>Order Bookings</h5><div class="ibox-tools">
+<div class="btn-group m-r-sm">
+  <button type="button" class="btn btn-sm btn-primary" id="btn-view-active">Active</button>
+  <button type="button" class="btn btn-sm btn-white" id="btn-view-archived">Archived</button>
+</div>
 <button type="button" class="btn btn-sm btn-white" id="btn-export-csv"><i class="fa fa-download"></i> Export CSV</button>
 </div></div>
 <div class="ibox-content">
@@ -46,6 +50,7 @@
 <?= $this->section('scripts') ?>
 <script>
 var canDelete=<?= !empty($canDelete)?'true':'false' ?>;
+var showArchived = false;
 
 function statusBadge(r){
     var status = String(r.status || '').toLowerCase();
@@ -64,6 +69,13 @@ function paymentBadge(r){
     return '<span class="badge">No Receipt</span>';
 }
 
+function setArchivedView(archived) {
+    showArchived = !!archived;
+    $('#btn-view-active').toggleClass('btn-primary', !showArchived).toggleClass('btn-white', showArchived);
+    $('#btn-view-archived').toggleClass('btn-primary', showArchived).toggleClass('btn-white', !showArchived);
+    table.load(true);
+}
+
 var table = AdminApp.createDataTable({
     url: ADMIN_BASE + '/api/orders',
     $tbody: $('#data-table tbody'),
@@ -71,23 +83,31 @@ var table = AdminApp.createDataTable({
     $info: $('#table-info'),
     $search: $('#search'),
     emptyCols: 10,
-    emptyText: 'No orders found',
+    emptyText: function () { return showArchived ? 'No archived orders' : 'No orders found'; },
     filters: function () {
         return {
             status: $('#filter-status').val(),
             date_from: $('#date-from').val(),
-            date_to: $('#date-to').val()
+            date_to: $('#date-to').val(),
+            archived: showArchived ? 1 : 0
         };
     },
     renderRow: function (r) {
-        var a = '<a class="btn btn-xs btn-primary" href="' + ADMIN_BASE + '/orders/' + r.id + '"><i class="fa fa-eye"></i></a> ';
-        if (canDelete) a += '<button class="btn btn-xs btn-danger btn-delete" data-id="' + r.id + '"><i class="fa fa-trash"></i></button>';
+        var a = '';
+        if (!showArchived) a += '<a class="btn btn-xs btn-primary" href="' + ADMIN_BASE + '/orders/' + r.id + '" title="View"><i class="fa fa-eye"></i></a> ';
+        if (canDelete) {
+            if (showArchived) a += '<button class="btn btn-xs btn-success btn-restore" data-id="' + r.id + '" title="Restore"><i class="fa fa-undo"></i></button>';
+            else a += '<button class="btn btn-xs btn-warning btn-archive" data-id="' + r.id + '" title="Archive"><i class="fa fa-archive"></i></button>';
+        }
         return '<tr><td>' + r.order_number + '</td><td>' + r.customer_name + '</td><td>' + r.customer_phone + '</td><td>' + (r.vendor_label || '-') + '</td><td>' + (r.plan_name || '-') + '</td><td>' + r.total_payable + '</td><td>' + statusBadge(r) + '</td><td>' + paymentBadge(r) + '</td><td>' + (r.created_at || '') + '</td><td>' + a + '</td></tr>';
     }
 });
 $('#btn-export-csv').on('click', function () { table.exportCsv(); });
 $('#btn-filter').on('click', function () { table.load(true); });
-$(document).on('click','.btn-delete',function(){var id=$(this).data('id');AdminApp.confirmDelete(function(){AdminApp.request(ADMIN_BASE+'/api/orders/'+id+'/delete','POST').done(function(res){AdminApp.toast('success',res.message);table.load(true);});},'Archive this order?');});
+$('#btn-view-active').on('click', function () { setArchivedView(false); });
+$('#btn-view-archived').on('click', function () { setArchivedView(true); });
+$(document).on('click','.btn-archive',function(){var id=$(this).data('id');AdminApp.confirmArchive(function(){AdminApp.request(ADMIN_BASE+'/api/orders/'+id+'/delete','POST').done(function(res){AdminApp.toast('success',res.message);table.load(true);});},'Archive this order?');});
+$(document).on('click','.btn-restore',function(){var id=$(this).data('id');AdminApp.confirmRestore(function(){AdminApp.request(ADMIN_BASE+'/api/orders/'+id+'/restore','POST').done(function(res){AdminApp.toast('success',res.message);table.load(true);});});});
 table.load(true);
 </script>
 <?= $this->endSection() ?>

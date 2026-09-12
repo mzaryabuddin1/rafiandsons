@@ -21,7 +21,7 @@ class ProductsController extends BaseAdminController
 
     public function create()
     {
-        if ($denied = $this->requirePagePermission('products.create', 'admin/products')) {
+        if ($denied = $this->requirePagePermission('products.create', 'products')) {
             return $denied;
         }
 
@@ -37,7 +37,7 @@ class ProductsController extends BaseAdminController
 
     public function edit($id)
     {
-        if ($denied = $this->requirePagePermission('products.update', 'admin/products')) {
+        if ($denied = $this->requirePagePermission('products.update', 'products')) {
             return $denied;
         }
 
@@ -61,8 +61,8 @@ class ProductsController extends BaseAdminController
         $builder = db_connect()->table('products p')
             ->select('p.*, c.name as category_name, v.business_name as vendor_name')
             ->join('categories c', 'c.id = p.category_id', 'left')
-            ->join('vendors v', 'v.id = p.vendor_id AND v.deleted_at IS NULL', 'left')
-            ->where('p.deleted_at', null);
+            ->join('vendors v', 'v.id = p.vendor_id AND v.deleted_at IS NULL', 'left');
+        $this->scopeArchivedBuilder($builder, 'p.deleted_at');
 
         if ($query['search'] !== '') {
             $builder->groupStart()
@@ -195,7 +195,21 @@ class ProductsController extends BaseAdminController
 
         $model->delete($id);
 
-        return $this->jsonSuccess('Product deleted.');
+        return $this->jsonSuccess('Product archived.');
+    }
+
+    public function restore($id)
+    {
+        if ($denied = $this->requirePermission('products.delete')) {
+            return $denied;
+        }
+
+        $result = $this->restoreSoftDeleted(model(ProductModel::class), $id, 'Product not found.');
+        if ($result !== true) {
+            return $result;
+        }
+
+        return $this->jsonSuccess('Product restored.');
     }
 
     private function validatedPayload(?int $id = null, ?array $existing = null): array

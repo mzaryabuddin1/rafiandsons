@@ -7,13 +7,17 @@
     </div>
     <div class="col-lg-4 text-right" style="padding-top:20px;">
         <?php if (! empty($canCreate)): ?>
-            <a href="<?= site_url('admin/bank-accounts/create') ?>" class="btn btn-primary"><i class="fa fa-plus"></i> Add Account</a>
+            <a href="<?= admin_url('bank-accounts/create') ?>" class="btn btn-primary"><i class="fa fa-plus"></i> Add Account</a>
         <?php endif; ?>
     </div>
 </div>
 
 <div class="ibox">
     <div class="ibox-title"><h5>Payment Accounts</h5><div class="ibox-tools">
+        <div class="btn-group m-r-sm">
+          <button type="button" class="btn btn-sm btn-primary" id="btn-view-active">Active</button>
+          <button type="button" class="btn btn-sm btn-white" id="btn-view-archived">Archived</button>
+        </div>
         <input type="text" id="search" class="form-control form-control-sm" placeholder="Search..." style="width:220px;display:inline-block;margin-right:8px;">
         <button type="button" class="btn btn-sm btn-white" id="btn-export-csv"><i class="fa fa-download"></i> Export CSV</button>
     </div></div>
@@ -48,6 +52,14 @@
 <script>
 var canUpdate = <?= ! empty($canUpdate) ? 'true' : 'false' ?>;
 var canDelete = <?= ! empty($canDelete) ? 'true' : 'false' ?>;
+var showArchived = false;
+
+function setArchivedView(archived) {
+    showArchived = !!archived;
+    $('#btn-view-active').toggleClass('btn-primary', !showArchived).toggleClass('btn-white', showArchived);
+    $('#btn-view-archived').toggleClass('btn-primary', showArchived).toggleClass('btn-white', !showArchived);
+    table.load(true);
+}
 
 var table = AdminApp.createDataTable({
     url: ADMIN_BASE + '/api/bank-accounts',
@@ -56,12 +68,15 @@ var table = AdminApp.createDataTable({
     $info: $('#table-info'),
     $search: $('#search'),
     emptyCols: 9,
-    emptyText: 'No bank accounts yet',
-    filters: function () { return {}; },
+    emptyText: function () { return showArchived ? 'No archived bank accounts' : 'No bank accounts yet'; },
+    filters: function () { return { archived: showArchived ? 1 : 0 }; },
     renderRow: function (r) {
         var a = '';
-        if (canUpdate) a += '<a class="btn btn-xs btn-primary" href="' + ADMIN_BASE + '/bank-accounts/' + r.id + '/edit"><i class="fa fa-pencil"></i></a> ';
-        if (canDelete) a += '<button class="btn btn-xs btn-danger btn-delete" data-id="' + r.id + '"><i class="fa fa-trash"></i></button>';
+        if (!showArchived && canUpdate) a += '<a class="btn btn-xs btn-primary" href="' + ADMIN_BASE + '/bank-accounts/' + r.id + '/edit"><i class="fa fa-pencil"></i></a> ';
+        if (canDelete) {
+            if (showArchived) a += '<button class="btn btn-xs btn-success btn-restore" data-id="' + r.id + '" title="Restore"><i class="fa fa-undo"></i></button>';
+            else a += '<button class="btn btn-xs btn-warning btn-archive" data-id="' + r.id + '" title="Archive"><i class="fa fa-archive"></i></button>';
+        }
         var logo = r.logo_url
             ? '<img src="' + r.logo_url + '" alt="" style="height:32px;max-width:70px;object-fit:contain;">'
             : '<span class="text-muted">-</span>';
@@ -79,15 +94,27 @@ var table = AdminApp.createDataTable({
     }
 });
 $('#btn-export-csv').on('click', function () { table.exportCsv(); });
+$('#btn-view-active').on('click', function () { setArchivedView(false); });
+$('#btn-view-archived').on('click', function () { setArchivedView(true); });
 
-$(document).on('click', '.btn-delete', function () {
+$(document).on('click', '.btn-archive', function () {
     var id = $(this).data('id');
-    AdminApp.confirmDelete(function () {
+    AdminApp.confirmArchive(function () {
         AdminApp.request(ADMIN_BASE + '/api/bank-accounts/' + id + '/delete', 'POST').done(function (res) {
             AdminApp.toast('success', res.message);
             table.load(true);
         });
-    }, 'Delete this bank account?');
+    }, 'Archive this bank account?');
+});
+
+$(document).on('click', '.btn-restore', function () {
+    var id = $(this).data('id');
+    AdminApp.confirmRestore(function () {
+        AdminApp.request(ADMIN_BASE + '/api/bank-accounts/' + id + '/restore', 'POST').done(function (res) {
+            AdminApp.toast('success', res.message);
+            table.load(true);
+        });
+    });
 });
 
 table.load(true);

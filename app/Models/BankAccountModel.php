@@ -10,7 +10,7 @@ class BankAccountModel extends Model
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
-    protected $useSoftDeletes   = false;
+    protected $useSoftDeletes   = true;
     protected $useTimestamps    = true;
     protected $allowedFields    = [
         'bank_name',

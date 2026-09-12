@@ -32,7 +32,7 @@
 </div>
 
 <script>
-    window.ADMIN_BASE = '<?= rtrim(site_url('admin'), '/') ?>';
+    window.ADMIN_BASE = '<?= rtrim(admin_url(), '/') ?>';
     window.BASE_URL = '<?= rtrim(base_url(), '/') ?>/';
 </script>
 <script src="<?= base_url('admintheme/js/jquery-3.1.1.min.js') ?>"></script>

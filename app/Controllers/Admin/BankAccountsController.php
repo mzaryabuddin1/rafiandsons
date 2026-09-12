@@ -19,7 +19,7 @@ class BankAccountsController extends BaseAdminController
 
     public function create()
     {
-        if ($denied = $this->requirePagePermission('bank_accounts.create', 'admin/bank-accounts')) {
+        if ($denied = $this->requirePagePermission('bank_accounts.create', 'bank-accounts')) {
             return $denied;
         }
 
@@ -33,7 +33,7 @@ class BankAccountsController extends BaseAdminController
 
     public function edit($id)
     {
-        if ($denied = $this->requirePagePermission('bank_accounts.update', 'admin/bank-accounts')) {
+        if ($denied = $this->requirePagePermission('bank_accounts.update', 'bank-accounts')) {
             return $denied;
         }
 
@@ -52,7 +52,7 @@ class BankAccountsController extends BaseAdminController
         }
 
         $query = $this->listQuery();
-        $model = model(BankAccountModel::class);
+        $model = $this->scopeArchivedModel(model(BankAccountModel::class));
         if ($query['search'] !== '') {
             $model->groupStart()
                 ->like('bank_name', $query['search'])
@@ -165,16 +165,23 @@ class BankAccountsController extends BaseAdminController
             return $this->jsonError('Bank account not found.', null, 404);
         }
 
-        if (! empty($row['logo']) && str_starts_with($row['logo'], 'uploads/')) {
-            $full = FCPATH . $row['logo'];
-            if (is_file($full)) {
-                @unlink($full);
-            }
-        }
-
         $model->delete($id);
 
-        return $this->jsonSuccess('Bank account deleted.');
+        return $this->jsonSuccess('Bank account archived.');
+    }
+
+    public function restore($id)
+    {
+        if ($denied = $this->requirePermission('bank_accounts.delete')) {
+            return $denied;
+        }
+
+        $result = $this->restoreSoftDeleted(model(BankAccountModel::class), $id, 'Bank account not found.');
+        if ($result !== true) {
+            return $result;
+        }
+
+        return $this->jsonSuccess('Bank account restored.');
     }
 
     private function payload(?array $existing = null): array

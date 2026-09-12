@@ -10,6 +10,7 @@ class ContentModel extends Model
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
+    protected $useSoftDeletes   = true;
     protected $useTimestamps    = true;
     protected $allowedFields    = ['slug', 'title', 'body', 'status'];
 }

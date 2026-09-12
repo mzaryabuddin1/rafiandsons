@@ -13,7 +13,9 @@ class GuestAdminFilter implements FilterInterface
     {
         $auth = new AdminAuth();
         if ($auth->check() && strtolower($request->getMethod()) === 'get') {
-            return redirect()->to(site_url('admin/dashboard'));
+            helper('admin');
+
+            return redirect()->to(admin_url('dashboard'));
         }
     }
 

@@ -28,7 +28,7 @@ $menu = $activeMenu ?? '';
 
             <?php if ($auth->can('dashboard.view')): ?>
             <li class="<?= $menu === 'dashboard' ? 'active' : '' ?>">
-                <a href="<?= site_url('admin/dashboard') ?>"><i class="fa fa-th-large"></i> <span class="nav-label">Dashboard</span></a>
+                <a href="<?= admin_url('dashboard') ?>"><i class="fa fa-th-large"></i> <span class="nav-label">Dashboard</span></a>
             </li>
             <?php endif; ?>
 
@@ -37,10 +37,10 @@ $menu = $activeMenu ?? '';
                 <a href="#"><i class="fa fa-cube"></i> <span class="nav-label">Catalog</span><span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level collapse <?= in_array($menu, ['categories', 'products'], true) ? 'in' : '' ?>">
                     <?php if ($auth->can('categories.view')): ?>
-                    <li class="<?= $menu === 'categories' ? 'active' : '' ?>"><a href="<?= site_url('admin/categories') ?>">Categories</a></li>
+                    <li class="<?= $menu === 'categories' ? 'active' : '' ?>"><a href="<?= admin_url('categories') ?>">Categories</a></li>
                     <?php endif; ?>
                     <?php if ($auth->can('products.view')): ?>
-                    <li class="<?= $menu === 'products' ? 'active' : '' ?>"><a href="<?= site_url('admin/products') ?>">Products</a></li>
+                    <li class="<?= $menu === 'products' ? 'active' : '' ?>"><a href="<?= admin_url('products') ?>">Products</a></li>
                     <?php endif; ?>
                 </ul>
             </li>
@@ -48,19 +48,19 @@ $menu = $activeMenu ?? '';
 
             <?php if ($auth->can('orders.view')): ?>
             <li class="<?= $menu === 'orders' ? 'active' : '' ?>">
-                <a href="<?= site_url('admin/orders') ?>"><i class="fa fa-shopping-cart"></i> <span class="nav-label">Orders</span></a>
+                <a href="<?= admin_url('orders') ?>"><i class="fa fa-shopping-cart"></i> <span class="nav-label">Orders</span></a>
             </li>
             <?php endif; ?>
 
             <?php if ($auth->can('customers.view')): ?>
             <li class="<?= $menu === 'customers' ? 'active' : '' ?>">
-                <a href="<?= site_url('admin/customers') ?>"><i class="fa fa-users"></i> <span class="nav-label">Customers</span></a>
+                <a href="<?= admin_url('customers') ?>"><i class="fa fa-users"></i> <span class="nav-label">Customers</span></a>
             </li>
             <?php endif; ?>
 
             <?php if ($auth->can('vendors.view')): ?>
             <li class="<?= $menu === 'vendors' ? 'active' : '' ?>">
-                <a href="<?= site_url('admin/vendors') ?>"><i class="fa fa-briefcase"></i> <span class="nav-label">Vendors</span></a>
+                <a href="<?= admin_url('vendors') ?>"><i class="fa fa-briefcase"></i> <span class="nav-label">Vendors</span></a>
             </li>
             <?php endif; ?>
 
@@ -69,16 +69,16 @@ $menu = $activeMenu ?? '';
                 <a href="#"><i class="fa fa-desktop"></i> <span class="nav-label">Website</span><span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level collapse <?= in_array($menu, ['contents', 'banners', 'bank_accounts', 'settings'], true) ? 'in' : '' ?>">
                     <?php if ($auth->can('contents.view')): ?>
-                    <li class="<?= $menu === 'contents' ? 'active' : '' ?>"><a href="<?= site_url('admin/contents') ?>">Contents</a></li>
+                    <li class="<?= $menu === 'contents' ? 'active' : '' ?>"><a href="<?= admin_url('contents') ?>">Contents</a></li>
                     <?php endif; ?>
                     <?php if ($auth->can('banners.view')): ?>
-                    <li class="<?= $menu === 'banners' ? 'active' : '' ?>"><a href="<?= site_url('admin/banners') ?>">Homepage Banners</a></li>
+                    <li class="<?= $menu === 'banners' ? 'active' : '' ?>"><a href="<?= admin_url('banners') ?>">Homepage Banners</a></li>
                     <?php endif; ?>
                     <?php if ($auth->can('bank_accounts.view')): ?>
-                    <li class="<?= $menu === 'bank_accounts' ? 'active' : '' ?>"><a href="<?= site_url('admin/bank-accounts') ?>">Bank Accounts</a></li>
+                    <li class="<?= $menu === 'bank_accounts' ? 'active' : '' ?>"><a href="<?= admin_url('bank-accounts') ?>">Bank Accounts</a></li>
                     <?php endif; ?>
                     <?php if ($auth->can('settings.view')): ?>
-                    <li class="<?= $menu === 'settings' ? 'active' : '' ?>"><a href="<?= site_url('admin/settings') ?>">Settings</a></li>
+                    <li class="<?= $menu === 'settings' ? 'active' : '' ?>"><a href="<?= admin_url('settings') ?>">Settings</a></li>
                     <?php endif; ?>
                 </ul>
             </li>
@@ -89,10 +89,10 @@ $menu = $activeMenu ?? '';
                 <a href="#"><i class="fa fa-lock"></i> <span class="nav-label">Access Control</span><span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level collapse <?= in_array($menu, ['users', 'roles'], true) ? 'in' : '' ?>">
                     <?php if ($auth->can('users.view')): ?>
-                    <li class="<?= $menu === 'users' ? 'active' : '' ?>"><a href="<?= site_url('admin/users') ?>">Users</a></li>
+                    <li class="<?= $menu === 'users' ? 'active' : '' ?>"><a href="<?= admin_url('users') ?>">Users</a></li>
                     <?php endif; ?>
                     <?php if ($auth->can('roles.view')): ?>
-                    <li class="<?= $menu === 'roles' ? 'active' : '' ?>"><a href="<?= site_url('admin/roles') ?>">Roles</a></li>
+                    <li class="<?= $menu === 'roles' ? 'active' : '' ?>"><a href="<?= admin_url('roles') ?>">Roles</a></li>
                     <?php endif; ?>
                 </ul>
             </li>

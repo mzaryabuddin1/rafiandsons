@@ -20,7 +20,7 @@ class RolesController extends BaseAdminController
 
     public function create()
     {
-        if ($denied = $this->requirePagePermission('roles.create', 'admin/roles')) {
+        if ($denied = $this->requirePagePermission('roles.create', 'roles')) {
             return $denied;
         }
 
@@ -34,13 +34,13 @@ class RolesController extends BaseAdminController
 
     public function edit($id)
     {
-        if ($denied = $this->requirePagePermission('roles.update', 'admin/roles')) {
+        if ($denied = $this->requirePagePermission('roles.update', 'roles')) {
             return $denied;
         }
 
         $role = model(RoleModel::class)->find($id);
         if (! $role || (int) ($role['is_super'] ?? 0) === 1) {
-            return redirect()->to(site_url('admin/roles'));
+            return redirect()->to(admin_url('roles'));
         }
 
         return $this->adminView('roles/form', [
@@ -58,7 +58,7 @@ class RolesController extends BaseAdminController
         }
 
         $query = $this->listQuery();
-        $model = model(RoleModel::class);
+        $model = $this->scopeArchivedModel(model(RoleModel::class));
         if ($query['search'] !== '') {
             $model->groupStart()
                 ->like('name', $query['search'])
@@ -188,17 +188,41 @@ class RolesController extends BaseAdminController
         }
 
         if ((int) $role['is_super'] === 1) {
-            return $this->jsonError('Super Admin role cannot be deleted.');
+            return $this->jsonError('Super Admin role cannot be archived.');
         }
 
         $usersCount = db_connect()->table('users')->where('role_id', $id)->where('deleted_at', null)->countAllResults();
         if ($usersCount > 0) {
-            return $this->jsonError('Role is assigned to users and cannot be deleted.');
+            return $this->jsonError('Role is assigned to users and cannot be archived.');
         }
 
         $model->delete($id);
 
-        return $this->jsonSuccess('Role deleted.');
+        return $this->jsonSuccess('Role archived.');
+    }
+
+    public function restore($id)
+    {
+        if ($denied = $this->requirePermission('roles.delete')) {
+            return $denied;
+        }
+
+        $model = model(RoleModel::class);
+        $role = $model->onlyDeleted()->find($id);
+        if (! $role) {
+            return $this->jsonError('Role not found.', null, 404);
+        }
+
+        if ((int) ($role['is_super'] ?? 0) === 1) {
+            return $this->jsonError('Super Admin role cannot be modified.');
+        }
+
+        db_connect()->table($model->getTable())->where('id', $id)->update([
+            'deleted_at' => null,
+            'updated_at' => date('Y-m-d H:i:s'),
+        ]);
+
+        return $this->jsonSuccess('Role restored.');
     }
 
     private function payload(?int $id = null): array

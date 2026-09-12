@@ -10,6 +10,7 @@ class RoleModel extends Model
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
+    protected $useSoftDeletes   = true;
     protected $useTimestamps    = true;
     protected $allowedFields    = ['name', 'slug', 'is_super', 'status'];
 }

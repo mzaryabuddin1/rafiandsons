@@ -19,7 +19,7 @@ class ContentsController extends BaseAdminController
 
     public function create()
     {
-        if ($denied = $this->requirePagePermission('contents.create', 'admin/contents')) {
+        if ($denied = $this->requirePagePermission('contents.create', 'contents')) {
             return $denied;
         }
 
@@ -33,7 +33,7 @@ class ContentsController extends BaseAdminController
 
     public function edit($id)
     {
-        if ($denied = $this->requirePagePermission('contents.update', 'admin/contents')) {
+        if ($denied = $this->requirePagePermission('contents.update', 'contents')) {
             return $denied;
         }
 
@@ -52,7 +52,7 @@ class ContentsController extends BaseAdminController
         }
 
         $query = $this->listQuery();
-        $model = model(ContentModel::class);
+        $model = $this->scopeArchivedModel(model(ContentModel::class));
         if ($query['search'] !== '') {
             $model->groupStart()->like('title', $query['search'])->orLike('slug', $query['search'])->groupEnd();
         }
@@ -145,7 +145,21 @@ class ContentsController extends BaseAdminController
 
         $model->delete($id);
 
-        return $this->jsonSuccess('Content deleted.');
+        return $this->jsonSuccess('Content archived.');
+    }
+
+    public function restore($id)
+    {
+        if ($denied = $this->requirePermission('contents.delete')) {
+            return $denied;
+        }
+
+        $result = $this->restoreSoftDeleted(model(ContentModel::class), $id, 'Content not found.');
+        if ($result !== true) {
+            return $result;
+        }
+
+        return $this->jsonSuccess('Content restored.');
     }
 
     private function payload(?int $id = null): array

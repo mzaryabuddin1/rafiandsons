@@ -39,7 +39,7 @@ class VendorsController extends BaseAdminController
 
         $query = $this->listQuery();
         $status = trim((string) $this->request->getGet('status'));
-        $model = model(VendorModel::class);
+        $model = $this->scopeArchivedModel(model(VendorModel::class));
 
         if ($query['search'] !== '') {
             $model->groupStart()
@@ -178,5 +178,19 @@ class VendorsController extends BaseAdminController
         $model->delete($id);
 
         return $this->jsonSuccess('Vendor archived.');
+    }
+
+    public function restore($id)
+    {
+        if ($denied = $this->requirePermission('vendors.delete')) {
+            return $denied;
+        }
+
+        $result = $this->restoreSoftDeleted(model(VendorModel::class), $id, 'Vendor not found.');
+        if ($result !== true) {
+            return $result;
+        }
+
+        return $this->jsonSuccess('Vendor restored.');
     }
 }

@@ -2040,6 +2040,39 @@
   font-size: 14px;
   line-height: 1.6;
   margin-bottom: 18px;
+  max-height: 280px;
+  overflow-y: auto;
+  padding-right: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--qb-brand) transparent;
+}
+
+.qb-product-desc::-webkit-scrollbar {
+  width: 5px;
+}
+
+.qb-product-desc::-webkit-scrollbar-thumb {
+  background: var(--qb-brand);
+  border-radius: 4px;
+}
+
+.qb-product-desc::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.qb-product-desc p {
+  margin: 0 0 10px;
+}
+
+.qb-product-desc ul,
+.qb-product-desc ol {
+  margin: 0 0 10px;
+  padding-left: 1.25em;
+}
+
+.qb-product-desc img {
+  max-width: 100%;
+  height: auto;
 }
 
 .qb-plans h3 {

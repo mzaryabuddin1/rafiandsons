@@ -4,7 +4,7 @@
 <div class="row wrapper border-bottom white-bg page-heading" style="margin:-15px -15px 20px;padding:15px;">
     <div class="col-lg-8"><h2><?= esc($pageTitle) ?></h2></div>
     <div class="col-lg-4 text-right" style="padding-top:20px;">
-        <a href="<?= site_url('admin/customers') ?>" class="btn btn-white"><i class="fa fa-arrow-left"></i> Back</a>
+        <a href="<?= admin_url('customers') ?>" class="btn btn-white"><i class="fa fa-arrow-left"></i> Back</a>
     </div>
 </div>
 
@@ -30,7 +30,7 @@
             <?php endif; ?>
             <div class="m-t-md">
                 <button type="submit" class="btn btn-primary" id="save-btn">Save</button>
-                <a href="<?= site_url('admin/customers') ?>" class="btn btn-white">Cancel</a>
+                <a href="<?= admin_url('customers') ?>" class="btn btn-white">Cancel</a>
             </div>
         </form>
     </div>

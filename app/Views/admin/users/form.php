@@ -7,7 +7,7 @@
         <h2><?= $isEdit ? 'Edit User' : 'Add User' ?></h2>
     </div>
     <div class="col-lg-4 text-right">
-        <a href="<?= site_url('admin/users') ?>" class="btn btn-white"><i class="fa fa-arrow-left"></i> Back</a>
+        <a href="<?= admin_url('users') ?>" class="btn btn-white"><i class="fa fa-arrow-left"></i> Back</a>
     </div>
 </div>
 
@@ -48,7 +48,7 @@
             </div>
             <div class="hr-line-dashed"></div>
             <div class="text-right">
-                <a href="<?= site_url('admin/users') ?>" class="btn btn-white">Cancel</a>
+                <a href="<?= admin_url('users') ?>" class="btn btn-white">Cancel</a>
                 <button type="submit" class="btn btn-primary" id="save-btn">Save</button>
             </div>
         </form>

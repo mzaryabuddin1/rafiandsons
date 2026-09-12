@@ -70,7 +70,7 @@
         <h2><?= $isEdit ? 'Edit Category' : 'Add Category' ?></h2>
     </div>
     <div class="col-lg-4 text-right">
-        <a href="<?= site_url('admin/categories') ?>" class="btn btn-white"><i class="fa fa-arrow-left"></i> Back to Categories</a>
+        <a href="<?= admin_url('categories') ?>" class="btn btn-white"><i class="fa fa-arrow-left"></i> Back to Categories</a>
     </div>
 </div>
 
@@ -130,7 +130,7 @@
 
             <div class="hr-line-dashed"></div>
             <div class="form-group">
-                <a href="<?= site_url('admin/categories') ?>" class="btn btn-white">Cancel</a>
+                <a href="<?= admin_url('categories') ?>" class="btn btn-white">Cancel</a>
                 <button type="submit" class="btn btn-primary" id="category-save-btn">Save</button>
             </div>
         </form>

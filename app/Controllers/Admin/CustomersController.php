@@ -20,7 +20,7 @@ class CustomersController extends BaseAdminController
 
     public function create()
     {
-        if ($denied = $this->requirePagePermission('customers.create', 'admin/customers')) {
+        if ($denied = $this->requirePagePermission('customers.create', 'customers')) {
             return $denied;
         }
 
@@ -34,7 +34,7 @@ class CustomersController extends BaseAdminController
 
     public function edit($id)
     {
-        if ($denied = $this->requirePagePermission('customers.update', 'admin/customers')) {
+        if ($denied = $this->requirePagePermission('customers.update', 'customers')) {
             return $denied;
         }
 
@@ -54,7 +54,7 @@ class CustomersController extends BaseAdminController
 
         $query = $this->listQuery();
         $registered = $this->request->getGet('registered');
-        $model = model(CustomerModel::class);
+        $model = $this->scopeArchivedModel(model(CustomerModel::class));
         if ($query['search'] !== '') {
             $model->groupStart()
                 ->like('name', $query['search'])
@@ -183,7 +183,21 @@ class CustomersController extends BaseAdminController
 
         $model->delete($id);
 
-        return $this->jsonSuccess('Customer deleted.');
+        return $this->jsonSuccess('Customer archived.');
+    }
+
+    public function restore($id)
+    {
+        if ($denied = $this->requirePermission('customers.delete')) {
+            return $denied;
+        }
+
+        $result = $this->restoreSoftDeleted(model(CustomerModel::class), $id, 'Customer not found.');
+        if ($result !== true) {
+            return $result;
+        }
+
+        return $this->jsonSuccess('Customer restored.');
     }
 
     private function payload(): array

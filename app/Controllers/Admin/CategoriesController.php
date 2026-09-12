@@ -19,7 +19,7 @@ class CategoriesController extends BaseAdminController
 
     public function create()
     {
-        if ($denied = $this->requirePagePermission('categories.create', 'admin/categories')) {
+        if ($denied = $this->requirePagePermission('categories.create', 'categories')) {
             return $denied;
         }
 
@@ -34,7 +34,7 @@ class CategoriesController extends BaseAdminController
 
     public function edit($id)
     {
-        if ($denied = $this->requirePagePermission('categories.update', 'admin/categories')) {
+        if ($denied = $this->requirePagePermission('categories.update', 'categories')) {
             return $denied;
         }
 
@@ -57,8 +57,8 @@ class CategoriesController extends BaseAdminController
         $db = db_connect();
         $builder = $db->table('categories c')
             ->select('c.*, p.name as parent_name')
-            ->join('categories p', 'p.id = c.parent_id', 'left')
-            ->where('c.deleted_at', null);
+            ->join('categories p', 'p.id = c.parent_id', 'left');
+        $this->scopeArchivedBuilder($builder, 'c.deleted_at');
 
         if ($query['search'] !== '') {
             $builder->groupStart()
@@ -217,7 +217,21 @@ class CategoriesController extends BaseAdminController
 
         $model->delete($id);
 
-        return $this->jsonSuccess('Category deleted.');
+        return $this->jsonSuccess('Category archived.');
+    }
+
+    public function restore($id)
+    {
+        if ($denied = $this->requirePermission('categories.delete')) {
+            return $denied;
+        }
+
+        $result = $this->restoreSoftDeleted(model(CategoryModel::class), $id, 'Category not found.');
+        if ($result !== true) {
+            return $result;
+        }
+
+        return $this->jsonSuccess('Category restored.');
     }
 
     private function validatedPayload(?int $id = null, ?array $existing = null): array

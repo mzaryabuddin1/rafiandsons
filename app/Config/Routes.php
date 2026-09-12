@@ -77,7 +77,10 @@ $routes->group('vendor', static function ($routes) {
     });
 });
 
-$routes->group('admin', ['namespace' => 'App\Controllers\Admin'], static function ($routes) {
+$adminPath = trim((string) (env('admin.path') ?: 'axSdwfwgms'), '/');
+
+// No /admin routes or redirects — keeps the real path undisclosed.
+$routes->group($adminPath, ['namespace' => 'App\Controllers\Admin'], static function ($routes) {
     $routes->group('', ['filter' => 'guestadmin'], static function ($routes) {
         $routes->get('login', 'AuthController::login');
         $routes->post('login', 'AuthController::attemptLogin', ['filter' => 'csrf']);
@@ -99,6 +102,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], static functio
         $routes->post('api/categories', 'CategoriesController::store', ['filter' => ['csrf', 'permission:categories.create']]);
         $routes->post('api/categories/(:num)', 'CategoriesController::update/$1', ['filter' => ['csrf', 'permission:categories.update']]);
         $routes->post('api/categories/(:num)/delete', 'CategoriesController::delete/$1', ['filter' => ['csrf', 'permission:categories.delete']]);
+        $routes->post('api/categories/(:num)/restore', 'CategoriesController::restore/$1', ['filter' => ['csrf', 'permission:categories.delete']]);
 
         // Products
         $routes->get('products', 'ProductsController::index', ['filter' => 'permission:products.view']);
@@ -109,6 +113,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], static functio
         $routes->post('api/products', 'ProductsController::store', ['filter' => ['csrf', 'permission:products.create']]);
         $routes->post('api/products/(:num)', 'ProductsController::update/$1', ['filter' => ['csrf', 'permission:products.update']]);
         $routes->post('api/products/(:num)/delete', 'ProductsController::delete/$1', ['filter' => ['csrf', 'permission:products.delete']]);
+        $routes->post('api/products/(:num)/restore', 'ProductsController::restore/$1', ['filter' => ['csrf', 'permission:products.delete']]);
 
         // Customers
         $routes->get('customers', 'CustomersController::index', ['filter' => 'permission:customers.view']);
@@ -119,6 +124,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], static functio
         $routes->post('api/customers', 'CustomersController::store', ['filter' => ['csrf', 'permission:customers.create']]);
         $routes->post('api/customers/(:num)', 'CustomersController::update/$1', ['filter' => ['csrf', 'permission:customers.update']]);
         $routes->post('api/customers/(:num)/delete', 'CustomersController::delete/$1', ['filter' => ['csrf', 'permission:customers.delete']]);
+        $routes->post('api/customers/(:num)/restore', 'CustomersController::restore/$1', ['filter' => ['csrf', 'permission:customers.delete']]);
 
         // Orders
         $routes->get('orders', 'OrdersController::index', ['filter' => 'permission:orders.view']);
@@ -131,6 +137,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], static functio
         $routes->post('api/orders/(:num)/status', 'OrdersController::updateStatus/$1', ['filter' => ['csrf', 'permission:orders.update']]);
         $routes->post('api/orders/(:num)/verify-payment', 'OrdersController::verifyPayment/$1', ['filter' => ['csrf', 'permission:orders.update']]);
         $routes->post('api/orders/(:num)/delete', 'OrdersController::delete/$1', ['filter' => ['csrf', 'permission:orders.delete']]);
+        $routes->post('api/orders/(:num)/restore', 'OrdersController::restore/$1', ['filter' => ['csrf', 'permission:orders.delete']]);
 
         // Bank Accounts
         $routes->get('bank-accounts', 'BankAccountsController::index', ['filter' => 'permission:bank_accounts.view']);
@@ -141,6 +148,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], static functio
         $routes->post('api/bank-accounts', 'BankAccountsController::store', ['filter' => ['csrf', 'permission:bank_accounts.create']]);
         $routes->post('api/bank-accounts/(:num)', 'BankAccountsController::update/$1', ['filter' => ['csrf', 'permission:bank_accounts.update']]);
         $routes->post('api/bank-accounts/(:num)/delete', 'BankAccountsController::delete/$1', ['filter' => ['csrf', 'permission:bank_accounts.delete']]);
+        $routes->post('api/bank-accounts/(:num)/restore', 'BankAccountsController::restore/$1', ['filter' => ['csrf', 'permission:bank_accounts.delete']]);
 
         // Vendors
         $routes->get('vendors', 'VendorsController::index', ['filter' => 'permission:vendors.view']);
@@ -150,6 +158,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], static functio
         $routes->post('api/vendors/(:num)/approve', 'VendorsController::approve/$1', ['filter' => ['csrf', 'permission:vendors.update']]);
         $routes->post('api/vendors/(:num)/reject', 'VendorsController::reject/$1', ['filter' => ['csrf', 'permission:vendors.update']]);
         $routes->post('api/vendors/(:num)/delete', 'VendorsController::delete/$1', ['filter' => ['csrf', 'permission:vendors.delete']]);
+        $routes->post('api/vendors/(:num)/restore', 'VendorsController::restore/$1', ['filter' => ['csrf', 'permission:vendors.delete']]);
 
         // Contents
         $routes->get('contents', 'ContentsController::index', ['filter' => 'permission:contents.view']);
@@ -160,6 +169,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], static functio
         $routes->post('api/contents', 'ContentsController::store', ['filter' => ['csrf', 'permission:contents.create']]);
         $routes->post('api/contents/(:num)', 'ContentsController::update/$1', ['filter' => ['csrf', 'permission:contents.update']]);
         $routes->post('api/contents/(:num)/delete', 'ContentsController::delete/$1', ['filter' => ['csrf', 'permission:contents.delete']]);
+        $routes->post('api/contents/(:num)/restore', 'ContentsController::restore/$1', ['filter' => ['csrf', 'permission:contents.delete']]);
 
         // Banners
         $routes->get('banners', 'BannersController::index', ['filter' => 'permission:banners.view']);
@@ -170,6 +180,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], static functio
         $routes->post('api/banners', 'BannersController::store', ['filter' => ['csrf', 'permission:banners.create']]);
         $routes->post('api/banners/(:num)', 'BannersController::update/$1', ['filter' => ['csrf', 'permission:banners.update']]);
         $routes->post('api/banners/(:num)/delete', 'BannersController::delete/$1', ['filter' => ['csrf', 'permission:banners.delete']]);
+        $routes->post('api/banners/(:num)/restore', 'BannersController::restore/$1', ['filter' => ['csrf', 'permission:banners.delete']]);
 
         // Settings
         $routes->get('settings', 'SettingsController::index', ['filter' => 'permission:settings.view']);
@@ -185,6 +196,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], static functio
         $routes->post('api/users', 'UsersController::store', ['filter' => ['csrf', 'permission:users.create']]);
         $routes->post('api/users/(:num)', 'UsersController::update/$1', ['filter' => ['csrf', 'permission:users.update']]);
         $routes->post('api/users/(:num)/delete', 'UsersController::delete/$1', ['filter' => ['csrf', 'permission:users.delete']]);
+        $routes->post('api/users/(:num)/restore', 'UsersController::restore/$1', ['filter' => ['csrf', 'permission:users.delete']]);
 
         // Roles
         $routes->get('roles', 'RolesController::index', ['filter' => 'permission:roles.view']);
@@ -195,6 +207,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], static functio
         $routes->post('api/roles', 'RolesController::store', ['filter' => ['csrf', 'permission:roles.create']]);
         $routes->post('api/roles/(:num)', 'RolesController::update/$1', ['filter' => ['csrf', 'permission:roles.update']]);
         $routes->post('api/roles/(:num)/delete', 'RolesController::delete/$1', ['filter' => ['csrf', 'permission:roles.delete']]);
+        $routes->post('api/roles/(:num)/restore', 'RolesController::restore/$1', ['filter' => ['csrf', 'permission:roles.delete']]);
         $routes->get('api/permissions', 'RolesController::permissions', ['filter' => 'permission:roles.view']);
     });
 });

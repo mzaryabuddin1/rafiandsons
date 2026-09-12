@@ -14,7 +14,7 @@ abstract class BaseAdminController extends BaseController
     {
         parent::initController($request, $response, $logger);
         $this->auth = new AdminAuth();
-        helper(['url', 'form', 'text']);
+        helper(['url', 'form', 'text', 'admin']);
     }
 
     protected function jsonSuccess(string $message = 'OK', $data = null, int $code = 200): ResponseInterface
@@ -47,10 +47,10 @@ abstract class BaseAdminController extends BaseController
     /**
      * Redirect away from a page when the user lacks permission.
      */
-    protected function requirePagePermission(string $permission, string $fallback = 'admin/dashboard')
+    protected function requirePagePermission(string $permission, string $fallback = 'dashboard')
     {
         if (! $this->auth->can($permission)) {
-            return redirect()->to(site_url($fallback));
+            return redirect()->to(admin_url($fallback));
         }
 
         return null;
@@ -190,6 +190,49 @@ abstract class BaseAdminController extends BaseController
         }
 
         return [array_slice($items, $query['offset'], $query['per_page']), $total];
+    }
+
+    protected function wantsArchived(): bool
+    {
+        return (string) $this->request->getGet('archived') === '1';
+    }
+
+    /** Apply soft-delete scope on a Model instance */
+    protected function scopeArchivedModel($model)
+    {
+        return $this->wantsArchived() ? $model->onlyDeleted() : $model;
+    }
+
+    /** Apply on query builder with table alias prefix e.g. 'p.deleted_at' */
+    protected function scopeArchivedBuilder($builder, string $deletedColumn)
+    {
+        if ($this->wantsArchived()) {
+            $builder->where($deletedColumn . ' IS NOT NULL', null, false);
+        } else {
+            $builder->where($deletedColumn, null);
+        }
+
+        return $builder;
+    }
+
+    /**
+     * Restore a soft-deleted row. Returns true on success, or a JSON error response.
+     *
+     * @return true|ResponseInterface
+     */
+    protected function restoreSoftDeleted($model, $id, string $notFoundMessage = 'Record not found.')
+    {
+        $row = $model->onlyDeleted()->find($id);
+        if (! $row) {
+            return $this->jsonError($notFoundMessage, null, 404);
+        }
+
+        db_connect()->table($model->getTable())->where('id', $id)->update([
+            'deleted_at' => null,
+            'updated_at' => date('Y-m-d H:i:s'),
+        ]);
+
+        return true;
     }
 
     protected function csvDownload(string $filename, array $headers, array $rows): ResponseInterface

@@ -1,8 +1,8 @@
 <?= $this->extend('admin/layout') ?>
 <?= $this->section('content') ?>
 <div class="row wrapper border-bottom white-bg page-heading" style="margin:-15px -15px 20px;padding:15px;">
-    <div class="col-lg-8"><h2>Vendor Details</h2><ol class="breadcrumb"><li><a href="<?= site_url('admin/vendors') ?>">Vendors</a></li><li class="active">Detail</li></ol></div>
-    <div class="col-lg-4 text-right"><a href="<?= site_url('admin/vendors') ?>" class="btn btn-white"><i class="fa fa-arrow-left"></i> Back to Vendors</a></div>
+    <div class="col-lg-8"><h2>Vendor Details</h2><ol class="breadcrumb"><li><a href="<?= admin_url('vendors') ?>">Vendors</a></li><li class="active">Detail</li></ol></div>
+    <div class="col-lg-4 text-right"><a href="<?= admin_url('vendors') ?>" class="btn btn-white"><i class="fa fa-arrow-left"></i> Back to Vendors</a></div>
 </div>
 
 <div class="ibox">
