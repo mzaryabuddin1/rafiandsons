@@ -169,6 +169,10 @@ class AccountController extends BaseStoreController
             return $this->jsonError('Name and phone are required.');
         }
 
+        if ($city !== '' && ! is_pakistan_city($city)) {
+            return $this->jsonError('Please pick a valid city from the list.');
+        }
+
         $phoneTaken = $model->where('phone', $phone)->where('id !=', $customerId)->first();
         if ($phoneTaken && ! empty($phoneTaken['password'])) {
             return $this->jsonError('This phone number is already used by another account.');

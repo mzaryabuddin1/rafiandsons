@@ -24,13 +24,74 @@ window.StoreApp = (function ($) {
     return data;
   }
 
-  function toast(message) {
-    var $el = $('#store-toast');
-    if (!$el.length) {
-      $el = $('<div id="store-toast" class="toast-store"></div>').appendTo('body');
+  function toast(message, type) {
+    type = type || 'info';
+    var text = String(message || '').trim();
+    if (!text) return;
+
+    var lower = text.toLowerCase();
+    if (type === 'info') {
+      if (
+        lower.indexOf('invalid') !== -1 ||
+        lower.indexOf('incorrect') !== -1 ||
+        lower.indexOf('failed') !== -1 ||
+        lower.indexOf('required') !== -1 ||
+        lower.indexOf('error') !== -1 ||
+        lower.indexOf('please') !== -1 ||
+        lower.indexOf('not found') !== -1 ||
+        lower.indexOf('denied') !== -1 ||
+        lower.indexOf('expired') !== -1 ||
+        lower.indexOf('wrong') !== -1
+      ) {
+        type = 'error';
+      } else if (
+        lower.indexOf('success') !== -1 ||
+        lower.indexOf('saved') !== -1 ||
+        lower.indexOf('updated') !== -1 ||
+        lower.indexOf('added') !== -1 ||
+        lower.indexOf('placed') !== -1 ||
+        lower.indexOf('sent') !== -1 ||
+        lower.indexOf('thanks') !== -1
+      ) {
+        type = 'success';
+      }
     }
-    $el.text(message).addClass('show');
-    setTimeout(function () { $el.removeClass('show'); }, 2800);
+
+    var $wrap = $('#store-toast-wrap');
+    if (!$wrap.length) {
+      $wrap = $('<div id="store-toast-wrap" class="toast-store-wrap" aria-live="polite"></div>').appendTo('body');
+    }
+
+    var $el = $(
+      '<div class="toast-store toast-store--' + type + '" role="alert">' +
+        '<span class="toast-store-icon" aria-hidden="true"></span>' +
+        '<span class="toast-store-msg"></span>' +
+        '<button type="button" class="toast-store-close" aria-label="Close">&times;</button>' +
+      '</div>'
+    );
+    $el.find('.toast-store-msg').text(text);
+    $wrap.append($el);
+
+    // Force reflow then show
+    void $el[0].offsetWidth;
+    $el.addClass('show');
+
+    var duration = type === 'error' ? 6000 : 3500;
+    var timer = setTimeout(function () {
+      hideToast($el);
+    }, duration);
+
+    $el.find('.toast-store-close').on('click', function () {
+      clearTimeout(timer);
+      hideToast($el);
+    });
+  }
+
+  function hideToast($el) {
+    $el.removeClass('show');
+    setTimeout(function () {
+      $el.remove();
+    }, 280);
   }
 
   function request(url, method, data, isFormData) {
@@ -58,7 +119,7 @@ window.StoreApp = (function ($) {
 
     return $.ajax(options).fail(function (xhr) {
       var msg = (xhr.responseJSON && xhr.responseJSON.message) || 'Request failed';
-      toast(msg);
+      toast(msg, 'error');
     });
   }
 

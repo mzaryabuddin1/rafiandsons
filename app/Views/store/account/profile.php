@@ -58,7 +58,9 @@ $avatar = $auth->profileImageUrl($storeCustomer ?? null);
                                 </div>
                                 <div class="col-md-6">
                                     <label>City</label>
-                                    <input type="text" class="form-control" name="city" value="<?= esc($customer['city'] ?? '') ?>">
+                                    <input type="text" class="form-control" name="city" data-qb-city-select
+                                           placeholder="Search or select city"
+                                           value="<?= esc($customer['city'] ?? '') ?>">
                                 </div>
                                 <div class="col-md-6">
                                     <label>Address</label>
@@ -97,6 +99,10 @@ $avatar = $auth->profileImageUrl($storeCustomer ?? null);
 
 <?= $this->section('scripts') ?>
 <script>
+window.PAKISTAN_CITIES = <?= json_encode(pakistan_cities(), JSON_UNESCAPED_UNICODE) ?>;
+</script>
+<script src="<?= base_url('assets/store/city-select.js') ?>?v=<?= @filemtime(FCPATH . 'assets/store/city-select.js') ?: time() ?>"></script>
+<script>
 $('#profile_image').on('change', function () {
     var file = this.files && this.files[0];
     if (!file) return;
@@ -109,6 +115,19 @@ $('#profile_image').on('change', function () {
 
 $('#profile-form').on('submit', function (e) {
     e.preventDefault();
+    var city = $.trim($('input[name="city"]').val() || '');
+    if (city && window.PAKISTAN_CITIES && window.PAKISTAN_CITIES.indexOf(city) === -1) {
+        var match = window.PAKISTAN_CITIES.find(function (c) {
+            return String(c).toLowerCase() === city.toLowerCase();
+        });
+        if (match) {
+            $('input[name="city"]').val(match);
+        } else {
+            StoreApp.toast('Please pick a city from the list.');
+            $('input[name="city"]').focus();
+            return;
+        }
+    }
     var $btn = $('#profile-save-btn');
     var text = $btn.text();
     $btn.prop('disabled', true).text('Saving...');

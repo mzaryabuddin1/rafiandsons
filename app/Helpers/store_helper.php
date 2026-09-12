@@ -103,3 +103,23 @@ if (! function_exists('shop_query_url')) {
         return site_url('shop') . $query;
     }
 }
+
+if (! function_exists('pakistan_cities')) {
+    /**
+     * Sorted list of Pakistan cities for checkout / profile pickers.
+     *
+     * @return list<string>
+     */
+    function pakistan_cities(): array
+    {
+        return config('PakistanCities')->sorted();
+    }
+}
+
+if (! function_exists('is_pakistan_city')) {
+    function is_pakistan_city(string $city): bool
+    {
+        return config('PakistanCities')->isValid($city);
+    }
+}
+

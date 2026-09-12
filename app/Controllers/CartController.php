@@ -183,6 +183,13 @@ class CartController extends BaseStoreController
             return $this->jsonError('Name and phone are required.');
         }
 
+        if ($city === '') {
+            return $this->jsonError('Please select your city.');
+        }
+        if (! is_pakistan_city($city)) {
+            return $this->jsonError('Please pick a valid city from the list.');
+        }
+
         $receiptImage = null;
         $receiptFile = $this->request->getFile('receipt_image');
         if ($receiptFile && $receiptFile->getError() !== UPLOAD_ERR_NO_FILE) {

@@ -86,7 +86,7 @@
 <script src="<?= base_url('assets/riode-vendor/imagesloaded/imagesloaded.pkgd.min.js') ?>"></script>
 <script src="<?= base_url('assets/riode-vendor/elevatezoom/jquery.elevatezoom.min.js') ?>"></script>
 <script src="<?= base_url('theme/js/main.min.js') ?>"></script>
-<script src="<?= base_url('assets/store/store-app.js') ?>"></script>
+<script src="<?= base_url('assets/store/store-app.js') ?>?v=<?= @filemtime(FCPATH . 'assets/store/store-app.js') ?: time() ?>"></script>
 <?= $this->renderSection('scripts') ?>
 </body>
 </html>

@@ -43,8 +43,10 @@ $bankAccounts = $bankAccounts ?? [];
                                 <input type="text" class="form-control" name="customer_cnic" placeholder="xxxxx-xxxxxxx-x" value="<?= esc($customer['cnic'] ?? '') ?>">
                             </div>
                             <div class="col-sm-6">
-                                <label>City</label>
-                                <input type="text" class="form-control" name="customer_city" value="<?= esc($customer['city'] ?? '') ?>">
+                                <label>City *</label>
+                                <input type="text" class="form-control" name="customer_city" data-qb-city-select
+                                       required placeholder="Search or select city"
+                                       value="<?= esc($customer['city'] ?? '') ?>">
                             </div>
                             <div class="col-sm-6">
                                 <label>Address</label>
@@ -149,6 +151,10 @@ $bankAccounts = $bankAccounts ?? [];
 
 <?= $this->section('scripts') ?>
 <script>
+window.PAKISTAN_CITIES = <?= json_encode(pakistan_cities(), JSON_UNESCAPED_UNICODE) ?>;
+</script>
+<script src="<?= base_url('assets/store/city-select.js') ?>?v=<?= @filemtime(FCPATH . 'assets/store/city-select.js') ?: time() ?>"></script>
+<script>
 $('#receipt_image').on('change', function () {
     var file = this.files && this.files[0];
     var $preview = $('#receipt-preview');
@@ -161,6 +167,24 @@ $('#receipt_image').on('change', function () {
 
 $('#checkout-form').on('submit', function (e) {
     e.preventDefault();
+    var city = $.trim($('input[name="customer_city"]').val() || '');
+    if (!city) {
+        StoreApp.toast('Please select your city.');
+        $('input[name="customer_city"]').focus();
+        return;
+    }
+    if (window.PAKISTAN_CITIES && window.PAKISTAN_CITIES.indexOf(city) === -1) {
+        var match = window.PAKISTAN_CITIES.find(function (c) {
+            return String(c).toLowerCase() === city.toLowerCase();
+        });
+        if (match) {
+            $('input[name="customer_city"]').val(match);
+        } else {
+            StoreApp.toast('Please pick a city from the list.');
+            $('input[name="customer_city"]').focus();
+            return;
+        }
+    }
     var $btn = $('#checkout-btn');
     var btnText = $btn.text();
     $btn.prop('disabled', true).text('Submitting...');
