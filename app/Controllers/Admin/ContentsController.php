@@ -17,6 +17,34 @@ class ContentsController extends BaseAdminController
         ]);
     }
 
+    public function create()
+    {
+        if ($denied = $this->requirePagePermission('contents.create', 'admin/contents')) {
+            return $denied;
+        }
+
+        return $this->adminView('contents/form', [
+            'pageTitle'  => 'Add Content',
+            'activeMenu' => 'contents',
+            'isEdit'     => false,
+            'recordId'   => null,
+        ]);
+    }
+
+    public function edit($id)
+    {
+        if ($denied = $this->requirePagePermission('contents.update', 'admin/contents')) {
+            return $denied;
+        }
+
+        return $this->adminView('contents/form', [
+            'pageTitle'  => 'Edit Content',
+            'activeMenu' => 'contents',
+            'isEdit'     => true,
+            'recordId'   => (int) $id,
+        ]);
+    }
+
     public function list()
     {
         if ($denied = $this->requirePermission('contents.view')) {

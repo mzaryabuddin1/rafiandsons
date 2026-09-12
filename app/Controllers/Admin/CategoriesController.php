@@ -17,6 +17,36 @@ class CategoriesController extends BaseAdminController
         ]);
     }
 
+    public function create()
+    {
+        if ($denied = $this->requirePagePermission('categories.create', 'admin/categories')) {
+            return $denied;
+        }
+
+        return $this->adminView('categories/form', [
+            'pageTitle'  => 'Add Category',
+            'activeMenu' => 'categories',
+            'isEdit'     => false,
+            'recordId'   => null,
+            'parents'    => model(CategoryModel::class)->parentsOnly(),
+        ]);
+    }
+
+    public function edit($id)
+    {
+        if ($denied = $this->requirePagePermission('categories.update', 'admin/categories')) {
+            return $denied;
+        }
+
+        return $this->adminView('categories/form', [
+            'pageTitle'  => 'Edit Category',
+            'activeMenu' => 'categories',
+            'isEdit'     => true,
+            'recordId'   => (int) $id,
+            'parents'    => model(CategoryModel::class)->parentsOnly(),
+        ]);
+    }
+
     public function list()
     {
         if ($denied = $this->requirePermission('categories.view')) {

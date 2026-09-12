@@ -13,8 +13,21 @@ class VendorsController extends BaseAdminController
             'pageTitle'  => 'Vendors',
             'activeMenu' => 'vendors',
             'statuses'   => VendorModel::STATUSES,
-            'canUpdate'  => $this->auth->can('vendors.update'),
             'canDelete'  => $this->auth->can('vendors.delete'),
+        ]);
+    }
+
+    public function detail($id)
+    {
+        if ($denied = $this->requirePagePermission('vendors.view')) {
+            return $denied;
+        }
+
+        return $this->adminView('vendors/detail', [
+            'pageTitle'  => 'Vendor Details',
+            'activeMenu' => 'vendors',
+            'canUpdate'  => $this->auth->can('vendors.update'),
+            'recordId'   => (int) $id,
         ]);
     }
 

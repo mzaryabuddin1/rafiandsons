@@ -15,6 +15,35 @@ class UsersController extends BaseAdminController
             'canCreate'  => $this->auth->can('users.create'),
             'canUpdate'  => $this->auth->can('users.update'),
             'canDelete'  => $this->auth->can('users.delete'),
+        ]);
+    }
+
+    public function create()
+    {
+        if ($denied = $this->requirePagePermission('users.create', 'admin/users')) {
+            return $denied;
+        }
+
+        return $this->adminView('users/form', [
+            'pageTitle'  => 'Add User',
+            'activeMenu' => 'users',
+            'isEdit'     => false,
+            'recordId'   => null,
+            'roles'      => model(RoleModel::class)->where('status', 1)->findAll(),
+        ]);
+    }
+
+    public function edit($id)
+    {
+        if ($denied = $this->requirePagePermission('users.update', 'admin/users')) {
+            return $denied;
+        }
+
+        return $this->adminView('users/form', [
+            'pageTitle'  => 'Edit User',
+            'activeMenu' => 'users',
+            'isEdit'     => true,
+            'recordId'   => (int) $id,
             'roles'      => model(RoleModel::class)->where('status', 1)->findAll(),
         ]);
     }

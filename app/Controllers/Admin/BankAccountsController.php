@@ -17,6 +17,34 @@ class BankAccountsController extends BaseAdminController
         ]);
     }
 
+    public function create()
+    {
+        if ($denied = $this->requirePagePermission('bank_accounts.create', 'admin/bank-accounts')) {
+            return $denied;
+        }
+
+        return $this->adminView('bank_accounts/form', [
+            'pageTitle'  => 'Add Bank Account',
+            'activeMenu' => 'bank_accounts',
+            'isEdit'     => false,
+            'recordId'   => null,
+        ]);
+    }
+
+    public function edit($id)
+    {
+        if ($denied = $this->requirePagePermission('bank_accounts.update', 'admin/bank-accounts')) {
+            return $denied;
+        }
+
+        return $this->adminView('bank_accounts/form', [
+            'pageTitle'  => 'Edit Bank Account',
+            'activeMenu' => 'bank_accounts',
+            'isEdit'     => true,
+            'recordId'   => (int) $id,
+        ]);
+    }
+
     public function list()
     {
         if ($denied = $this->requirePermission('bank_accounts.view')) {

@@ -12,10 +12,43 @@ class BannersController extends BaseAdminController
             'pageTitle'  => 'Banners',
             'activeMenu' => 'banners',
             'positions'  => BannerModel::positions(),
-            'imageSizes' => BannerModel::recommendedImageSizes(),
             'canCreate'  => $this->auth->can('banners.create'),
             'canUpdate'  => $this->auth->can('banners.update'),
             'canDelete'  => $this->auth->can('banners.delete'),
+        ]);
+    }
+
+    public function create()
+    {
+        if ($denied = $this->requirePagePermission('banners.create', 'admin/banners')) {
+            return $denied;
+        }
+
+        return $this->adminView('banners/form', [
+            'pageTitle'  => 'Add Banner',
+            'activeMenu' => 'banners',
+            'isEdit'     => false,
+            'recordId'   => null,
+            'positions'  => BannerModel::positions(),
+            'imageSizes' => BannerModel::recommendedImageSizes(),
+            'categories' => model(\App\Models\CategoryModel::class)->parentsOnly(false),
+        ]);
+    }
+
+    public function edit($id)
+    {
+        if ($denied = $this->requirePagePermission('banners.update', 'admin/banners')) {
+            return $denied;
+        }
+
+        return $this->adminView('banners/form', [
+            'pageTitle'  => 'Edit Banner',
+            'activeMenu' => 'banners',
+            'isEdit'     => true,
+            'recordId'   => (int) $id,
+            'positions'  => BannerModel::positions(),
+            'imageSizes' => BannerModel::recommendedImageSizes(),
+            'categories' => model(\App\Models\CategoryModel::class)->parentsOnly(false),
         ]);
     }
 

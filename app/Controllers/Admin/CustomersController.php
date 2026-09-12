@@ -18,6 +18,34 @@ class CustomersController extends BaseAdminController
         ]);
     }
 
+    public function create()
+    {
+        if ($denied = $this->requirePagePermission('customers.create', 'admin/customers')) {
+            return $denied;
+        }
+
+        return $this->adminView('customers/form', [
+            'pageTitle'  => 'Add Customer',
+            'activeMenu' => 'customers',
+            'isEdit'     => false,
+            'recordId'   => null,
+        ]);
+    }
+
+    public function edit($id)
+    {
+        if ($denied = $this->requirePagePermission('customers.update', 'admin/customers')) {
+            return $denied;
+        }
+
+        return $this->adminView('customers/form', [
+            'pageTitle'  => 'Edit Customer',
+            'activeMenu' => 'customers',
+            'isEdit'     => true,
+            'recordId'   => (int) $id,
+        ]);
+    }
+
     public function list()
     {
         if ($denied = $this->requirePermission('customers.view')) {

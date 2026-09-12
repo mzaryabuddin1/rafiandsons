@@ -16,9 +16,21 @@ class OrdersController extends BaseAdminController
             'pageTitle'  => 'Orders',
             'activeMenu' => 'orders',
             'canCreate'  => $this->auth->can('orders.create'),
-            'canUpdate'  => $this->auth->can('orders.update'),
             'canDelete'  => $this->auth->can('orders.delete'),
             'statuses'   => OrderModel::STATUSES,
+        ]);
+    }
+
+    public function create()
+    {
+        if ($denied = $this->requirePagePermission('orders.create', 'admin/orders')) {
+            return $denied;
+        }
+
+        return $this->adminView('orders/create', [
+            'pageTitle'  => 'Create Order',
+            'activeMenu' => 'orders',
+            'canCreate'  => true,
             'plans'      => model(InstallmentPlanModel::class)
                 ->where('status', 1)
                 ->where('product_id IS NOT NULL', null, false)
@@ -26,6 +38,21 @@ class OrdersController extends BaseAdminController
                 ->findAll(),
             'products'   => model(ProductModel::class)->where('status', 1)->findAll(),
             'customers'  => model(CustomerModel::class)->where('status', 1)->orderBy('name')->findAll(),
+        ]);
+    }
+
+    public function detail($id)
+    {
+        if ($denied = $this->requirePagePermission('orders.view', 'admin/orders')) {
+            return $denied;
+        }
+
+        return $this->adminView('orders/detail', [
+            'pageTitle'  => 'Order Details',
+            'activeMenu' => 'orders',
+            'canUpdate'  => $this->auth->can('orders.update'),
+            'statuses'   => OrderModel::STATUSES,
+            'recordId'   => (int) $id,
         ]);
     }
 

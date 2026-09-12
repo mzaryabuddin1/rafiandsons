@@ -92,6 +92,8 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], static functio
 
         // Categories
         $routes->get('categories', 'CategoriesController::index', ['filter' => 'permission:categories.view']);
+        $routes->get('categories/create', 'CategoriesController::create', ['filter' => 'permission:categories.create']);
+        $routes->get('categories/(:num)/edit', 'CategoriesController::edit/$1', ['filter' => 'permission:categories.update']);
         $routes->get('api/categories', 'CategoriesController::list', ['filter' => 'permission:categories.view']);
         $routes->get('api/categories/(:num)', 'CategoriesController::show/$1', ['filter' => 'permission:categories.view']);
         $routes->post('api/categories', 'CategoriesController::store', ['filter' => ['csrf', 'permission:categories.create']]);
@@ -100,6 +102,8 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], static functio
 
         // Products
         $routes->get('products', 'ProductsController::index', ['filter' => 'permission:products.view']);
+        $routes->get('products/create', 'ProductsController::create', ['filter' => 'permission:products.create']);
+        $routes->get('products/(:num)/edit', 'ProductsController::edit/$1', ['filter' => 'permission:products.update']);
         $routes->get('api/products', 'ProductsController::list', ['filter' => 'permission:products.view']);
         $routes->get('api/products/(:num)', 'ProductsController::show/$1', ['filter' => 'permission:products.view']);
         $routes->post('api/products', 'ProductsController::store', ['filter' => ['csrf', 'permission:products.create']]);
@@ -108,6 +112,8 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], static functio
 
         // Customers
         $routes->get('customers', 'CustomersController::index', ['filter' => 'permission:customers.view']);
+        $routes->get('customers/create', 'CustomersController::create', ['filter' => 'permission:customers.create']);
+        $routes->get('customers/(:num)/edit', 'CustomersController::edit/$1', ['filter' => 'permission:customers.update']);
         $routes->get('api/customers', 'CustomersController::list', ['filter' => 'permission:customers.view']);
         $routes->get('api/customers/(:num)', 'CustomersController::show/$1', ['filter' => 'permission:customers.view']);
         $routes->post('api/customers', 'CustomersController::store', ['filter' => ['csrf', 'permission:customers.create']]);
@@ -116,6 +122,8 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], static functio
 
         // Orders
         $routes->get('orders', 'OrdersController::index', ['filter' => 'permission:orders.view']);
+        $routes->get('orders/create', 'OrdersController::create', ['filter' => 'permission:orders.create']);
+        $routes->get('orders/(:num)', 'OrdersController::detail/$1', ['filter' => 'permission:orders.view']);
         $routes->get('api/orders', 'OrdersController::list', ['filter' => 'permission:orders.view']);
         $routes->get('api/orders/(:num)', 'OrdersController::show/$1', ['filter' => 'permission:orders.view']);
         $routes->post('api/orders', 'OrdersController::store', ['filter' => ['csrf', 'permission:orders.create']]);
@@ -126,6 +134,8 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], static functio
 
         // Bank Accounts
         $routes->get('bank-accounts', 'BankAccountsController::index', ['filter' => 'permission:bank_accounts.view']);
+        $routes->get('bank-accounts/create', 'BankAccountsController::create', ['filter' => 'permission:bank_accounts.create']);
+        $routes->get('bank-accounts/(:num)/edit', 'BankAccountsController::edit/$1', ['filter' => 'permission:bank_accounts.update']);
         $routes->get('api/bank-accounts', 'BankAccountsController::list', ['filter' => 'permission:bank_accounts.view']);
         $routes->get('api/bank-accounts/(:num)', 'BankAccountsController::show/$1', ['filter' => 'permission:bank_accounts.view']);
         $routes->post('api/bank-accounts', 'BankAccountsController::store', ['filter' => ['csrf', 'permission:bank_accounts.create']]);
@@ -134,6 +144,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], static functio
 
         // Vendors
         $routes->get('vendors', 'VendorsController::index', ['filter' => 'permission:vendors.view']);
+        $routes->get('vendors/(:num)', 'VendorsController::detail/$1', ['filter' => 'permission:vendors.view']);
         $routes->get('api/vendors', 'VendorsController::list', ['filter' => 'permission:vendors.view']);
         $routes->get('api/vendors/(:num)', 'VendorsController::show/$1', ['filter' => 'permission:vendors.view']);
         $routes->post('api/vendors/(:num)/approve', 'VendorsController::approve/$1', ['filter' => ['csrf', 'permission:vendors.update']]);
@@ -142,6 +153,8 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], static functio
 
         // Contents
         $routes->get('contents', 'ContentsController::index', ['filter' => 'permission:contents.view']);
+        $routes->get('contents/create', 'ContentsController::create', ['filter' => 'permission:contents.create']);
+        $routes->get('contents/(:num)/edit', 'ContentsController::edit/$1', ['filter' => 'permission:contents.update']);
         $routes->get('api/contents', 'ContentsController::list', ['filter' => 'permission:contents.view']);
         $routes->get('api/contents/(:num)', 'ContentsController::show/$1', ['filter' => 'permission:contents.view']);
         $routes->post('api/contents', 'ContentsController::store', ['filter' => ['csrf', 'permission:contents.create']]);
@@ -150,6 +163,8 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], static functio
 
         // Banners
         $routes->get('banners', 'BannersController::index', ['filter' => 'permission:banners.view']);
+        $routes->get('banners/create', 'BannersController::create', ['filter' => 'permission:banners.create']);
+        $routes->get('banners/(:num)/edit', 'BannersController::edit/$1', ['filter' => 'permission:banners.update']);
         $routes->get('api/banners', 'BannersController::list', ['filter' => 'permission:banners.view']);
         $routes->get('api/banners/(:num)', 'BannersController::show/$1', ['filter' => 'permission:banners.view']);
         $routes->post('api/banners', 'BannersController::store', ['filter' => ['csrf', 'permission:banners.create']]);
@@ -163,6 +178,8 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], static functio
 
         // Users
         $routes->get('users', 'UsersController::index', ['filter' => 'permission:users.view']);
+        $routes->get('users/create', 'UsersController::create', ['filter' => 'permission:users.create']);
+        $routes->get('users/(:num)/edit', 'UsersController::edit/$1', ['filter' => 'permission:users.update']);
         $routes->get('api/users', 'UsersController::list', ['filter' => 'permission:users.view']);
         $routes->get('api/users/(:num)', 'UsersController::show/$1', ['filter' => 'permission:users.view']);
         $routes->post('api/users', 'UsersController::store', ['filter' => ['csrf', 'permission:users.create']]);
@@ -171,6 +188,8 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], static functio
 
         // Roles
         $routes->get('roles', 'RolesController::index', ['filter' => 'permission:roles.view']);
+        $routes->get('roles/create', 'RolesController::create', ['filter' => 'permission:roles.create']);
+        $routes->get('roles/(:num)/edit', 'RolesController::edit/$1', ['filter' => 'permission:roles.update']);
         $routes->get('api/roles', 'RolesController::list', ['filter' => 'permission:roles.view']);
         $routes->get('api/roles/(:num)', 'RolesController::show/$1', ['filter' => 'permission:roles.view']);
         $routes->post('api/roles', 'RolesController::store', ['filter' => ['csrf', 'permission:roles.create']]);

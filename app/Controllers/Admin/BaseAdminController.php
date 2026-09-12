@@ -44,6 +44,18 @@ abstract class BaseAdminController extends BaseController
         return null;
     }
 
+    /**
+     * Redirect away from a page when the user lacks permission.
+     */
+    protected function requirePagePermission(string $permission, string $fallback = 'admin/dashboard')
+    {
+        if (! $this->auth->can($permission)) {
+            return redirect()->to(site_url($fallback));
+        }
+
+        return null;
+    }
+
     protected function adminView(string $view, array $data = [])
     {
         $data['authUser'] = $this->auth->user();

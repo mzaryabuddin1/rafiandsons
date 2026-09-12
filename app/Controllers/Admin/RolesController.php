@@ -18,6 +18,39 @@ class RolesController extends BaseAdminController
         ]);
     }
 
+    public function create()
+    {
+        if ($denied = $this->requirePagePermission('roles.create', 'admin/roles')) {
+            return $denied;
+        }
+
+        return $this->adminView('roles/form', [
+            'pageTitle'  => 'Add Role',
+            'activeMenu' => 'roles',
+            'isEdit'     => false,
+            'recordId'   => null,
+        ]);
+    }
+
+    public function edit($id)
+    {
+        if ($denied = $this->requirePagePermission('roles.update', 'admin/roles')) {
+            return $denied;
+        }
+
+        $role = model(RoleModel::class)->find($id);
+        if (! $role || (int) ($role['is_super'] ?? 0) === 1) {
+            return redirect()->to(site_url('admin/roles'));
+        }
+
+        return $this->adminView('roles/form', [
+            'pageTitle'  => 'Edit Role',
+            'activeMenu' => 'roles',
+            'isEdit'     => true,
+            'recordId'   => (int) $id,
+        ]);
+    }
+
     public function list()
     {
         if ($denied = $this->requirePermission('roles.view')) {

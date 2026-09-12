@@ -16,6 +16,36 @@ class ProductsController extends BaseAdminController
             'canCreate'  => $this->auth->can('products.create'),
             'canUpdate'  => $this->auth->can('products.update'),
             'canDelete'  => $this->auth->can('products.delete'),
+        ]);
+    }
+
+    public function create()
+    {
+        if ($denied = $this->requirePagePermission('products.create', 'admin/products')) {
+            return $denied;
+        }
+
+        return $this->adminView('products/form', [
+            'pageTitle'  => 'Add Product',
+            'activeMenu' => 'products',
+            'isEdit'     => false,
+            'recordId'   => null,
+            'categories' => model(CategoryModel::class)->flatOptions(),
+            'vendors'    => model(VendorModel::class)->approvedOptions(),
+        ]);
+    }
+
+    public function edit($id)
+    {
+        if ($denied = $this->requirePagePermission('products.update', 'admin/products')) {
+            return $denied;
+        }
+
+        return $this->adminView('products/form', [
+            'pageTitle'  => 'Edit Product',
+            'activeMenu' => 'products',
+            'isEdit'     => true,
+            'recordId'   => (int) $id,
             'categories' => model(CategoryModel::class)->flatOptions(),
             'vendors'    => model(VendorModel::class)->approvedOptions(),
         ]);
@@ -175,9 +205,28 @@ class ProductsController extends BaseAdminController
             return ['error' => 'Product name is required.'];
         }
 
-        $images = $existing && ! empty($existing['images']) ? json_decode($existing['images'], true) : [];
-        if (! is_array($images)) {
-            $images = [];
+        $existingImages = [];
+        if ($existing && ! empty($existing['images'])) {
+            $decoded = json_decode($existing['images'], true);
+            $existingImages = is_array($decoded) ? $decoded : [];
+        }
+
+        // When the form manages images (Dropzone), keep_images is the remaining existing set.
+        $imagesManaged = (string) $this->request->getPost('images_managed') === '1';
+        if ($id !== null && $imagesManaged) {
+            $keepRaw = $this->request->getPost('keep_images');
+            $images  = [];
+            if (is_array($keepRaw)) {
+                $allowed = array_flip($existingImages);
+                foreach ($keepRaw as $path) {
+                    $path = trim((string) $path);
+                    if ($path !== '' && isset($allowed[$path])) {
+                        $images[] = $path;
+                    }
+                }
+            }
+        } else {
+            $images = $existingImages;
         }
 
         $files = $this->request->getFileMultiple('images');

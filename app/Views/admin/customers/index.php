@@ -2,7 +2,7 @@
 <?= $this->section('content') ?>
 <div class="row wrapper border-bottom white-bg page-heading" style="margin:-15px -15px 20px;padding:15px;">
 <div class="col-lg-8"><h2>Customers</h2></div>
-<div class="col-lg-4 text-right"><?php if (!empty($canCreate)): ?><button class="btn btn-primary" id="btn-add"><i class="fa fa-plus"></i> Add Customer</button><?php endif; ?></div>
+<div class="col-lg-4 text-right"><?php if (!empty($canCreate)): ?><a href="<?= site_url('admin/customers/create') ?>" class="btn btn-primary"><i class="fa fa-plus"></i> Add Customer</a><?php endif; ?></div>
 </div>
 <div class="ibox"><div class="ibox-title"><h5>Customers</h5><div class="ibox-tools">
 <select id="filter-registered" class="form-control form-control-sm" style="width:180px;display:inline-block;margin-right:8px;">
@@ -19,22 +19,6 @@
   <div class="col-sm-6 text-right"><div class="admin-table-pager" id="table-pager"></div></div>
 </div>
 </div></div>
-<div class="modal inmodal" id="form-modal" tabindex="-1"><div class="modal-dialog"><div class="modal-content animated fadeIn">
-<form id="main-form"><div class="modal-header navy-bg"><button type="button" class="close" data-dismiss="modal"><span>&times;</span></button><h4 class="modal-title" id="modal-title">Add Customer</h4></div>
-<div class="modal-body">
-<input type="hidden" name="id" id="record-id">
-<div class="form-group"><label>Name *</label><input class="form-control" name="name" id="f-name" required></div>
-<div class="row"><div class="col-md-6"><div class="form-group"><label>Phone *</label><input class="form-control" name="phone" id="f-phone" required></div></div>
-<div class="col-md-6"><div class="form-group"><label>Email</label><input type="email" class="form-control" name="email" id="f-email"></div></div></div>
-<div class="row"><div class="col-md-6"><div class="form-group"><label>CNIC</label><input class="form-control" name="cnic" id="f-cnic"></div></div>
-<div class="col-md-6"><div class="form-group"><label>City</label><input class="form-control" name="city" id="f-city"></div></div></div>
-<div class="form-group"><label>Address</label><input class="form-control" name="address" id="f-address"></div>
-<div class="form-group"><label>Notes</label><textarea class="form-control" name="notes" id="f-notes" rows="2"></textarea></div>
-<div class="form-group"><label>Status</label><select class="form-control" name="status" id="f-status"><option value="1">Active</option><option value="0">Inactive</option></select></div>
-<div id="order-history" class="m-t-sm"></div>
-</div>
-<div class="modal-footer"><button type="button" class="btn btn-white" data-dismiss="modal">Close</button><button type="submit" class="btn btn-primary" id="save-btn">Save</button></div>
-</form></div></div></div>
 <?= $this->endSection() ?>
 <?= $this->section('scripts') ?>
 <script>
@@ -52,17 +36,14 @@ var table = AdminApp.createDataTable({
     },
     renderRow: function (r) {
         var a = '';
-        if (canUpdate) a += '<button class="btn btn-xs btn-primary btn-edit" data-id="' + r.id + '"><i class="fa fa-pencil"></i></button> ';
+        if (canUpdate) a += '<a class="btn btn-xs btn-primary" href="' + ADMIN_BASE + '/customers/' + r.id + '/edit"><i class="fa fa-pencil"></i></a> ';
         if (canDelete) a += '<button class="btn btn-xs btn-danger btn-delete" data-id="' + r.id + '"><i class="fa fa-trash"></i></button>';
         var acct = r.is_registered ? '<span class="badge badge-success">Registered</span>' : '<span class="badge badge-default">Guest</span>';
         return '<tr><td>' + r.id + '</td><td>' + r.name + '</td><td>' + r.phone + '</td><td>' + (r.email || '') + '</td><td>' + (r.city || '') + '</td><td>' + acct + '</td><td>' + (r.status == 1 ? 'Active' : 'Inactive') + '</td><td>' + a + '</td></tr>';
     }
 });
 $('#btn-export-csv').on('click', function () { table.exportCsv(); });
-$('#btn-add').on('click',function(){$('#main-form')[0].reset();$('#record-id').val('');$('#order-history').html('');$('#modal-title').text('Add Customer');$('#form-modal').modal('show');});
 $('#filter-registered').on('change', function () { table.load(true); });
-$('#main-form').on('submit',function(e){e.preventDefault();var id=$('#record-id').val(),url=id?ADMIN_BASE+'/api/customers/'+id:ADMIN_BASE+'/api/customers',$btn=$('#save-btn');AdminApp.setButtonLoading($btn,true);AdminApp.request(url,'POST',$(this).serialize()).done(function(res){AdminApp.toast('success',res.message);$('#form-modal').modal('hide');table.load(true);}).always(function(){AdminApp.setButtonLoading($btn,false);});});
-$(document).on('click','.btn-edit',function(){AdminApp.request(ADMIN_BASE+'/api/customers/'+$(this).data('id'),'GET').done(function(res){var r=res.data;$('#record-id').val(r.id);$('#f-name').val(r.name);$('#f-phone').val(r.phone);$('#f-email').val(r.email||'');$('#f-cnic').val(r.cnic||'');$('#f-city').val(r.city||'');$('#f-address').val(r.address||'');$('#f-notes').val(r.notes||'');$('#f-status').val(r.status);var oh='<p><strong>Account:</strong> '+(r.is_registered?'<span class="badge badge-success">Registered</span>':'<span class="badge badge-default">Guest checkout</span>');if(r.last_login_at)oh+=' &nbsp; <strong>Last login:</strong> '+r.last_login_at;oh+='</p><strong>Order History</strong><ul class="m-t-xs">';(r.orders||[]).forEach(function(o){oh+='<li>'+o.order_number+' — '+o.status+' — '+o.total_payable+'</li>';});if(!(r.orders||[]).length)oh+='<li class="text-muted">No orders</li>';oh+='</ul>';$('#order-history').html(oh);$('#modal-title').text('Edit Customer');$('#form-modal').modal('show');});});
 $(document).on('click','.btn-delete',function(){var id=$(this).data('id');AdminApp.confirmDelete(function(){AdminApp.request(ADMIN_BASE+'/api/customers/'+id+'/delete','POST').done(function(res){AdminApp.toast('success',res.message);table.load(true);});});});
 table.load(true);
 </script>

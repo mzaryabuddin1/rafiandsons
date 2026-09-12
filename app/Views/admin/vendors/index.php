@@ -43,34 +43,10 @@
         </div>
     </div>
 </div>
-
-<div class="modal inmodal" id="detail-modal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content animated fadeIn">
-            <div class="modal-header navy-bg">
-                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-                <h4 class="modal-title">Vendor Details</h4>
-            </div>
-            <div class="modal-body" id="detail-body"></div>
-            <?php if (! empty($canUpdate)): ?>
-            <div class="modal-footer" style="display:block;text-align:left;">
-                <input type="hidden" id="vendor-id">
-                <div class="form-group">
-                    <label>Admin Notes</label>
-                    <textarea id="vendor-notes" class="form-control" rows="2" placeholder="Optional notes"></textarea>
-                </div>
-                <button type="button" class="btn btn-success" id="btn-approve"><i class="fa fa-check"></i> Approve</button>
-                <button type="button" class="btn btn-warning" id="btn-reject"><i class="fa fa-times"></i> Reject</button>
-            </div>
-            <?php endif; ?>
-        </div>
-    </div>
-</div>
 <?= $this->endSection() ?>
 
 <?= $this->section('scripts') ?>
 <script>
-var canUpdate = <?= ! empty($canUpdate) ? 'true' : 'false' ?>;
 var canDelete = <?= ! empty($canDelete) ? 'true' : 'false' ?>;
 
 var table = AdminApp.createDataTable({
@@ -85,7 +61,7 @@ var table = AdminApp.createDataTable({
         return { status: $('#filter-status').val() };
     },
     renderRow: function (r) {
-        var a = '<button class="btn btn-xs btn-primary btn-view" data-id="' + r.id + '"><i class="fa fa-eye"></i></button> ';
+        var a = '<a class="btn btn-xs btn-primary" href="' + ADMIN_BASE + '/vendors/' + r.id + '"><i class="fa fa-eye"></i></a> ';
         if (canDelete) a += '<button class="btn btn-xs btn-danger btn-delete" data-id="' + r.id + '"><i class="fa fa-trash"></i></button>';
         return '<tr>'
             + '<td>' + (r.business_name || '') + '</td>'
@@ -101,56 +77,6 @@ var table = AdminApp.createDataTable({
 $('#btn-export-csv').on('click', function () { table.exportCsv(); });
 
 $('#btn-filter').on('click', function () { table.load(true); });
-
-$(document).on('click', '.btn-view', function () {
-    AdminApp.request(ADMIN_BASE + '/api/vendors/' + $(this).data('id'), 'GET').done(function (res) {
-        var r = res.data;
-        var h = '<p><strong>' + (r.business_name || '') + '</strong> — ' + (r.status_label || r.status) + '</p>';
-        h += '<p>' + (r.contact_name || '') + ' | ' + (r.email || '') + ' | ' + (r.phone || '') + '</p>';
-        h += '<p>' + (r.address || '') + ' ' + (r.city || '') + '</p>';
-        h += '<p>CNIC: ' + (r.cnic || '-') + '</p>';
-        h += '<p>Notes: ' + (r.notes || '-') + '</p>';
-        h += '<p>Admin notes: ' + (r.admin_notes || '-') + '</p>';
-        h += '<p>Reviewed: ' + (r.reviewed_at || '-') + '</p>';
-        $('#detail-body').html(h);
-        $('#vendor-id').val(r.id);
-        $('#vendor-notes').val(r.admin_notes || '');
-        if (canUpdate) {
-            $('#btn-approve,#btn-reject').toggle(r.status !== 'approved');
-            if (r.status === 'approved') $('#btn-reject').hide();
-            if (r.status === 'rejected') {
-                $('#btn-approve').show();
-                $('#btn-reject').hide();
-            }
-            if (r.status === 'pending') {
-                $('#btn-approve,#btn-reject').show();
-            }
-        }
-        $('#detail-modal').modal('show');
-    });
-});
-
-$('#btn-approve').on('click', function () {
-    var id = $('#vendor-id').val();
-    AdminApp.request(ADMIN_BASE + '/api/vendors/' + id + '/approve', 'POST', {
-        admin_notes: $('#vendor-notes').val()
-    }).done(function (res) {
-        AdminApp.toast('success', res.message);
-        $('#detail-modal').modal('hide');
-        table.load(true);
-    });
-});
-
-$('#btn-reject').on('click', function () {
-    var id = $('#vendor-id').val();
-    AdminApp.request(ADMIN_BASE + '/api/vendors/' + id + '/reject', 'POST', {
-        admin_notes: $('#vendor-notes').val()
-    }).done(function (res) {
-        AdminApp.toast('success', res.message);
-        $('#detail-modal').modal('hide');
-        table.load(true);
-    });
-});
 
 $(document).on('click', '.btn-delete', function () {
     var id = $(this).data('id');
