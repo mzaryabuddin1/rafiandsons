@@ -25,7 +25,7 @@ $avatarUrl = $isLoggedIn ? $storeAuth->profileImageUrl($storeCustomer) : '';
                                 <option value="">All</option>
                                 <?php foreach ($categoryTree as $cat): ?>
                                     <option value="<?= esc($cat['slug']) ?>" <?= $searchCategory === $cat['slug'] ? 'selected' : '' ?>>
-                                        <?= esc($cat['name']) ?>
+                                        <?= esc(category_display_name($cat['name'])) ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
@@ -155,11 +155,11 @@ $avatarUrl = $isLoggedIn ? $storeAuth->profileImageUrl($storeCustomer) : '';
                 <ul>
                     <?php foreach ($categoryTree as $cat): ?>
                         <li>
-                            <a href="<?= site_url('shop?category=' . urlencode($cat['slug'])) ?>"><?= esc($cat['name']) ?></a>
+                            <a href="<?= site_url('shop?category=' . urlencode($cat['slug'])) ?>"><?= esc(category_display_name($cat['name'])) ?></a>
                             <?php if (! empty($cat['children'])): ?>
                             <ul>
                                 <?php foreach ($cat['children'] as $child): ?>
-                                    <li><a href="<?= site_url('shop?category=' . urlencode($child['slug'])) ?>"><?= esc($child['name']) ?></a></li>
+                                    <li><a href="<?= site_url('shop?category=' . urlencode($child['slug'])) ?>"><?= esc(category_display_name($child['name'])) ?></a></li>
                                 <?php endforeach; ?>
                             </ul>
                             <?php endif; ?>

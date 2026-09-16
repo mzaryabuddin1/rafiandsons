@@ -13,13 +13,13 @@
                                 <li class="<?= ! empty($cat['children']) ? 'has-children' : '' ?>">
                                     <a href="<?= site_url('shop?category=' . urlencode($cat['slug'])) ?>">
                                         <i class="fas <?= esc($icon) ?>" aria-hidden="true"></i>
-                                        <span><?= esc($cat['name']) ?></span>
+                                        <span><?= esc(category_display_name($cat['name'])) ?></span>
                                         <?php if (! empty($cat['children'])): ?><i class="fas fa-chevron-right qb-cat-arrow"></i><?php endif; ?>
                                     </a>
                                     <?php if (! empty($cat['children'])): ?>
                                     <ul class="qb-cat-sub">
                                         <?php foreach ($cat['children'] as $child): ?>
-                                            <li><a href="<?= site_url('shop?category=' . urlencode($child['slug'])) ?>"><?= esc($child['name']) ?></a></li>
+                                            <li><a href="<?= site_url('shop?category=' . urlencode($child['slug'])) ?>"><?= esc(category_display_name($child['name'])) ?></a></li>
                                         <?php endforeach; ?>
                                     </ul>
                                     <?php endif; ?>
@@ -102,12 +102,12 @@
                         <a href="<?= site_url('shop?category=' . urlencode($cat['slug'])) ?>" class="qb-cat-icon-item">
                             <span class="qb-cat-icon-circle">
                                 <?php if (! empty($cat['image_file']) && is_file(FCPATH . $cat['image_file'])): ?>
-                                    <img src="<?= base_url($cat['image_file']) ?>" alt="<?= esc($cat['name']) ?>">
+                                    <img src="<?= base_url($cat['image_file']) ?>" alt="<?= esc(category_display_name($cat['name'])) ?>">
                                 <?php else: ?>
                                     <i class="fas <?= esc($cat['icon'] ?? 'fa-box') ?>"></i>
                                 <?php endif; ?>
                             </span>
-                            <span class="qb-cat-icon-label"><?= esc($cat['name']) ?></span>
+                            <span class="qb-cat-icon-label"><?= esc(category_display_name($cat['name'])) ?></span>
                         </a>
                     <?php endforeach; ?>
                 </div>
@@ -157,7 +157,7 @@
                     </a>
                 <?php endif; ?>
                 <div class="qb-section-head">
-                    <h2 class="qb-section-title mb-0"><?= esc($section['category']['name']) ?></h2>
+                    <h2 class="qb-section-title mb-0"><?= esc(category_display_name($section['category']['name'])) ?></h2>
                     <a href="<?= site_url('shop?category=' . urlencode($section['category']['slug'])) ?>" class="qb-view-all">View All <i class="fas fa-angle-right"></i></a>
                 </div>
                 <div class="qb-product-carousel owl-carousel owl-theme" data-owl-options="{

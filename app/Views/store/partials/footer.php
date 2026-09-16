@@ -58,7 +58,7 @@ $address = $settings['contact_address'] ?? '';
                         <h4 class="widget-title">Categories</h4>
                         <ul class="widget-body">
                             <?php foreach (array_slice($categoryTree ?? $categories, 0, 8) as $cat): ?>
-                                <li><a href="<?= site_url('shop?category=' . urlencode($cat['slug'])) ?>"><?= esc($cat['name']) ?></a></li>
+                                <li><a href="<?= site_url('shop?category=' . urlencode($cat['slug'])) ?>"><?= esc(category_display_name($cat['name'])) ?></a></li>
                             <?php endforeach; ?>
                         </ul>
                     </div>

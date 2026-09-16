@@ -1,5 +1,36 @@
 <?php
 
+if (! function_exists('category_display_name')) {
+    /**
+     * Format category name for storefront display (Proper Case / title case).
+     * e.g. "washing machine" → "Washing Machine", "LED TV" → "LED TV"
+     */
+    function category_display_name(?string $name): string
+    {
+        $name = trim((string) $name);
+        if ($name === '') {
+            return '';
+        }
+
+        $parts = preg_split('/[\s\-_\/]+/', $name) ?: [];
+        $out   = [];
+
+        foreach ($parts as $part) {
+            $part = trim($part);
+            if ($part === '') {
+                continue;
+            }
+            if (strlen($part) <= 4 && strtoupper($part) === $part && preg_match('/^[A-Z]+$/', $part)) {
+                $out[] = $part;
+            } else {
+                $out[] = ucfirst(strtolower($part));
+            }
+        }
+
+        return implode(' ', $out);
+    }
+}
+
 if (! function_exists('category_fa_icon')) {
     /**
      * Resolve a Font Awesome 5 Free icon class for a category.

@@ -21,7 +21,7 @@ $hasPriceFilter = $minPrice !== null || $maxPrice !== null;
                     <span>Search: <?= esc($search) ?></span>
                 <?php elseif (! empty($activeCategory)): ?>
                     <span>/</span>
-                    <span><?= esc($activeCategory['name']) ?></span>
+                    <span><?= esc(category_display_name($activeCategory['name'])) ?></span>
                 <?php endif; ?>
             </nav>
         </div>
@@ -101,10 +101,10 @@ $hasPriceFilter = $minPrice !== null || $maxPrice !== null;
                                         <div class="qb-filter-parent-row">
                                             <a href="<?= shop_query_url(['category' => $cat['slug']]) ?>">
                                                 <i class="fas <?= esc(category_fa_icon($cat['slug'], $cat['icon'] ?? $cat['description'] ?? null)) ?>"></i>
-                                                <?= esc($cat['name']) ?>
+                                                <?= esc(category_display_name($cat['name'])) ?>
                                             </a>
                                             <?php if ($hasChildren): ?>
-                                                <button type="button" class="qb-filter-expand" aria-expanded="<?= $isParentActive ? 'true' : 'false' ?>" aria-label="Toggle <?= esc($cat['name']) ?> subcategories">
+                                                <button type="button" class="qb-filter-expand" aria-expanded="<?= $isParentActive ? 'true' : 'false' ?>" aria-label="Toggle <?= esc(category_display_name($cat['name'])) ?> subcategories">
                                                     <i class="fas fa-chevron-down"></i>
                                                 </button>
                                             <?php endif; ?>
@@ -114,7 +114,7 @@ $hasPriceFilter = $minPrice !== null || $maxPrice !== null;
                                                 <?php foreach ($cat['children'] as $child): ?>
                                                     <li class="<?= $activeId === (int) $child['id'] ? 'is-active' : '' ?>">
                                                         <a href="<?= shop_query_url(['category' => $child['slug']]) ?>">
-                                                            <?= esc($child['name']) ?>
+                                                            <?= esc(category_display_name($child['name'])) ?>
                                                         </a>
                                                     </li>
                                                 <?php endforeach; ?>
