@@ -2049,9 +2049,42 @@
   margin-bottom: 18px;
   max-height: 280px;
   overflow-y: auto;
+  overflow-x: auto;
   padding-right: 6px;
   scrollbar-width: thin;
   scrollbar-color: var(--qb-brand) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (min-width: 992px) {
+  .qb-product-desc {
+    overflow-x: hidden;
+  }
+
+  .qb-product-desc img,
+  .qb-product-desc video,
+  .qb-product-desc iframe {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .qb-product-desc table {
+    max-width: 100%;
+    width: 100% !important;
+    table-layout: fixed;
+  }
+
+  .qb-product-desc th,
+  .qb-product-desc td {
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  .qb-product-desc pre,
+  .qb-product-desc code {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
 }
 
 .qb-product-desc::-webkit-scrollbar {
