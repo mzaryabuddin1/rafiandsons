@@ -1,5 +1,12 @@
 <?php
 
+if (! function_exists('store_vendor_enabled')) {
+    function store_vendor_enabled(): bool
+    {
+        return (bool) config('Store')->showVendor;
+    }
+}
+
 if (! function_exists('category_display_name')) {
     /**
      * Format category name for storefront display (Proper Case / title case).

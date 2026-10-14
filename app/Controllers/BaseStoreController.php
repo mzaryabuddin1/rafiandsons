@@ -39,6 +39,7 @@ abstract class BaseStoreController extends BaseController
         $recaptcha = new RecaptchaService();
         $data['recaptchaEnabled'] = $recaptcha->isEnabled();
         $data['recaptchaSiteKey'] = $recaptcha->siteKey();
+        $data['showVendor'] = store_vendor_enabled();
 
         return view('store/' . $view, $data);
     }
@@ -119,10 +120,12 @@ abstract class BaseStoreController extends BaseController
             }
         }
 
-        $vendorIds = array_values(array_unique(array_filter(array_map(
-            static fn ($p) => (int) ($p['vendor_id'] ?? 0),
-            $products
-        ))));
+        $vendorIds = store_vendor_enabled()
+            ? array_values(array_unique(array_filter(array_map(
+                static fn ($p) => (int) ($p['vendor_id'] ?? 0),
+                $products
+            ))))
+            : [];
         $vendorMap = [];
         if ($vendorIds) {
             foreach ($db->table('vendors')

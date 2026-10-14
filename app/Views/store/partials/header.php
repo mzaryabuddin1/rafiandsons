@@ -1,4 +1,5 @@
 <?php
+$showVendor = $showVendor ?? store_vendor_enabled();
 $siteName = $settings['site_name'] ?? 'Rafi & Sons';
 $phone = $settings['contact_phone'] ?? '0300-0000000';
 $whatsapp = $settings['whatsapp_number'] ?? $phone;
@@ -84,7 +85,9 @@ $avatarUrl = $isLoggedIn ? $storeAuth->profileImageUrl($storeCustomer) : '';
                         <div class="qb-account-dropdown" id="qb-account-dropdown">
                             <a href="<?= site_url('account/profile') ?>"><i class="far fa-user"></i> Profile</a>
                             <a href="<?= site_url('account/orders') ?>"><i class="d-icon-bag"></i> My Orders</a>
+                            <?php if (! empty($showVendor)): ?>
                             <a href="<?= site_url('vendor/login') ?>"><i class="fas fa-briefcase"></i> Login as Vendor</a>
+                            <?php endif; ?>
                             <a href="#" id="header-logout-link"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
                         </div>
                     </div>
@@ -98,7 +101,9 @@ $avatarUrl = $isLoggedIn ? $storeAuth->profileImageUrl($storeCustomer) : '';
                         <div class="qb-account-dropdown" id="qb-account-dropdown">
                             <a href="<?= site_url('account/login') ?>"><i class="fas fa-sign-in-alt"></i> Sign In</a>
                             <a href="<?= site_url('account/register') ?>"><i class="fas fa-user-plus"></i> Sign Up</a>
+                            <?php if (! empty($showVendor)): ?>
                             <a href="<?= site_url('vendor/login') ?>"><i class="fas fa-briefcase"></i> Login as Vendor</a>
+                            <?php endif; ?>
                         </div>
                     </div>
                     <?php endif; ?>
@@ -129,7 +134,9 @@ $avatarUrl = $isLoggedIn ? $storeAuth->profileImageUrl($storeCustomer) : '';
                     <li class="<?= $menu === 'contact' ? 'active' : '' ?>"><a href="<?= site_url('contact') ?>">Contact</a></li>
                 </ul>
                 <div class="qb-nav-right">
+                    <?php if (! empty($showVendor)): ?>
                     <a href="<?= site_url('vendor/apply') ?>" class="qb-nav-vendor">Become a Vendor</a>
+                    <?php endif; ?>
                     <?php if ($isLoggedIn): ?>
                         <a href="<?= site_url('account/profile') ?>">My Account</a>
                     <?php endif; ?>
@@ -171,8 +178,10 @@ $avatarUrl = $isLoggedIn ? $storeAuth->profileImageUrl($storeCustomer) : '';
             <li><a href="<?= site_url('about') ?>">About</a></li>
             <li><a href="<?= site_url('faq') ?>">FAQ</a></li>
             <li><a href="<?= site_url('contact') ?>">Contact</a></li>
+            <?php if (! empty($showVendor)): ?>
             <li><a href="<?= site_url('vendor/apply') ?>">Become a Vendor</a></li>
             <li><a href="<?= site_url('vendor/login') ?>">Login as Vendor</a></li>
+            <?php endif; ?>
             <li><a href="<?= site_url('track-order') ?>">Track Your Order</a></li>
             <li><a href="<?= site_url('cart') ?>">Cart</a></li>
             <?php if ($isLoggedIn): ?>

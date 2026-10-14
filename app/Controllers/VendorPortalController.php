@@ -9,6 +9,10 @@ class VendorPortalController extends BaseStoreController
 {
     public function apply()
     {
+        if (! store_vendor_enabled()) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        }
+
         return $this->storeView('vendor/apply', [
             'pageTitle'  => 'Become a Vendor',
             'activeMenu' => 'vendor',
@@ -19,6 +23,10 @@ class VendorPortalController extends BaseStoreController
 
     public function submitApplication()
     {
+        if (! store_vendor_enabled()) {
+            return $this->jsonError('Not found.', null, 404);
+        }
+
         if ($denied = $this->requireRecaptcha('vendor_apply')) {
             return $denied;
         }

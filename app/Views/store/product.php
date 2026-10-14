@@ -49,7 +49,7 @@
                         }
                         ?>
                         <h1 class="qb-product-title"><?= esc($product['name']) ?></h1>
-                        <?php if (! empty($product['vendor_name'])): ?>
+                        <?php if (! empty($showVendor) && ! empty($product['vendor_name'])): ?>
                             <div class="qb-vendor-tag">Vendor: <?= esc($product['vendor_name']) ?></div>
                         <?php endif; ?>
                         <div class="qb-product-meta">

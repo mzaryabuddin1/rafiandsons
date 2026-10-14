@@ -74,9 +74,10 @@
 }
 
 .admin-logo {
-  width: 160px;
+  width: auto;
+  max-width: 200px;
   height: auto;
-  max-height: 72px;
+  max-height: 56px;
   object-fit: contain;
   display: block;
   margin: 0 auto 10px;
@@ -86,7 +87,8 @@
 }
 
 .admin-logo-mini {
-  width: 48px;
+  width: auto;
+  max-width: 44px;
   height: 28px;
   object-fit: contain;
   border-radius: 0;
@@ -100,9 +102,10 @@ body.mini-navbar .logo-element .admin-logo-mini {
 }
 
 .admin-login-logo {
-  width: 220px;
+  width: auto;
+  max-width: min(420px, 92vw);
   height: auto;
-  max-height: 100px;
+  max-height: 88px;
   object-fit: contain;
   border-radius: 0;
   margin: 0 auto 16px;

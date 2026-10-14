@@ -50,6 +50,7 @@ $openQuickForCart = $bothModes;
 
         <h3 class="qb-product-name"><a href="<?= $url ?>"><?= esc($product['name']) ?></a></h3>
 
+        <?php if (store_vendor_enabled()): ?>
         <div class="qb-vendor-tag<?= empty($product['vendor_name']) ? ' is-empty' : '' ?>">
             <?php if (! empty($product['vendor_name'])): ?>
                 Vendor: <?= esc($product['vendor_name']) ?>
@@ -57,6 +58,7 @@ $openQuickForCart = $bothModes;
                 &nbsp;
             <?php endif; ?>
         </div>
+        <?php endif; ?>
 
         <div class="qb-card-price-box">
             <?php if ($cashAvailable): ?>

@@ -171,7 +171,7 @@
 		<main class="cs-main">
 			<div class="container">
 				<a href="<?= site_url('/') ?>" class="cs-brand" aria-label="Rafi &amp; Sons">
-					<img src="<?= base_url('assets/images/logo.png') ?>" alt="Rafi &amp; Sons — Making Life Easier, Every Day." width="220" height="220">
+					<img src="<?= base_url('assets/images/logo.png') ?>" alt="Rafi &amp; Sons — Making Life Easier, Every Day." width="420" height="100" style="max-width:min(420px,92vw);height:auto;display:block;margin:0 auto;">
 				</a>
 				<h1 class="cs-title">We&rsquo;re preparing something <span>special</span></h1>
 				<div class="cs-rule" aria-hidden="true"></div>

@@ -11,6 +11,10 @@ class GuestVendorFilter implements FilterInterface
 {
     public function before(RequestInterface $request, $arguments = null)
     {
+        if (! config('Store')->showVendor) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        }
+
         $auth = new VendorAuth();
         if ($auth->check() && strtolower($request->getMethod()) === 'get') {
             return redirect()->to(site_url('vendor/dashboard'));

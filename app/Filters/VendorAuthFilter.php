@@ -11,6 +11,10 @@ class VendorAuthFilter implements FilterInterface
 {
     public function before(RequestInterface $request, $arguments = null)
     {
+        if (! config('Store')->showVendor) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        }
+
         $auth = new VendorAuth();
         if (! $auth->check()) {
             if ($request->isAJAX() || str_contains($request->getHeaderLine('Accept'), 'application/json')) {
